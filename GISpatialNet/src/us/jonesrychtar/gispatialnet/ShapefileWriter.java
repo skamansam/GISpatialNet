@@ -33,10 +33,10 @@ import org.opengis.feature.simple.SimpleFeature;
 
 public class ShapefileWriter {
 
-    File file;
-    DataStore myData;
-    FeatureStore<SimpleFeatureType, SimpleFeature> store;
-    FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
+    private File file;
+    private DataStore myData;
+    private FeatureStore<SimpleFeatureType, SimpleFeature> store;
+    private FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
     
     //default constructor
     public ShapefileWriter() {
