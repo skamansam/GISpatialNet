@@ -1,6 +1,6 @@
 /*
- * This program will convert network file with known geographic coordinates
- * into a shapefile.
+ * This is a shapefile writer. Note that all input must match
+ * the originally defined scheme.
  * 
  * For research by Eric Jones and Jan Rychtar.
  * 
