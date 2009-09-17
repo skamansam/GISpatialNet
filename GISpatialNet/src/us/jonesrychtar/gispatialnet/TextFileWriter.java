@@ -1,6 +1,5 @@
 /*
- * This program will convert network file with known geographic coordinates
- * into a shapefile.
+ * This is an abstract class for text file writers (csv and dl/ucinet)
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -23,7 +22,6 @@ public abstract class TextFileWriter {
     private File file;
     private Matrix workingset;
 
-    public TextFileWriter(){};
 
     public void setFile(File var){
         file=var;

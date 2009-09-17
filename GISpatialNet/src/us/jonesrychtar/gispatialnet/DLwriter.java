@@ -27,7 +27,7 @@ public class DLwriter extends TextFileWriter {
     public final static boolean TXT = false;
 
     //file format data
-    String ext = ".dat";
+    private String ext = ".dat";
 
     //constructors
     public DLwriter(Matrix map, String filename){
