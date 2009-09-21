@@ -10,6 +10,7 @@
 
 package us.jonesrychtar.socialnetwork;
 
+import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -127,20 +128,10 @@ public class SpatialNetworkBias {
 
 	@SuppressWarnings("unused")
 	private void createCoordinateGraphData() throws FileNotFoundException {
-		Random rand = new Random();
-		PrintStream outx = null;
-		PrintStream outy = null;
-		PrintStream outa = null;
-
-		outx = new PrintStream(
-				new FileOutputStream("x.csv")
-		);
-		outy = new PrintStream(
-				new FileOutputStream("y.csv")
-		);
-		outa = new PrintStream(
-				new FileOutputStream("a.csv")
-		);
+		rand = new Random();
+		PrintStream outx = new PrintStream(new FileOutputStream("x.csv"));
+		PrintStream outy = new PrintStream(new FileOutputStream("y.csv"));
+		PrintStream outa = new PrintStream(new FileOutputStream("a.csv"));
 
 		for (int i = 0; i < 25; i++) {
 			outx.print(rand.nextDouble()*10);
@@ -953,7 +944,7 @@ public class SpatialNetworkBias {
 	}
 	
 	public void createGraphAndWriteOutput(FileWriter fw, int graphNum) throws IOException {
-		SpatialGraph sg = new SpatialGraph(x, y, A);
+		SpatialGraphBase sg = new SpatialGraphBase(x, y, A);
 		if (metricFunction == null) {
 			sg.setMetricFunction(Metric.EUCLIDEAN);
 			sg.calculateBiasAndEstimates();

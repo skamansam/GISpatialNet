@@ -1,10 +1,11 @@
 package us.jonesrychtar.socialnetwork;
 
+import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 import java.util.Random;
 
 import org.ujmp.core.MatrixFactory;
 
-public class SquareLatticeSpatialGraph extends SpatialGraph {
+public class SquareLatticeSpatialGraph extends SpatialGraphBase {
 	protected int size;
 	protected double rewire;
 	

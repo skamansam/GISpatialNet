@@ -1,18 +1,20 @@
-package us.jonesrychtar.socialnetwork;
+package us.jonesrychtar.socialnetwork.SpatialGraph;
 
+import us.jonesrychtar.socialnetwork.*;
+import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 import java.util.Random;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 
-public class PoissonSpatialGraph extends SpatialGraph {
+public class Poisson extends SpatialGraphBase {
 	protected double rho;
 	protected double H;
 	protected double alpha;
 	protected double beta;
 	
 	/**
-	 * Constructs a new PoissonSpatialGraph object.
+	 * Constructs a new Poisson object.
 	 * 
 	 * @param numVerts the number of vertices in the graph.
 	 * @param rho density parameter.
@@ -21,7 +23,7 @@ public class PoissonSpatialGraph extends SpatialGraph {
 	 * @param alpha parameter for edge distribution function, between 0 and 1.
 	 * @param beta parameter for edge distribution function, between 0 and 1.
 	 */
-	public PoissonSpatialGraph(int numVerts, double rho, Metric metricFunction, double H, double alpha, double beta) {
+	public Poisson(int numVerts, double rho, Metric metricFunction, double H, double alpha, double beta) {
 		this.numVerts = numVerts;
 		this.rho = rho;
 		this.metricFunction = metricFunction;
