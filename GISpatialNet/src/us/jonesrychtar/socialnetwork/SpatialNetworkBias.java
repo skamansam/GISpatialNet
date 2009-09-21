@@ -28,7 +28,15 @@ import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.exceptions.MatrixException;
 
+import us.jonesrychtar.socialnetwork.CoordinateGraph.*;
+import us.jonesrychtar.socialnetwork.MetricFunction.*;
+import us.jonesrychtar.socialnetwork.Network.*;
+import us.jonesrychtar.socialnetwork.Reader.*;
+import us.jonesrychtar.socialnetwork.SpatialGraph*;
+import us.jonesrychtar.socialnetwork.Writer.*;
+
 import com.mindprod.csv.CSVReader;
+import us.jonesrychtar.socialnetwork.SpatialGraph.Poisson;
 
 public class SpatialNetworkBias {
 	private int coordinateFormat; // 1 = xy, 2 = radians, 3 = degrees, 4 = decimal degrees
@@ -57,7 +65,14 @@ public class SpatialNetworkBias {
     private boolean trimQuoted;
     private boolean allowMultiLineFields;
     private Random rand;
-	
+
+    private CoordinateGraphBase theGraph;
+    private SpatialGraphBase theSpatialGraph;
+    private MetricFunctionBase theFunction;
+    private NetworkBase theNetwork;
+    private ReaderBase theReader;
+    private WriterBase theWriter;
+
 	public SpatialNetworkBias() {
 		coordinateFormat = 0;
 		distanceFormat = 0;
@@ -81,11 +96,18 @@ public class SpatialNetworkBias {
         trimQuoted = true;
         allowMultiLineFields = true;
         rand = new Random();
+        theGraph=new CoordinateGraphBase();
+        theSpatialGraph = new SpatialGraphBase();
+        theFunction = new MetricFunctionBase();
+        theNetwork = new NetworkBase();
+        theReader = new ReaderBase();
+        theWriter = new WriterBase();
 	}
 	
 	public static void main(String[] args) {
 		SpatialNetworkBias snb = new SpatialNetworkBias();
-		snb.setCoordinateFormat();
+
+		snb.theGraph.setCoordinateFormat();
 		
 		if (snb.coordinateFormat == 2) {
 			snb.setDistanceFormat();
@@ -160,7 +182,7 @@ public class SpatialNetworkBias {
 	}
 	
 	
-	private void setCoordinateFormat() {
+/*	private void setCoordinateFormat() {
 		System.out.println("Is the coordinate dataset in x,y format, or in direction and distance format?\n" +
 			"Please enter the option number from the menu below.\n" +
 			"\t1. x,y format.\n" +
@@ -187,7 +209,7 @@ public class SpatialNetworkBias {
 			}
 		}
 	}
-	
+*/
 	
 	private void setDistanceFormat() {
 		System.out.println("Is distance in time, or in (linear geographic) distance?\n" +
