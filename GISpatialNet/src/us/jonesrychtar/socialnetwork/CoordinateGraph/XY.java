@@ -9,6 +9,6 @@ package us.jonesrychtar.socialnetwork.CoordinateGraph;
  *
  * @author Samuel C. Tyler <skamansam@gmail.com>
  */
-public class XY {
+public class XY extends CoordinateGraphBase {
 
 }
