@@ -32,7 +32,7 @@ import us.jonesrychtar.socialnetwork.CoordinateGraph.*;
 import us.jonesrychtar.socialnetwork.MetricFunction.*;
 import us.jonesrychtar.socialnetwork.Network.*;
 import us.jonesrychtar.socialnetwork.Reader.*;
-import us.jonesrychtar.socialnetwork.SpatialGraph*;
+import us.jonesrychtar.socialnetwork.SpatialGraph.*;
 import us.jonesrychtar.socialnetwork.Writer.*;
 
 import com.mindprod.csv.CSVReader;
@@ -104,48 +104,48 @@ public class SpatialNetworkBias {
         theWriter = new WriterBase();
 	}
 	
-	public static void main(String[] args) {
-		SpatialNetworkBias snb = new SpatialNetworkBias();
+	   /*public static void main(String[] args) {
+    SpatialNetworkBias snb = new SpatialNetworkBias();
 
-		snb.theGraph.setCoordinateFormat();
-		
-		if (snb.coordinateFormat == 2) {
-			snb.setDistanceFormat();
-		}
+    snb.theGraph.setCoordinateFormat();
 
-		if (snb.distanceFormat == 1) {
-			snb.setTimeUnits();
-		} else if (snb.distanceFormat == 2) {
-			snb.setDistanceUnits();
-		}
-		
-		snb.setMetricFunction();
-		
-		snb.setNetworkFormat();
-		
-		snb.setEdgeFormat();
-		
-		if (snb.edgeFormat == 1) {
-			snb.setEdgeMinValue();
-		}
+    if (snb.coordinateFormat == 2) {
+    snb.setDistanceFormat();
+    }
 
-		snb.setMinMissingEdgeValue();
-		snb.setMaxMissingEdgeValue();
-		
-		snb.setNumVerts();
-		
-		snb.setNumNetworks();
+    if (snb.distanceFormat == 1) {
+    snb.setTimeUnits();
+    } else if (snb.distanceFormat == 2) {
+    snb.setDistanceUnits();
+    }
 
-		snb.setIncludeEgo();
-		
-		snb.setDistanceSeparatorChar();
-		
-		snb.setNetworkSeparatorChar();
-		
-		snb.readInputFiles();
-		
-		System.out.println("Program completed successfully.");
-	}
+    snb.setMetricFunction();
+
+    snb.setNetworkFormat();
+
+    snb.setEdgeFormat();
+
+    if (snb.edgeFormat == 1) {
+    snb.setEdgeMinValue();
+    }
+
+    snb.setMinMissingEdgeValue();
+    snb.setMaxMissingEdgeValue();
+
+    snb.setNumVerts();
+
+    snb.setNumNetworks();
+
+    snb.setIncludeEgo();
+
+    snb.setDistanceSeparatorChar();
+
+    snb.setNetworkSeparatorChar();
+
+    snb.readInputFiles();
+
+    System.out.println("Program completed successfully.");
+    }*/
 
 
 	@SuppressWarnings("unused")

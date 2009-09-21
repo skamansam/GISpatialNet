@@ -7,7 +7,7 @@
  * Requires: UJMP
  *
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Writer;
 
 import java.io.File;
 import java.io.PrintWriter;

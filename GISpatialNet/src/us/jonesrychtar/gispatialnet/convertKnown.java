@@ -8,6 +8,7 @@
  * 
  */
 package us.jonesrychtar.gispatialnet;
+import us.jonesrychtar.gispatialnet.Writer.*;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -25,18 +26,21 @@ public class convertKnown {
     //need map and shapewriter
     private ShapefileWriter outN;
     private ShapefileWriter outE;
-    private Matrix workingSetNodes;
-    private Matrix workingSetEdges;
+    private Matrix x;
+    private Matrix y;
+    private Matrix adj;
+    private Matrix attb;
     private String schemeNodes;
-    private String schemeEdges;
+    private String schemeEdges = " ";
 
-    public convertKnown(Matrix mapNodes, Matrix mapEdges){
+    public convertKnown(Matrix xin, Matrix yin, Matrix adjin, Matrix attbin){
         //setup mapreader and shapewriter
-        workingSetNodes = mapNodes;
-        workingSetEdges = mapEdges;
+        x = xin;
+        y = yin;
+        adj = adjin;
+        attb = attbin;
 
-        schemeNodes=analyzeScheme(workingSetNodes);
-        schemeEdges=analyzeScheme(workingSetEdges);
+        schemeNodes=analyzeScheme(attbin);
 
         outN = new ShapefileWriter("outN",schemeNodes);
         outE = new ShapefileWriter("outE",schemeEdges);
@@ -55,8 +59,15 @@ public class convertKnown {
         
     }
     private String analyzeScheme(Matrix in){
-        String sch="";
-        
+        String sch="*geom:Point";
+        for(int i=0; i<in.getColumnCount(); i++){
+            if(in.getColumnObject(i).getClass().isInstance(java.lang.Number.class)){
+                sch+=", "+in.getColumnLabel(i)+":Float";
+            }
+            else {
+                sch+=", "+in.getColumnLabel(i)+":String";
+            }
+        }
         return sch;
     }
 }

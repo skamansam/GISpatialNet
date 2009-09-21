@@ -7,7 +7,7 @@
  * Requires: UJMP and org.boehn.kmlframework
  *
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Writer;
 
 import org.boehn.kmlframework.kml.Document;
 import org.boehn.kmlframework.kml.Kml;

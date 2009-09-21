@@ -6,7 +6,7 @@
  * Requires: UJMP
  *
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
 import org.ujmp.core.Matrix;
@@ -18,6 +18,11 @@ import org.ujmp.core.Matrix;
  * @version 0.0.1
  */
 public abstract class FileReader {
+    //Type Definitions
+    public static int FULL_MATRIX= 0;
+    public static int LOWER_MATRIX= 1;
+    public static int UPPER_MATRIX= 2;
+
     private File file;
 
     public File getFile(){
@@ -26,7 +31,7 @@ public abstract class FileReader {
     public void setFile(File var){
         file=var;
     }
-    public abstract void openFile(String filename);
-    public abstract Matrix Read();
+    public abstract File openFile(String filename);
+    public abstract Matrix Read(int type, int rows, int col);
 
 }
