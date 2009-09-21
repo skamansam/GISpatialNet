@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package us.jonesrychtar.socialnetwork;
+package us.jonesrychtar.socialnetwork.MetricFunction;
 
 /**
  *
  * @author Samuel C. Tyler <skamansam@gmail.com>
  */
-public class Reader {
+public class PeriodicEuclidean  extends MetricFunctionBase {
 
 }

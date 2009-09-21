@@ -1,5 +1,6 @@
 package us.jonesrychtar.socialnetwork;
 
+import us.jonesrychtar.socialnetwork.SpatialGraph.Poisson;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -8,7 +9,7 @@ import java.util.Random;
 
 public class GraphSimulation {
 	public static void notmain(String[] args) {
-		PoissonSpatialGraph psg = new PoissonSpatialGraph(25, 1, Metric.EUCLIDEAN, .25, .5, .25);
+		Poisson psg = new Poisson(25, 1, Metric.EUCLIDEAN, .25, .5, .25);
 		do {
 			psg.generateGraph();			
 		} while (psg.getNbhdSizeLowerEstimate() < .225 || psg.getNbhdSizeLowerEstimate() > .275);
@@ -98,7 +99,7 @@ public class GraphSimulation {
 			Random rand = new Random();
 			for(int i = 0; i < 65000; i++) {
 				String outString = "";
-				PoissonSpatialGraph sg = new PoissonSpatialGraph(rand.nextInt(76)+25, 1, Metric.EUCLIDEAN, rand.nextDouble()*.49+.01, rand.nextDouble()*.5+.5, rand.nextDouble()*.48+.01);
+				Poisson sg = new Poisson(rand.nextInt(76)+25, 1, Metric.EUCLIDEAN, rand.nextDouble()*.49+.01, rand.nextDouble()*.5+.5, rand.nextDouble()*.48+.01);
 				sg.generateGraph();
 				double euclideanBias = sg.getBias();
 				double euclideanLower = sg.getNbhdSizeLowerEstimate();

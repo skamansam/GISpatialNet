@@ -8,14 +8,15 @@
  * ujmp http://www.ujmp.org/ Tested with version 0.2.2
  */
 
-package us.jonesrychtar.socialnetwork;
+package us.jonesrychtar.socialnetwork.SpatialGraph;
 
+import us.jonesrychtar.socialnetwork.*;
 import java.io.PrintStream;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 
-public class SpatialGraph {
+public class SpatialGraphBase {
 	protected Matrix X; //stores x coordinates of all vertices
 	protected Matrix Y; //stores y coordinates of all vertices
 	protected Matrix A; //stores adjacency matrix of the network
@@ -29,7 +30,7 @@ public class SpatialGraph {
 	/**
 	 * Constructs blank spatial graph object.
 	 */
-	public SpatialGraph() {
+	public SpatialGraphBase() {
 		X = MatrixFactory.emptyMatrix();
 		Y = MatrixFactory.emptyMatrix();
 		A = MatrixFactory.emptyMatrix();
@@ -41,7 +42,7 @@ public class SpatialGraph {
 	 * 
 	 * @param inGraph the graph to copy. 
 	 */
-	public SpatialGraph(SpatialGraph inGraph) {
+	public SpatialGraphBase(SpatialGraphBase inGraph) {
 		X = MatrixFactory.copyFromMatrix(inGraph.getX());
 		Y = MatrixFactory.copyFromMatrix(inGraph.getY());
 		A = MatrixFactory.copyFromMatrix(inGraph.getA());
@@ -53,13 +54,13 @@ public class SpatialGraph {
 	}
 	
 	/**
-	 * Create a SpatialGraph object from existing data.
+	 * Create a SpatialGraphBase object from existing data.
 	 * 
 	 * @param inX the x-coordinates for each vertex.
 	 * @param inY the y-coordinates for each vertex.
 	 * @param inA the adjacency matrix of the graph.
 	 */
-	public SpatialGraph(Matrix inX, Matrix inY, Matrix inA) {
+	public SpatialGraphBase(Matrix inX, Matrix inY, Matrix inA) {
 		X = MatrixFactory.copyFromMatrix(inX);
 		Y = MatrixFactory.copyFromMatrix(inY);
 		A = MatrixFactory.copyFromMatrix(inA);

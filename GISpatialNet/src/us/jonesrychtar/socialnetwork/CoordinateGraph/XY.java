@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package us.jonesrychtar.socialnetwork;
+package us.jonesrychtar.socialnetwork.CoordinateGraph;
 
 /**
  *
  * @author Samuel C. Tyler <skamansam@gmail.com>
  */
-public class Writer {
+public class XY {
 
 }
