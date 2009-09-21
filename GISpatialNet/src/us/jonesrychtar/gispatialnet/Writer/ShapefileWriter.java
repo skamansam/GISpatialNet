@@ -7,7 +7,7 @@
  * Requires: geotools
  * 
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Writer;
 
 /*
  *

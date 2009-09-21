@@ -19,10 +19,12 @@ public class CoordinateGraphBase {
     }
 
 	public void setCoordinateFormat() {
+        //TODO: Make menu.
 		System.out.println("Is the coordinate dataset in x,y format, or in direction and distance format?\n" +
 			"Please enter the option number from the menu below.\n" +
 			"\t1. x,y format.\n" +
 			"\t2. Polar ( and angle and distance) format.\n");
+        //Menu.createMenu("New Menu Option:",["Option 1","Option 2"],\&setCoordinateFormat())
 			Scanner sc = new Scanner(System.in);
 			int option = 0;
 		while( option >= 2 && option <= 1 ) {

@@ -6,7 +6,7 @@
  * Requires: UJMP and Mindprod CSV Writer
  *
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Writer;
 
 import com.mindprod.csv.CSVWriter;
 import java.io.File;
