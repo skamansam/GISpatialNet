@@ -1,5 +1,5 @@
 /*
- * This is the main program. It coordinates all other classes
+ * This is the DL/UCINET reader class
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -10,7 +10,6 @@ package us.jonesrychtar.gispatialnet.Reader;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
-import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -22,12 +21,7 @@ import java.util.Scanner;
 public class DLreader extends FileReader{
 
     public DLreader(String file){
-        this.setFile(openFile(file));
-    }
-
-    @Override
-    public File openFile(String filename) {
-       return new File(filename);
+        this.setFile(this.openFile(file));
     }
 
     @Override
