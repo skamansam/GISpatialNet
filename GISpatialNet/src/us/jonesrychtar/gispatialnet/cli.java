@@ -31,14 +31,18 @@ public class cli {
 
      //Menus----------------------------------------------------------------------------------
     public void Menu() {
-        System.out.println("\n\nMain menu:");
-        System.out.println("1) Load Data\n" +
-                "2) Save Data\n" +
-                "3) Analyze Data\n" +
-                "4) Exit\n");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            int option = sc.nextInt();
+        int option=getMenu(
+                "Main Menu:", 
+                "Put more about what the program does here.", 
+                ["Load Data","Analyze Data","Exit"]);
+//        System.out.println("\n\nMain menu:");
+//        System.out.println("1) Load Data\n" +
+//                "2) Save Data\n" +
+//                "3) Analyze Data\n" +
+//                "4) Exit\n");
+//        while (true) {
+//            Scanner sc = new Scanner(System.in);
+//            int option = sc.nextInt();
             switch (option) {
                 case 1:
                     LoadMenu();
@@ -55,7 +59,7 @@ public class cli {
                     break;
             }
 
-        }
+//        }
     }
 
     private void LoadMenu() {
@@ -145,4 +149,33 @@ public class cli {
     }
     //End menus ----------------------------------------------------------------------------
 
+    private int getMenu(String title, String info ,String[] items){
+        //return and err out if length of items is less than one.
+        if(items.length<1){
+            System.err.println("Incorrect length for menu items.");
+            return 0;
+        }
+
+        Scanner sc = new Scanner(System.in);    //new Scanner for getting input.
+        int option=0;                           //the option input value
+        boolean validInput=false;               //whether the input is valid
+
+        //do menu while the input is not valid
+        while(!validInput){
+            //print the menu.
+            System.out.println("\n\n"+title+"\n");
+            System.out.print(info+"\n");
+            for(int i=0;i<items.length;i++) System.out.println("\t"+(i+1)+") "+items[i]+"\n");
+            System.out.println("Please enter your selection (1-"+items.length+"): ");
+
+            //get user input
+            option = sc.nextInt();
+
+            //validate input
+            if(option>=1 && option <=items.length) validInput=true;
+            else System.out.println("Invalid Input.");
+        }
+
+        return option;
+    }
 }
