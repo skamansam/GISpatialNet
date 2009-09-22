@@ -1,5 +1,5 @@
 /*
- * This is the main program. It coordinates all other classes
+ * This prints the command line interface.
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -31,25 +31,20 @@ public class cli {
 
      //Menus----------------------------------------------------------------------------------
     public void Menu() {
-        int option=getMenu(
-                "Main Menu:", 
-                "Put more about what the program does here.", 
-                ["Load Data","Analyze Data","Exit"]);
-//        System.out.println("\n\nMain menu:");
-//        System.out.println("1) Load Data\n" +
-//                "2) Save Data\n" +
-//                "3) Analyze Data\n" +
-//                "4) Exit\n");
-//        while (true) {
-//            Scanner sc = new Scanner(System.in);
-//            int option = sc.nextInt();
+        int option= getMenu(
+                "Main Menu:",
+                "Put more about what the program does here.",
+                new String[] {"Load data","Save Data","Analyze Data","Exit"} );
+
             switch (option) {
                 case 1:
-                    LoadMenu();
+                    LoadMenu1();
                     break;
                 case 2:
+                    SaveMenu();
                     break;
                 case 3:
+                    AnalyzeMenu();
                     break;
                 case 4:
                     System.exit(0);
@@ -62,89 +57,82 @@ public class cli {
 //        }
     }
 
-    private void LoadMenu() {
-        System.out.println("\n\nLoad Data menu:");
-        System.out.println("1) Delimited text file (.csv,.txt)\n" +
-                "2) DL/UCINET (.txt,.dat)\n" +
-                "3) Pajek (.net)\n" +
-                "4) Shape File\n" +
-                "5) Back");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            int option = sc.nextInt();
-            switch (option) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    Menu();
-                    break;
-                default:
-                    System.out.println("Invalid input. Please re-enter.");
-                    break;
-            }
+    private void LoadMenu1(){
+        int option = getMenu(
+                "Load Menu:",
+                "Put more about what the program does here.",
+                new String[] {"Graph/Network Data","Node Coordinate/Location Data",
+                "Attribute Data","Exit"} );
+        if(option<3 && option>0)
+            LoadMenu2(option);
+        else
+            Menu();
 
+    }
+    private void LoadMenu2(int what) {
+        int option = getMenu(
+                "Load File Menu:",
+                "",
+                new String[] {"Delimited text file (.csv,.txt)",
+                "DL/ucinet (.txt,.dat)","Pajek (.net)",
+                "Back"});
+          switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                LoadMenu1();
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
         }
     }
     private void SaveMenu() {
-        System.out.println("\n\nSave Data menu:");
-        System.out.println("1) Delimited text file (.csv,.txt)\n" +
-                "2) DL/UCINET (.txt,.dat)\n" +
-                "3) Pajek (.net)\n" +
-                "4) Shape File\n" +
-                "4) Back");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            int option = sc.nextInt();
-            switch (option) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    Menu();
-                    break;
-                default:
-                    System.out.println("Invalid input. Please re-enter.");
-                    break;
-            }
+        int option = getMenu(
+                "Save Data:",
+                "",
+                new String[] {"Delimited text file (.csv,.txt)",
+                "DL/ucinet (.txt,.dat)","Pajek (.net)",
+                "Back"});
+           switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                Menu();
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
         }
     }
     private void AnalyzeMenu() {
-        System.out.println("\n\nAnalyze Data menu:");
-        System.out.println("1) \n" +
-                "2) \n" +
-                "3) \n" +
-                "4) \n" +
-                "4) Back");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            int option = sc.nextInt();
-            switch (option) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    Menu();
-                    break;
-                default:
-                    System.out.println("Invalid input. Please re-enter.");
-                    break;
-            }
+        int option = getMenu(
+                "Analyze Data:",
+                "",
+                new String[] {});
+          switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                Menu();
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
         }
     }
     //End menus ----------------------------------------------------------------------------

@@ -1,6 +1,5 @@
 /*
- * This program will convert network file with known geographic coordinates
- * into a shapefile.
+ * This program will write DL/UCINET files
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -23,8 +22,9 @@ import org.ujmp.core.enums.FileFormat;
 public class DLwriter extends TextFileWriter {
 
     //public constants for file type
-    public final static boolean DAT = true;
-    public final static boolean TXT = false;
+    public final static int DAT = 0;
+    public final static int TXT = 1;
+    public final static int XXH = 2; //actually "##h"
 
     //file format data
     private String ext = ".dat";
@@ -34,12 +34,14 @@ public class DLwriter extends TextFileWriter {
         this.setWorkingset(map);
         this.CreateFile(filename);
     }
-    public DLwriter(Matrix map, String filename, boolean type){
+    public DLwriter(Matrix map, String filename, int type){
         this.setWorkingset(map);
-        if(type)
-            ext=".dat";
-        else
-            ext=".txt";
+        switch(type){
+            case 0: ext=".dat"; break;
+            case 1: ext=".txt"; break;
+            case 2: ext=".##h"; break;
+            default: ext=".dat"; break;
+        }
         this.CreateFile(filename);
     }
 

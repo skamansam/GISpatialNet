@@ -31,7 +31,9 @@ public abstract class FileReader {
     public void setFile(File var){
         file=var;
     }
-    public abstract File openFile(String filename);
+    public File openFile(String filename){
+        return new File(filename);
+    };
     public abstract Matrix Read(int type, int rows, int col);
 
 }
