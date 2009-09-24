@@ -27,7 +27,11 @@ public class util {
     private Matrix adj;
     private Matrix attb;
 
+    //loading functions
 
+    //saving functions
+
+    //analyzing functions
 
 
 
