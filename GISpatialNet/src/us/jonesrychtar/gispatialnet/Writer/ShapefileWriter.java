@@ -43,14 +43,14 @@ public class ShapefileWriter {
         createfile("out", "*geom:Point,name:String");
     }
 
-    /*
+    /**
      * @param filename the name of the output shapefile
      * @param scheme the format of the database (list of field names and field Types) ex:"geom:Point,name:String"
      * */
     public ShapefileWriter(String filename, String scheme) {
         createfile(filename, scheme);
     }
-    /*
+    /**
      * @param name name of the output file without extenstion
      * @param format scheme from above
      * */
@@ -71,7 +71,7 @@ public class ShapefileWriter {
             ex.printStackTrace();
         }
     }
-    /*
+    /**
      * @param input an array of objects, objects must be in same order as defined scheme.
      * ex: scheme="geom:Point,name:String" then input will be [Point,String]
      * */
