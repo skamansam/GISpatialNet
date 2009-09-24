@@ -10,7 +10,7 @@
 
 package us.jonesrychtar.socialnetwork;
 
-import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
+//import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,7 @@ import com.mindprod.csv.CSVReader;
 import us.jonesrychtar.socialnetwork.SpatialGraph.Poisson;
 
 public class SpatialNetworkBias {
-	private int coordinateFormat; // 1 = xy, 2 = radians, 3 = degrees, 4 = decimal degrees
+	//private int coordinateFormat; // 1 = xy, 2 = radians, 3 = degrees, 4 = decimal degrees
 	private int distanceFormat;
 	private int timeUnits;
 	private int distanceUnits;
@@ -74,7 +74,7 @@ public class SpatialNetworkBias {
     private WriterBase theWriter;
 
 	public SpatialNetworkBias() {
-		coordinateFormat = 0;
+		//coordinateFormat = 0;
 		distanceFormat = 0;
 		timeUnits = 0;
 		distanceUnits = 0;
@@ -427,7 +427,6 @@ public class SpatialNetworkBias {
 				try {
 					egoFileName = in.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					System.out.println("Error reading input");
 					e.printStackTrace();
 				}
@@ -590,13 +589,10 @@ public class SpatialNetworkBias {
 			
 			fw.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -607,7 +603,6 @@ public class SpatialNetworkBias {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			exitCondition += "Error reading the spatial data for the next network.";
 			e1.printStackTrace();
 		}
@@ -629,19 +624,16 @@ public class SpatialNetworkBias {
 		for (int i = 0; i < numVerts && exitCondition.equals(""); i++) {
 			try {
 				reader.skip(2); //skip the two leading fields
-				if (coordinateFormat == 1) {
-					//xy coordinates
-					double xCoord = reader.getDouble();
-					double yCoord = reader.getDouble();
-					if (xCoord == 9999 || yCoord == 9999) {
-						missingNodes.add(i);
-					} else {
-						x.setAsDouble(xCoord, i, 0);
-						y.setAsDouble(yCoord, i, 0);
-						totalXCoord += xCoord;
-						totalYCoord += yCoord;
-					}
-				} else if (coordinateFormat == 2) {
+                theGraph.readValues(reader);
+                if (theGraph.isValidNodeValue())
+                    missingNodes.add(i);
+                else{
+					x.setAsDouble(xCoord, i, 0);
+					y.setAsDouble(yCoord, i, 0);
+					totalXCoord += xCoord;
+					totalYCoord += yCoord;
+                }
+				if (coordinateFormat == 2) {
 					//radians
 					double radius = reader.getDouble();
 					double theta = reader.getDouble();
@@ -688,15 +680,12 @@ public class SpatialNetworkBias {
 					reader.skipToNextLine();
 				}
 			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Internal data writing error on line " + i + " of current distance data.";
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Reading an entry on line " + i + " of current spatial data which was not a properly formatted number.";
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "An unspecified error occured at line " + i + " of the current spatial data.";
 				e.printStackTrace();
 			}
@@ -724,7 +713,6 @@ public class SpatialNetworkBias {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			exitCondition += "Error reading the network data for the next network.";
 			e1.printStackTrace();
 		}
@@ -758,15 +746,12 @@ public class SpatialNetworkBias {
 					reader.skipToNextLine(); //done reading this line, go to next line
 				}
 			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Internal data writing error on line " + i + " of current network data.";
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.";
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "An unspecified error occured at line " + i + " of the current network data.";
 				e.printStackTrace();
 			}
@@ -785,7 +770,6 @@ public class SpatialNetworkBias {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			exitCondition += "Error reading the network data for the next network.";
 			e1.printStackTrace();
 		}
@@ -822,15 +806,12 @@ public class SpatialNetworkBias {
 					reader.skipToNextLine(); //done reading this line, go to next line
 				}
 			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Internal data writing error on line " + i + " of current network data.";
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.";
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "An unspecified error occured at line " + i + " of the current network data.";
 				e.printStackTrace();
 			}
@@ -849,7 +830,6 @@ public class SpatialNetworkBias {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			exitCondition += "Error reading the network data for the next network.";
 			e1.printStackTrace();
 		}
@@ -886,15 +866,12 @@ public class SpatialNetworkBias {
 					reader.skipToNextLine(); //done reading this line, go to next line
 				}
 			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Internal data writing error on line " + i + " of current network data.";
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.";
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "An unspecified error occured at line " + i + " of the current network data.";
 				e.printStackTrace();
 			}
@@ -913,7 +890,6 @@ public class SpatialNetworkBias {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			exitCondition += "Error reading the ego data for the next network.";
 			e1.printStackTrace();
 		}
@@ -938,15 +914,12 @@ public class SpatialNetworkBias {
 					A.setAsDouble(value, numVerts, i);
 				}
 			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Internal data writing error on line " + i + " of current network data.";
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.";
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				exitCondition += "An unspecified error occured at line " + i + " of the current network data.";
 				e.printStackTrace();
 			}
