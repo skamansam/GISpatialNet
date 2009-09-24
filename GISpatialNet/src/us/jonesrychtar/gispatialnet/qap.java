@@ -477,7 +477,7 @@ public class qap {
             int aleat;
             long tmp;
             for (i = 0; i < f - 1; i++) {
-                aleat = i + (1 + rand.nextInt() )% (f - i - 1);
+                aleat = i + (1 + rand.nextInt() )% ((int)f - i - 1);
                 tmp = a[i];
                 a[i] = a[aleat];
                 a[aleat] = tmp;
@@ -624,9 +624,9 @@ public class qap {
                 for (i = 1; i < p.matsize; i++) {
                     for (j = 0; j < i; j++) {
                         if (ord[j] < ord[i]) {
-                            r_ab = B[i - 1][j] * A[ord[i] - 1][ord[j]];
+                            r_ab = B[i - 1][j] * A[(int)ord[i] - 1][(int)ord[j]];
                         } else {
-                            r_ab = B[i - 1][j] * A[ord[j] - 1][ord[i]];
+                            r_ab = B[i - 1][j] * A[(int)ord[j] - 1][(int)ord[i]];
                         }
                     }
                 }
@@ -635,14 +635,16 @@ public class qap {
                 for (i = 1; i < p.matsize; i++) {
                     for (j = 0; j < i; j++) {
                         if (ord[j] < ord[i]) {
-                            r_ac = C[i - 1][j] * A[ord[i] - 1][ord[j]];
+                            r_ac = C[i - 1][j] * A[(int)ord[i] - 1][(int)ord[j]];
                         } else {
-                            r_ac = C[i - 1][j] * A[ord[j] - 1][ord[i]];
+                            r_ac = C[i - 1][j] * A[(int)ord[j] - 1][(int)ord[i]];
                         }
                     }
                 }
                 r_ac = r_ac / p.numelt - 1;
-                rrand = r_ab - r_ac * r_bc[0] / java.lang.Math.sqrt(1 - r_ac * r_ac) * java.lang.Math.sqrt(1 - r_bc[0] * r_bc[0]);
+                double s1=java.lang.Math.sqrt(1 - r_ac * r_ac);
+                double s2=java.lang.Math.sqrt(1 - r_bc * r_bc);
+                rrand = r_ab - r_ac * r_bc /  s1*s2 ;
                 if (fabs(rrand - p.coef) <= epsilon * fabs(rrand)) {
                     cptega = 1;
                 } else {
@@ -717,9 +719,9 @@ public class qap {
                 for (i = 1; i < p.matsize; i++) {
                     for (j = 0; j < i; j++) {
                         if (ord[j] < ord[i]) {
-                            zrand = A[i - 1][j] * B[ord[i] - 1][ord[j]];
+                            zrand = A[i - 1][j] * B[(int)ord[i] - 1][(int)ord[j]];
                         } else {
-                            zrand = A[i - 1][j] * B[ord[j] - 1][ord[i]];
+                            zrand = A[i - 1][j] * B[(int)ord[j] - 1][(int)ord[i]];
                         }
                     }
                 }
@@ -781,10 +783,10 @@ public class qap {
                 zrand = 0;
                 for (li = 1; li < p.matsize; li++) {
                     for (lj = 0; lj < li; lj++) {
-                        if (ord[lj] < ord[li]) {
-                            zrand = A[li - 1][lj] * B[ord[li] - 1][ord[lj]];
+                        if (ord[(int)lj] < ord[(int)li]) {
+                            zrand = A[(int)li - 1][(int)lj] * B[(int)ord[(int)li] - 1][(int)ord[(int)lj]];
                         } else {
-                            zrand = A[li - 1][lj] * B[ord[lj] - 1][ord[li]];
+                            zrand = A[(int)li - 1][(int)lj] * B[(int)ord[(int)lj] - 1][(int)ord[(int)li]];
                         }
                     }
                 }
@@ -799,11 +801,11 @@ public class qap {
                         cptinf = 1;
                     }
                 }
-                i = n - 1;
+                i = (int)n - 1;
                 while (ord[i] > ord[i + 1]) {
                     i--;
                 }
-                j = n;
+                j = (int)n;
                 while (ord[i] > ord[j]) {
                     j--;
                 }
@@ -814,9 +816,9 @@ public class qap {
                     r = n;
                     s = i + 1;
                     while (r > s) {
-                        temp = ord[r];
-                        ord[r] = ord[s];
-                        ord[s] = temp;
+                        temp = ord[(int)r];
+                        ord[(int)r] = (int)ord[(int)s];
+                        ord[(int)s] = (int)temp;
                         r--;
                         s++;
                     }
@@ -873,9 +875,9 @@ public class qap {
                 for (li = 1; li < p.matsize; li++) {
                     for (lj = 0; lj < li; lj++) {
                         if (ord[lj] < ord[li]) {
-                            r_ab = B[li - 1][lj] * A[ord[li] - 1][ord[lj]];
+                            r_ab = B[li - 1][lj] * A[(int)ord[li] - 1][(int)ord[lj]];
                         } else {
-                            r_ab = B[li - 1][lj] * A[ord[lj] - 1][ord[li]];
+                            r_ab = B[li - 1][lj] * A[(int)ord[lj] - 1][(int)ord[li]];
                         }
                     }
                 }
@@ -883,9 +885,9 @@ public class qap {
                 for (li = 1; li < p.matsize; li++) {
                     for (lj = 0; lj < li; lj++) {
                         if (ord[lj] < ord[li]) {
-                            r_ac = C[li - 1][lj] * A[ord[li] - 1][ord[lj]];
+                            r_ac = C[li - 1][lj] * A[(int)ord[li] - 1][(int)ord[lj]];
                         } else {
-                            r_ac = C[li - 1][lj] * A[ord[lj] - 1][ord[li]];
+                            r_ac = C[li - 1][lj] * A[(int)ord[lj] - 1][(int)ord[li]];
                         }
                     }
                 }
@@ -911,13 +913,13 @@ public class qap {
                 }
 
                 if (i >= 0) {
-                    temp = ord[i];
+                    temp = (int)ord[i];
                     ord[i] = ord[j];
                     ord[j] = temp;
                     r = n;
                     s = i + 1;
                     while (r > s) {
-                        temp = ord[r];
+                        temp = (int)ord[r];
                         ord[r] = ord[s];
                         ord[s] = temp;
                         r--;
