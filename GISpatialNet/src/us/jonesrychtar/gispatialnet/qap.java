@@ -18,6 +18,8 @@
  *
  *
  */
+//TODO: Simplify algorithms!
+
 package us.jonesrychtar.gispatialnet;
 
 import java.io.File;

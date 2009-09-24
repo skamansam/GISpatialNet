@@ -17,7 +17,13 @@ public class CoordinateGraphBase {
 
     public CoordinateGraphBase() {
     }
-
+   public void readValue(java.util.Scanner sc) {
+        System.err.println("Please override readValue() in your coordinate class.");
+   }
+   public boolean isValidNodeValue() {
+        System.err.println("Please override isValidNodeValue() in your coordinate class.");
+        return false;
+   }
 	public void setCoordinateFormat() {
         //TODO: Make menu.
 		System.out.println("Is the coordinate dataset in x,y format, or in direction and distance format?\n" +
