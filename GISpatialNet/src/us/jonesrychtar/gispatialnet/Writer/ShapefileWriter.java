@@ -9,7 +9,7 @@
  */
 package us.jonesrychtar.gispatialnet.Writer;
 
-/*
+/**
  *
  * @author Charles Bevan
  * @date September 10, 2009

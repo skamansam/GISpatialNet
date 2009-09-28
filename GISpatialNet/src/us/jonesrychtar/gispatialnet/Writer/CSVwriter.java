@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import org.ujmp.core.Matrix;
 
-/*
+/**
  *
  * @author Charles Bevan
  * @date September 16, 2009

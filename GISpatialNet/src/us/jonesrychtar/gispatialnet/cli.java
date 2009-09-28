@@ -20,9 +20,12 @@ import java.util.Scanner;
 public class cli {
 
     private static cli c;
+    private static util u;
+    private int statusLevel = 0;
 
     public static void main(String[] args) {
        c = new cli();
+       u = new util();
        c.Menu();
     }
 
@@ -33,7 +36,7 @@ public class cli {
     public void Menu() {
         int option= getMenu(
                 "Main Menu:",
-                "Put more about what the program does here.",
+                u.Status(statusLevel),
                 new String[] {"Load data","Save Data","Analyze Data","Exit"} );
 
             switch (option) {
@@ -117,7 +120,7 @@ public class cli {
         int option = getMenu(
                 "Analyze Data:",
                 "",
-                new String[] {});
+                new String[] {"QAP"});
           switch (option) {
             case 1:
                 break;

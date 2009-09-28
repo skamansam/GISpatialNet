@@ -16,7 +16,7 @@ import org.ujmp.core.Matrix;
  * @date September 17, 2009
  * @version 0.0.1
  */
-public class PajekReader extends FileReader {
+public class PajekReader extends TextFileReader {
 
     public PajekReader(Matrix in, String filename){
         this.setFile(this.openFile(filename));
