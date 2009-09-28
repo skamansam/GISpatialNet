@@ -96,6 +96,12 @@ public class qap {
 
 	};
 
+    /**
+     *
+     * @param argc number of arguments
+     * @param argv arguments and filenames
+     */
+    //TODO: Change arguments from filenames to matrix
 	public qap(int argc, String argv[]) {
 
 

@@ -11,6 +11,7 @@ package us.jonesrychtar.gispatialnet.Reader;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import java.util.Scanner;
+import java.util.Vector;
 
 /**
  *
@@ -18,8 +19,38 @@ import java.util.Scanner;
  * @date September 17, 2009
  * @version 0.0.1
  */
-public class DLreader extends FileReader{
+public class DLreader extends TextFileReader{
 
+    private class DLHeaders {
+        //covers nr, nc, and n
+        public int nr,nc;
+        //format (defined in FileReader)
+        //fullmatrix =0, lowerhalf = 1, upperhalf =2;
+        //BlockMatrix and LinkedList Matrix (nodelist, edgelist, ranked list) not supported
+        public int format = 0;
+        //Labels: and col lables:
+        //separated either by spaces, commas or carriage returns (or both).
+        //Labels cannot contain embedded spaces unless you enclose them in quotes, as in "Tom Smith".
+        public Vector <String> labels;
+        //row labels embedded
+        public boolean rembed = false;
+		public Vector <String> rlabels; //used in row labels:
+        //col labels embedded
+        public boolean cembed = false;
+		public Vector <String> clables; //used in col labels:
+        //number of matricies nm
+        public int nm =1;
+        //matrix labels
+        public Vector <String> mlabels;
+        //datafile, defines a pointer to data in seperate file
+        public String datafileName;
+        //diagonal: absent
+        public boolean isDiagAbsent = false;
+
+
+    }
+    DLHeaders header = new DLHeaders();
+    
     public DLreader(String file){
         this.setFile(this.openFile(file));
     }
@@ -27,39 +58,151 @@ public class DLreader extends FileReader{
     @Override
     public Matrix Read(int type, int rows, int col) {
         Scanner sc;
-
-        Matrix output = MatrixFactory.emptyMatrix();
+        header.nc = col;
+        header.nr = rows;
+        //make empty matrix
+        Matrix output = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, header.nc, header.nr);
         try {
             sc = new Scanner(this.getFile());
             //read headers
-            
+            String word = sc.next().toLowerCase();
+            while(!(word.equals("data:"))) {
+                //analyze header
+                _analyzeHeader(word,sc);
+                word = sc.next().toLowerCase();
+            }
             //read matrix
+
             //type 0 = full matrix
-            while(!(sc.next().equals("data:")));
-            if (type == 1) {
-                for(int i = 0; i<rows; i++)
-                    for(int j=0; j<col; j++){
-                        output.setAsString(sc.next(),i,j);
+            if (type == 0) {
+                //if col labels embedded, read labels
+                if(header.cembed){
+                    for(int c = 0; c<header.nc; c++){
+                        output.setColumnLabel(c,sc.next());
                     }
-            } //type 1 = lower matrix
-            else if (type == 2) {
+                }
+                for(int i = 0; i<rows; i++)
+                    if(header.rembed){
+                        output.setAsString(sc.next(),i,0);
+                        for(int j=1; j<=col; j++){
+							if((!header.rembed && (header.isDiagAbsent && i==j)) ||
+									(header.rembed && (header.isDiagAbsent && i==j+1)))
+								output.setAsString("0",i,j);
+							else
+								output.setAsString(sc.next(),i,j);
+                        }
+                    }
+                    else
+                        for(int j=0; j<col; j++){
+                            output.setAsString(sc.next(),i,j);
+                        }
+            }
+
+            //type 1 = lower matrix
+            else if (type == 1) {
+                 if(header.cembed){
+                    for(int c = 0; c<header.nc; c++){
+                        output.setColumnLabel(c,sc.next());
+                    }
+                }
+                 if(header.rembed){
+
+                 }
                 for(int i = 0; i<rows; i++)
                     for(int j=0; j<(col-i); j++){
                         output.setAsString(sc.next(),i,j);
                     }
-            } //type 2 = upper matrix
-            else if (type == 3) {
+            }
+
+            //type 2 = upper matrix
+            else if (type == 2) {
+                 if(header.cembed){
+                    for(int c = 0; c<header.nc; c++){
+                        output.setColumnLabel(c,sc.next());
+                    }
+                }
                 for(int i = 0; i<rows; i++)
                     for(int j=0; j<(col-(col-(i+1))); j++){
                         output.setAsString(sc.next(),i,j);
                     }
-            } else {
-                System.err.println("Invalid number");
+            }
+
+            else {
+                System.err.println("Invalid format");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
          return output;
     }
+	private boolean _analyzeHeader (String in, Scanner sc) {
+		//check for n
+		if(in.equals("n") || in.equals("n=")){
+			if(in.equals("n"))
+				sc.next();
+			int temp = sc.nextInt();
+			header.nc = temp;
+			header.nr = temp;
+			return true;
+		}
+		//check for nc
+		else if (in.equals("nc") || in.equals("nc=")){
+			if(in.equals("nc"))
+				sc.next();
+			header.nc = sc.nextInt();
+			return true;
+		}
+		//check for nr
+		else if (in.equals("nr") || in.equals("nr=")){
+			if(in.equals("nr"))
+				sc.next();
+			header.nr = sc.nextInt();
+		}
+		//check for format
+		else if (in.equals("format") || in.equals("format=")){
+			if(in.equals("format"))
+				sc.next();
+			String form = sc.next().toLowerCase();
+			if(form.equals("fullmatrix")){
+				header.format = 0;
+			}
+			if(form.equals("lowerhalf")){
+				header.format = 1;
+			}
+			if(form.equals("upperhalf")){
+				header. format = 2;
+			}
+			return true;
+		}
+		//check for row
+		else if(in.equals("row")){
+			String word = sc.next().toLowerCase();
+			//row labes:
+			if(word.equals("labels:")){
+
+			}
+			//row labels embeded
+
+			return true;
+		}
+		//check for col
+
+		//check for labels
+		else if(in.equals("labels:")){
+			String word = sc.next();
+			if(!(_analyzeHeader(word,sc)))
+				header.labels.add(word);
+			return true;
+		}
+		//nm
+
+		//check for matrix labels
+
+		//check for datafile
+
+		//check for diagonal: absent
+
+		return false;
+	}
 
 }

@@ -11,7 +11,7 @@ package us.jonesrychtar.gispatialnet.Writer;
 import java.io.File;
 import org.ujmp.core.Matrix;
 
-/*
+/**
  *
  * @author Charles Bevan
  * @date September 16, 2009

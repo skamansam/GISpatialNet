@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.enums.FileFormat;
 
-/*
+/**
  *
  * @author Charles Bevan
  * @date September 16, 2009
@@ -24,7 +24,7 @@ public class DLwriter extends TextFileWriter {
     //public constants for file type
     public final static int DAT = 0;
     public final static int TXT = 1;
-    public final static int XXH = 2; //actually "##h"
+    //public final static int XXH = 2; //actually "##h"
 
     //file format data
     private String ext = ".dat";
@@ -39,7 +39,6 @@ public class DLwriter extends TextFileWriter {
         switch(type){
             case 0: ext=".dat"; break;
             case 1: ext=".txt"; break;
-            case 2: ext=".##h"; break;
             default: ext=".dat"; break;
         }
         this.CreateFile(filename);
@@ -60,6 +59,7 @@ public class DLwriter extends TextFileWriter {
             pw.print("col labels:\n");
             for(int i=0; i<this.getWorkingset().getColumnCount();i++){
                 if(i<this.getWorkingset().getColumnCount()-1)
+                    //all labels except last have ,
                     pw.print(this.getWorkingset().getColumnLabel(i)+", ");
                 else
                     pw.print(this.getWorkingset().getColumnLabel(i));
@@ -67,7 +67,7 @@ public class DLwriter extends TextFileWriter {
             pw.print("\n");
             //write data
             pw.println("data:");
-            pw.print(this.getWorkingset().exportToString(FileFormat.TXT));
+            pw.print(this.getWorkingset()); //this should print whole matrix to file
         } catch (Exception ex) {
             ex.printStackTrace();
         }

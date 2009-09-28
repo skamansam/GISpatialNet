@@ -24,8 +24,8 @@ public class KMLwriter {
 
     private Kml kml;
     private Document doc;
-    String file;
-    Matrix workingset;
+    private String file;
+    private Matrix workingset;
 
     //note Matrix must be in form {longitude, latitude, Name, description}
     public KMLwriter(Matrix map, String filename){
