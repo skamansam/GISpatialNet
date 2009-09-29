@@ -61,7 +61,7 @@ public class DLreader extends TextFileReader{
         header.nc = col;
         header.nr = rows;
         //make empty matrix
-        Matrix output = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, header.nc, header.nr);
+        Matrix output = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, header.nr, header.nc);
         try {
             sc = new Scanner(this.getFile());
             //read headers
