@@ -30,7 +30,7 @@ public class convertKnown {
     private Matrix x; //format: id, xcoordinate
     private Matrix y; //format: id, y coordinate
     private Matrix adj; 
-    private Matrix attb; //format: id, attributes...
+    private Matrix attb = null; //format: id, attributes...
     private String schemeNodes;
     private String schemeEdges;
 
@@ -49,28 +49,49 @@ public class convertKnown {
         
         convert();
     }
+    public convertKnown(Matrix xin, Matrix yin, Matrix adjin){
+        //setup mapreader and shapewriter
+        x = xin;
+        y = yin;
+        adj = adjin;
+
+        schemeNodes= "*geom:Point";
+        schemeEdges = "*l:LineString";
+
+        outN = new ShapefileWriter("outN",schemeNodes);
+        outE = new ShapefileWriter("outE",schemeEdges);
+
+        convert();
+    }
     private void convert() {
         GeometryFactory gfact = new GeometryFactory();
         //write Node Shapefile
         //use X, Y, and attb
         //for each row make coordinate
         for(int r =0; r<x.getRowCount(); r++){
-            Object[] data = new Object[(int)attb.getColumnCount()+1];
+            Object[] data;
+            if(attb != null){
+                data = new Object[(int)attb.getColumnCount()+1];
+            }
+            else
+                data = new Object[1];
             Coordinate coord = new Coordinate(x.getAsDouble(r,1),y.getAsDouble(r,1));
             Point geo1 = gfact.createPoint(coord);
             data[0]=geo1;
             //add data in attb for row
-            for(int j=1; j<attb.getColumnCount(); j++){
-                data[j] = attb.getAsString(r,j);
+            if(attb != null){
+                for(int j=1; j<attb.getColumnCount(); j++){
+                    data[j] = attb.getAsString(r,j);
+                }
             }
             outN.addData(data);
         }
         //edge shapefile
         for(int r=0; r<x.getRowCount(); r++){
             Object[] data = new Object[1];
-            for(int r2=0; r2<attb.getRowCount(); r2++){
-                for(int c=0; c<attb.getColumnCount(); c++){
-                    if(attb.getAsDouble(r2,c) > 0){
+            for(int r2=0; r2<adj.getRowCount(); r2++){
+                for(int c=0; c<adj.getColumnCount(); c++){
+                    if(adj.getAsDouble(r2,c) > 0){
                         Coordinate coord = new Coordinate(x.getAsDouble(r2,1),y.getAsDouble(r2,1));
                         Coordinate coord2 = new Coordinate(x.getAsDouble(c,1),y.getAsDouble(c,1));
                         Coordinate[] points = {coord,coord2};
@@ -85,13 +106,11 @@ public class convertKnown {
     private String analyzeScheme(Matrix in){
         String sch="*geom:Point";
         for(int i=0; i<in.getColumnCount(); i++){
-            if(in.getColumnObject(i)!=null) //TODO: NULL Pointer exception
-                if(in.getColumnObject(i).getClass().isInstance(java.lang.Number.class)){
-                    sch+=", "+in.getColumnLabel(i)+":Float";
-                }
-                else {
-                    sch+=", "+in.getColumnLabel(i)+":String";
-                }
+            if (in.getColumnObject(i).getClass().isInstance(java.lang.Number.class)) {
+                sch += ", " + in.getColumnLabel(i) + ":Float";
+            } else {
+                sch += ", " + in.getColumnLabel(i) + ":String";
+            }
         }
         return sch;
     }
