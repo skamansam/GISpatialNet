@@ -18,11 +18,12 @@ public class TestData {
         return MatrixFactory.zeros(rows,cols);
     }
     public Matrix RandomMatrix(int rows, int cols,int min, int max){
+        max ++;
         Random rand = new Random();
         Matrix out = MatrixFactory.zeros(rows,cols);
         for(int i=0; i<rows; i++)
             for(int j=0; j<cols; j++)
-                out.setAsDouble((rand.nextInt()%(max-min))+min,i,j);
+                out.setAsDouble((rand.nextInt(max))+min,i,j);
         return out;
     }
 

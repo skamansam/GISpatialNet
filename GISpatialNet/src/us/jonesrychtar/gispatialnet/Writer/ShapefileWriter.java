@@ -97,9 +97,9 @@ public class ShapefileWriter {
     }
 
     private void write() {
+        //transaction makes writing faster and safer with ability to rollback
+        DefaultTransaction transaction= new DefaultTransaction("Add");
         try {
-            //transaction makes writing faster and safer with ability to rollback
-            DefaultTransaction transaction = new DefaultTransaction("Add");
             store.setTransaction(transaction);
             try {
                 //try to write data to file
@@ -114,5 +114,6 @@ public class ShapefileWriter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        transaction.close();
     }
 }
