@@ -75,7 +75,7 @@ public class convertKnown {
             }
             else
                 data = new Object[1];
-            Coordinate coord = new Coordinate(x.getAsDouble(r,1),y.getAsDouble(r,1));
+            Coordinate coord = new Coordinate(x.getAsDouble(r,0),y.getAsDouble(r,0));
             Point geo1 = gfact.createPoint(coord);
             data[0]=geo1;
             //add data in attb for row
@@ -92,8 +92,8 @@ public class convertKnown {
             for(int r2=0; r2<adj.getRowCount(); r2++){
                 for(int c=0; c<adj.getColumnCount(); c++){
                     if(adj.getAsDouble(r2,c) > 0){
-                        Coordinate coord = new Coordinate(x.getAsDouble(r2,1),y.getAsDouble(r2,1));
-                        Coordinate coord2 = new Coordinate(x.getAsDouble(c,1),y.getAsDouble(c,1));
+                        Coordinate coord = new Coordinate(x.getAsDouble(r2,0),y.getAsDouble(r2,0));
+                        Coordinate coord2 = new Coordinate(x.getAsDouble(c,0),y.getAsDouble(c,0));
                         Coordinate[] points = {coord,coord2};
                         LineString ln = gfact.createLineString(points);
                         data[0] = ln;

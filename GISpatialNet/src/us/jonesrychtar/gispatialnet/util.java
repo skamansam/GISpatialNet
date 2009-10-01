@@ -23,10 +23,10 @@ public class util {
     /**
      * @param args the command line arguments
      */
-    private Matrix x = new EmptyMatrix();
-    private Matrix y = new EmptyMatrix();
-    private Matrix adj = new EmptyMatrix();
-    private Matrix attb = new EmptyMatrix();
+    private Matrix x = new EmptyMatrix(); //vector matrix (1 col) of x coordinates
+    private Matrix y = new EmptyMatrix(); //vector matrix of y coordinates
+    private Matrix adj = new EmptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (x,y)i to (x,y)j
+    private Matrix attb = new EmptyMatrix(); //attributes for node (x,y)i where i is the row of attb
 
     private String[] loadedFiles = new String[]{};
 
