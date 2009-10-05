@@ -62,6 +62,7 @@ public class KMLwriter {
             }
             //write file
             kml.createKml(file);
+            kml.write(kml);
         }catch(Exception e){
             e.printStackTrace();
         }
