@@ -27,10 +27,10 @@ public class convertKnown {
     //need map and shapewriter
     private ShapefileWriter outN;
     private ShapefileWriter outE;
-    private Matrix x; //format: id, xcoordinate
-    private Matrix y; //format: id, y coordinate
+    private Matrix x; //format: xcoordinate
+    private Matrix y; //format: y coordinate
     private Matrix adj; 
-    private Matrix attb = null; //format: id, attributes...
+    private Matrix attb = null; //format: attributes...
     private String schemeNodes;
     private String schemeEdges;
 
