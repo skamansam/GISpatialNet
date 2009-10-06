@@ -10,10 +10,6 @@
 package us.jonesrychtar.gispatialnet;
 import us.jonesrychtar.gispatialnet.Writer.*;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.LineString;
 import org.ujmp.core.Matrix;
 
 /**
@@ -25,93 +21,17 @@ import org.ujmp.core.Matrix;
 public class convertKnown {
 
     //need map and shapewriter
-    private ShapefileWriter outN;
-    private ShapefileWriter outE;
-    private Matrix x; //format: xcoordinate
-    private Matrix y; //format: y coordinate
-    private Matrix adj; 
-    private Matrix attb = null; //format: attributes...
-    private String schemeNodes;
-    private String schemeEdges;
+    private ShapefileEdgeWriter sfew;
+    private ShapefileNodeWriter sfnw;
+   
 
     public convertKnown(Matrix xin, Matrix yin, Matrix adjin, Matrix attbin){
-        //setup mapreader and shapewriter
-        x = xin;
-        y = yin;
-        adj = adjin;
-        attb = attbin;
 
-        schemeNodes=analyzeScheme(attbin);
-        schemeEdges = "*l:LineString";
+        sfew = new ShapefileEdgeWriter(xin,yin,adjin);
+        sfnw = new ShapefileNodeWriter(xin,yin,attbin);
 
-        outN = new ShapefileWriter("outN",schemeNodes);
-        outE = new ShapefileWriter("outE",schemeEdges);
-        
-        convert();
-    }
-    public convertKnown(Matrix xin, Matrix yin, Matrix adjin){
-        //setup mapreader and shapewriter
-        x = xin;
-        y = yin;
-        adj = adjin;
-
-        schemeNodes= "*geom:Point";
-        schemeEdges = "*l:LineString";
-
-        outN = new ShapefileWriter("outN",schemeNodes);
-        outE = new ShapefileWriter("outE",schemeEdges);
-
-        convert();
-    }
-    private void convert() {
-        GeometryFactory gfact = new GeometryFactory();
-        //write Node Shapefile
-        //use X, Y, and attb
-        //for each row make coordinate
-        for(int r =0; r<x.getRowCount(); r++){
-            Object[] data;
-            if(attb != null){
-                data = new Object[(int)attb.getColumnCount()+1];
-            }
-            else
-                data = new Object[1];
-            Coordinate coord = new Coordinate(x.getAsDouble(r,0),y.getAsDouble(r,0));
-            Point geo1 = gfact.createPoint(coord);
-            data[0]=geo1;
-            //add data in attb for row
-            if(attb != null){
-                for(int j=1; j<attb.getColumnCount(); j++){
-                    data[j] = attb.getAsString(r,j);
-                }
-            }
-            outN.addData(data);
-        }
-        //edge shapefile
-        for(int r=0; r<x.getRowCount(); r++){
-            Object[] data = new Object[1];
-            for(int r2=0; r2<adj.getRowCount(); r2++){
-                for(int c=0; c<adj.getColumnCount(); c++){
-                    if(adj.getAsDouble(r2,c) > 0){
-                        Coordinate coord = new Coordinate(x.getAsDouble(r2,0),y.getAsDouble(r2,0));
-                        Coordinate coord2 = new Coordinate(x.getAsDouble(c,0),y.getAsDouble(c,0));
-                        Coordinate[] points = {coord,coord2};
-                        LineString ln = gfact.createLineString(points);
-                        data[0] = ln;
-                        outE.addData(data);
-                    }
-                }
-            }
-        }               
-    }
-    private String analyzeScheme(Matrix in){
-        String sch="*geom:Point";
-        for(int i=0; i<in.getColumnCount(); i++){
-            if (in.getColumnObject(i).getClass().isInstance(java.lang.Number.class)) {
-                sch += ", " + in.getColumnLabel(i) + ":Float";
-            } else {
-                sch += ", " + in.getColumnLabel(i) + ":String";
-            }
-        }
-        return sch;
+        sfew.write();
+        sfnw.write();
     }
 }
+    

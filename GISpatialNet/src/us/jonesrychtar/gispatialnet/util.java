@@ -34,6 +34,11 @@ public class util {
 
     //saving functions
 
+    public void SaveAs(Matrix in, String filneame, int Type){
+        switch(Type){
+            case 0: 
+        }
+    }
     //analyzing functions
 
 
@@ -108,6 +113,10 @@ public class util {
             }
         }
         return out;
+    }
+    public Matrix combineXYAttb(){
+        //TODO: Size Check
+       return x.appendHorizontally(y).appendHorizontally(attb);
     }
 
 }

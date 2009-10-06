@@ -1,6 +1,5 @@
 /*
- * This program will convert network file with known geographic coordinates
- * into a shapefile and highlight the borders acording to a specified constraint.
+ * This program will perform a borders algorithm on data and output shapefile.
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -9,13 +8,12 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import java.awt.Color;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
+import us.jonesrychtar.gispatialnet.Writer.ShapefileEdgeWriter;
 import us.jonesrychtar.gispatialnet.Writer.ShapefileWriter;
 
 /**
@@ -26,13 +24,12 @@ public class Borders {
     private Matrix X;
     private Matrix Y;
     private Matrix Adj;
-    private ShapefileWriter shpout;
+    private Matrix adjStyle;
     int Alg = 0;
-    public Borders(Matrix x, Matrix y, Matrix adj, String filename, int Algorithm){
+    public Borders(Matrix x, Matrix y, Matrix adj, int Algorithm){
         X = x;
         Y = y;
         Adj = adj;
-        shpout = new ShapefileWriter(filename,"*line:LineString, style:Style");
         Alg = Algorithm;
         
     }
@@ -47,42 +44,29 @@ public class Borders {
         return ans;
     }
     public void Write(){
-        //line shape and style builders
-        GeometryFactory gfact = new GeometryFactory();
         StyleBuilder builder = new StyleBuilder();
         Style origLineStyle = builder.createStyle(builder.createLineSymbolizer(Color.BLACK,1));
         Style linestyle = builder.createStyle(builder.createLineSymbolizer(Color.GREEN, 2));
+        Style[] st = {origLineStyle,linestyle};
 
-        for (int r = 0; r < X.getRowCount(); r++) {
-            //output data that will be written to shapefile
-            Object[] data = new Object[2];
-
-            for (int r2 = 0; r2 < Adj.getRowCount(); r2++) {
-                for (int c = 0; c < Adj.getColumnCount(); c++) {
-                    if (Adj.getAsDouble(r2, c) > 0) {
-                        //set coordinates of line
-                        Coordinate coord = new Coordinate(X.getAsDouble(r2, 0), Y.getAsDouble(r2, 0));
-                        Coordinate coord2 = new Coordinate(X.getAsDouble(c, 0), Y.getAsDouble(c, 0));
-                        Coordinate[] points = {coord, coord2};
-
-                        //create line
-                        LineString ln = gfact.createLineString(points);
-                        if(_Highlight(Adj.getAsDouble(r2,c))){
-                            //highlight line ln
-                           data[1]= linestyle;
-                        }
-                        else
-                            data[1] = origLineStyle;
-                        data[0] = ln;
-                        shpout.addData(data);
-                    }
+        //make adjStyle
+        adjStyle = MatrixFactory.zeros(Adj.getRowCount(), Adj.getColumnCount());
+        for(int row=0; row<Adj.getRowCount(); row++)
+            for(int col=0; col<Adj.getColumnCount(); col++)
+                if(_Highlight(Adj.getAsDouble(row,col)))
+                    adjStyle.setAsInt(1,row,col);
+                else{
+                    adjStyle.setAsInt(0,row,col);
                 }
-            }
-        }
+
+        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(X,Y, Adj, adjStyle,st);
+        sfew.write();
+        
     }
 
     private boolean _border1(){
         //TODO: Source code request in progress
+
         return false;
     }
 }
