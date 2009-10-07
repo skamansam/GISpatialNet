@@ -25,7 +25,7 @@ public class ShapefileEdgeWriter {
     private boolean hasStyle;
     private Style[] Styles;
 
-   public ShapefileEdgeWriter(Matrix xin, Matrix yin, Matrix adjin, Matrix adjStyledin, Style[] Style){
+   public ShapefileEdgeWriter(String filename, Matrix xin, Matrix yin, Matrix adjin, Matrix adjStyledin, Style[] Style){
 
         x = xin;
         y = yin;
@@ -35,18 +35,18 @@ public class ShapefileEdgeWriter {
         adjStyled = adjStyledin;
         schemeEdges = "*l:LineString,value:Number,style:Style";
 
-        outE = new ShapefileWriter("outE",schemeEdges);
+        outE = new ShapefileWriter(filename,schemeEdges);
 
     }
-    public ShapefileEdgeWriter(Matrix xin, Matrix yin, Matrix adjin){
+    public ShapefileEdgeWriter(String filename, Matrix xin, Matrix yin, Matrix adjin){
 
         x = xin;
         y = yin;
         adj = adjin;
         hasStyle = false;
-        schemeEdges = "*l:LineString,value:Number";
+        schemeEdges = "*l:LineString,value:Float";
 
-        outE = new ShapefileWriter("outE",schemeEdges);
+        outE = new ShapefileWriter(filename,schemeEdges);
     }
 
      public void write(){

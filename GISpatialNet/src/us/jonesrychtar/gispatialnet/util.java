@@ -24,9 +24,6 @@ import us.jonesrychtar.gispatialnet.Reader.*;
  */
 public class util {
 
-    /**
-     * @param args the command line arguments
-     */
     private Matrix x = new EmptyMatrix(); //vector matrix (1 col) of x coordinates
     private Matrix y = new EmptyMatrix(); //vector matrix of y coordinates
     private Matrix adj = new EmptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
@@ -60,53 +57,119 @@ public class util {
      * */
         
     //saving functions
-    //TODO: comment functions
-    public void saveShapefile(){
+    /**
+     * Saves to 2 shapefiles, one with nodes, one with edges
+     */
+    public void saveShapefile(String Edgefilename, String Nodefilename){
         if (attb != null) {
-            new convertKnown(x, y, adj, attb);
+            new convertKnown(Edgefilename, Nodefilename, x, y, adj, attb);
         } else {
-            new convertKnown(x, y, adj);
+            new convertKnown(Edgefilename, Nodefilename, x, y, adj);
         }
     }
-    public void saveShapefileUnknown(int alg, int Height, int Width){
+    /**
+     * Saves to 2 shapefiles, one with nodes, one with edges
+     * @param alg which layout algorithm to use
+     * @param Height height of final map
+     * @param Width width of final map
+     */
+    public void saveShapefileUnknown(String Edgefilename, String Nodefilename, int alg, int Height, int Width){
         Dimension temp = new Dimension(Height,Width);
-        new convertUnknown(x,y, alg , temp);
+        new convertUnknown(Edgefilename, Nodefilename,x,y, alg , temp);
     }
+    /**
+     * Saves to Google Earth kml format
+     * @param filename Name of output file without extension
+     */
     public void saveGoogleEarth(String filename){
         new KMLwriter(combineXYAttb(),filename);
     }
+    /**
+     * Saves to PAjek .net format
+     * @param filename name of output file without extension
+     */
     public void savePajek(String filename){
         new PajekWriter(x.appendHorizontally(y), adj, filename).WriteFile();
     }
+    /**
+     * Saves to DL/UCINET format
+     * @param filename name of output file without extension
+     * @param ext extension (0:.dat, 1:.txt)
+     */
     public void saveDL(String filename, int ext){
         new DLwriter(adj,filename,ext).WriteFile();
     }
+    /**
+     * Saves to excel .xls format
+     * @param filenameNodes name of output file for nodes without extension
+     * @param filenameArcs name of output file for edges without extension
+     */
     public void saveExcel(String filenameNodes, String filenameArcs){
         new ExcelWriter(combineXYAttb(), filenameNodes).WriteFile();
         new ExcelWriter(adj, filenameArcs).WriteFile();
     }
+    /**
+     * Saves in a seperated value format (.csv, .txt)
+     * @param filenameNodes name of output file for nodes without extension
+     * @param filenameArcs name of output file for edges without extension
+     * @param seperator character that seperates values
+     */
     public void saveCSV(String filenameNodes, String filenameArcs, char seperator){
         new CSVwriter(combineXYAttb(), filenameNodes, seperator);
         new CSVwriter(adj, filenameArcs, seperator);
     }
    
     //analyzing functions
-    public void Border(int alg){
-        Borders b = new Borders(x,y,adj,alg);
+    /**
+     * Performes a borders analysis on data, writes out edge shapefile
+     * @param alg Algorithm to use
+     * Options: 0 - default Borders algorithm
+     */
+    public void Border(String filename, int alg){
+        Borders b = new Borders(filename, x,y,adj,alg);
         b.Write();
     }
+    /**
+     * Performs qap analysis on data
+     * @param arg Examples:
+     *  	Simple Mantel test: -s file1 file2 number_of_randomizations
+			Partial Mantel test: -p file1 file2 file3 number_of_randomizations
+			Options:
+			-r partial Mantel test with raw option
+			-e force exact permutations procedure
+			-l print licence terms
+			-h display help
+     */
     public void QAP(String arg[]){
         qap q = new qap (arg.length-2, arg);
     }
+    /**
+     * Highlighrs edges and saves edge shapefile
+     * @param alg Which algorithm to use
+     * @param filename output filename
+     * Algorithms:  0 less than average length
+     *              1 less than median length
+     *              2 more than median length
+     *              3 top 10 percent
+     */
     public void Highlight(int alg, String filename){
-        HighlightEdges h = new HighlightEdges(x,y,adj,filename,alg);
+        HighlightEdges h = new HighlightEdges(filename, x,y,adj,alg);
         h.write();
     }
+    /**
+     * Not supported yet
+     * @throws javax.naming.OperationNotSupportedException
+     */
     public void SNB() throws OperationNotSupportedException{
         throw new OperationNotSupportedException("function not done yet");
     }
 
     //extra functions
+    /**
+     * Displays detail of loaded files
+     * @param Detail level of detail to be recorded (the higher the number, the more detail)
+     * @return String containing detail information
+     */
     public String Status(int Detail){
         String out= "Loaded Files: ";
 
@@ -178,6 +241,9 @@ public class util {
         }
         return out;
     }
+    /**
+     * Clears all matricies and loaded filenames
+     */
     public void ClearData(){
         x = new EmptyMatrix();
         y = new EmptyMatrix();
@@ -187,12 +253,22 @@ public class util {
         loadedFiles = new String[]{};
 
     }
+    /**
+     * Combines x y and attb into one matrix
+     * @return a single matrix made from x, y, and attb
+     * @throws java.lang.IllegalArgumentException
+     */
     public Matrix combineXYAttb() throws IllegalArgumentException{
        if(x.getRowCount() == y.getRowCount() && y.getRowCount() == attb.getRowCount())
             return x.appendHorizontally(y).appendHorizontally(attb);
        else
            throw new IllegalArgumentException("Matrix Sizes do not match.");
     }
+    /**
+     * Splits a big matrix into 3 smaller matricies
+     * @param in matrix containing x, y, and attb
+     * @return matrix array where out[0] = x, out[1] =y , and out[2] = attb
+     */
     public Matrix[] splitXYAttb(Matrix in){
         Matrix[] out = new Matrix[3];
         //copy all rows of col 0 to out[0]

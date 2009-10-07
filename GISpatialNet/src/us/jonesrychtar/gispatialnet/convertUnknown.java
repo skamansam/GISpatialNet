@@ -26,7 +26,16 @@ public class convertUnknown {
     private Matrix adj; //adjancency matrix
     convertKnown ck; //handles the writing of shapefile
 
-    public convertUnknown(Matrix adjin, Matrix attbin, int alg, Dimension args){
+    /**
+     *
+     * @param filenameE
+     * @param filenameN
+     * @param adjin
+     * @param attbin
+     * @param alg
+     * @param args
+     */
+    public convertUnknown(String filenameE, String filenameN, Matrix adjin, Matrix attbin, int alg, Dimension args){
         //set x, y
         _use(alg,args);
 
@@ -34,9 +43,28 @@ public class convertUnknown {
         adj = adjin;
         
         //make convert known
-        ck = new convertKnown(x,y,adjin, attbin);
+        ck = new convertKnown(filenameE, filenameN, x,y,adjin, attbin);
     }
 
+
+    public convertUnknown(String filenameE, String filenameN, Matrix adjin, int alg, Dimension args){
+        //set x, y
+        _use(alg,args);
+
+        //set adj
+        adj = adjin;
+
+        //make convert known
+        ck = new convertKnown(filenameE, filenameN, x,y,adjin);
+    }
+
+    /**
+     * Helper function that decides which layout algorightm to use
+     * @param algorithm chooses which algorithm
+     * Options:
+     *      0 egonetAlgorithm
+     * @param args Dimension of final output map
+     */
     private void _use(int algorithm, Dimension args) {
         switch(algorithm){
             case 0: _egonet(args);

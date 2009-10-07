@@ -22,20 +22,20 @@ public class ShapefileNodeWriter {
     private String schemeNodes;
 
 
-    public ShapefileNodeWriter(Matrix xin, Matrix yin, Matrix attbin){
+    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin, Matrix attbin){
 
         x = xin;
         y = yin;
         attb = attbin;
         schemeNodes=_analyzeScheme(attbin);
-        outN = new ShapefileWriter("outN",schemeNodes);
+        outN = new ShapefileWriter(filename,schemeNodes);
     }
-    public ShapefileNodeWriter(Matrix xin, Matrix yin){
+    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin){
 
         x = xin;
         y = yin;
         schemeNodes= "*geom:Point";
-        outN = new ShapefileWriter("outN",schemeNodes);
+        outN = new ShapefileWriter(filename,schemeNodes);
     }
     
     public void write(){

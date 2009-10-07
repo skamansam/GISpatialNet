@@ -25,14 +25,30 @@ public class Borders {
     private Matrix Y;
     private Matrix Adj;
     private Matrix adjStyle;
+    private String filenameE;
     int Alg = 0;
-    public Borders(Matrix x, Matrix y, Matrix adj, int Algorithm){
+    /**
+     *
+     * @param filenameEdgesin Name of output edgefile name
+     * @param x vector matrix of x values for nodes
+     * @param y vector matrix of y values for nodes
+     * @param adj adjacency matrix for edge values
+     * @param Algorithm which algorithm to use:
+     *          0 default border algorithm
+     *          1 ...
+     */
+    public Borders(String filenameEdgesin, Matrix x, Matrix y, Matrix adj, int Algorithm){
         X = x;
         Y = y;
         Adj = adj;
         Alg = Algorithm;
-        
+        filenameE = filenameEdgesin;
     }
+    /**
+     *
+     * @param edge number value on edge
+     * @return does edge need to be highlighted
+     */
     private boolean _Highlight(double edge){
         boolean ans;
         switch(Alg){
@@ -43,6 +59,9 @@ public class Borders {
         }
         return ans;
     }
+    /**
+     * writes data to edgeshapefile
+     */
     public void Write(){
         StyleBuilder builder = new StyleBuilder();
         Style origLineStyle = builder.createStyle(builder.createLineSymbolizer(Color.BLACK,1));
@@ -59,11 +78,14 @@ public class Borders {
                     adjStyle.setAsInt(0,row,col);
                 }
 
-        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(X,Y, Adj, adjStyle,st);
+        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(filenameE, X,Y, Adj, adjStyle,st);
         sfew.write();
         
     }
-
+    /**
+     * Default borders algorithm
+     * @return not implemented
+     */
     private boolean _border1(){
         //TODO: Source code request in progress
 
