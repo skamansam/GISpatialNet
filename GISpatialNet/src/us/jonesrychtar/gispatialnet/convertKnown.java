@@ -33,5 +33,14 @@ public class convertKnown {
         sfew.write();
         sfnw.write();
     }
+
+    public convertKnown(Matrix xin, Matrix yin, Matrix adjin){
+
+        sfew = new ShapefileEdgeWriter(xin,yin,adjin);
+        sfnw = new ShapefileNodeWriter(xin,yin);
+
+        sfew.write();
+        sfnw.write();
+    }
 }
     

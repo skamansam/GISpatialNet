@@ -37,7 +37,7 @@ public class cli {
         int option= getMenu(
                 "Main Menu:",
                 u.Status(statusLevel),
-                new String[] {"Load data","Save Data","Analyze Data","Exit"} );
+                new String[] {"Load data","Save Data","Analyze Data","Print Full Status","Exit"} );
 
             switch (option) {
                 case 1:
@@ -50,6 +50,9 @@ public class cli {
                     AnalyzeMenu();
                     break;
                 case 4:
+                    u.Status(3);
+                    break;
+                case 5:
                     System.exit(0);
                     break;
                 default:

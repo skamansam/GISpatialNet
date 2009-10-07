@@ -26,7 +26,7 @@ public class convertUnknown {
     private Matrix adj; //adjancency matrix
     convertKnown ck; //handles the writing of shapefile
 
-    public convertUnknown(Matrix adjin, Matrix attbin, int alg, Object[] args){
+    public convertUnknown(Matrix adjin, Matrix attbin, int alg, Dimension args){
         //set x, y
         _use(alg,args);
 
@@ -37,11 +37,11 @@ public class convertUnknown {
         ck = new convertKnown(x,y,adjin, attbin);
     }
 
-    private void _use(int algorithm, Object[] args) {
+    private void _use(int algorithm, Dimension args) {
         switch(algorithm){
-            case 0: _egonet((Dimension) args[0]);
+            case 0: _egonet(args);
             break;
-            default: _egonet((Dimension) args[0]);
+            default: _egonet(args);
             break;
         }
     }
