@@ -28,20 +28,37 @@ public class HighlightEdges {
     private Matrix Y;
     private Matrix Adj;
     private Matrix adjStyle;
+    private String filenameE;
 
     //stats
     private double avg;
     private double median;
     private double top10percent;
 
-    public HighlightEdges(Matrix x, Matrix y, Matrix adj, String filename, int Algorithm){
+    /**
+     * Writes shapefile with edges highlighted to user specification
+     * @param filename output filename of edge shapefile
+     * @param x vector matrix of x coordinates
+     * @param y vector matrix of y coordinates
+     * @param adj adjacency matrix of edges
+     * @param Algorithm algorithm to use:
+     *          0 less than average length
+     *          1 less than median length
+     *          2 more than median length
+     *          3 top 10 percent
+     */
+    public HighlightEdges(String filename, Matrix x, Matrix y, Matrix adj, int Algorithm){
         Alg = Algorithm;
         X = x;
         Y = y;
         Adj = adj;
+        filenameE = filename;
 
     }
 
+    /**
+     * Writes data to edge shapefile
+     */
     public void write(){
         StyleBuilder builder = new StyleBuilder();
         Style origLineStyle = builder.createStyle(builder.createLineSymbolizer(Color.BLACK,1));
@@ -59,10 +76,15 @@ public class HighlightEdges {
                     adjStyle.setAsInt(0,row,col);
                 }
 
-        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(X,Y, Adj, adjStyle,st);
+        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(filenameE, X,Y, Adj, adjStyle,st);
         sfew.write();
     }
 
+    /**
+     * Tells if edge needs to be highlighted
+     * @param edge value of edge
+     * @return does edge need to be highlighted
+     */
     private boolean _Highlight(double edge){
         boolean ans;
         switch(Alg){
@@ -70,7 +92,7 @@ public class HighlightEdges {
                 break;
             case 1: ans = _LessThanMedianLen(edge);
                 break;
-            case 2: ans = _GreaterThanMedianLen(edge);
+            case 2: ans = !(_LessThanMedianLen(edge));
                 break;
             case 3: ans = _Top10percent(edge);
                 break;
@@ -80,22 +102,37 @@ public class HighlightEdges {
         return ans;
     }
 
+    /**
+     * Tells if edge is less than average length
+     * @param edge value of edge
+     * @return true if edge is less than averge length, flase if edge is greater than average length
+     */
     private boolean _LessThanAvgLen(double edge) {
         return edge < avg;
     }
 
+    /**
+     * Tells if edge is les than median length
+     * @param edge value of edge
+     * @return true if edge is less than median length, false if edge is greater than median length
+     */
     private boolean _LessThanMedianLen(double edge) {
         return edge < median;
     }
     
-    private boolean _GreaterThanMedianLen(double edge) {
-        return edge > median;
-    }
 
+    /**
+     * Tells if edge is in top 10%
+     * @param edge value of edge
+     * @return true if edge is in top 10%, false if it is not in top 10%
+     */
     private boolean _Top10percent(double edge) {
        return edge >= top10percent;
     }
 
+    /**
+     * Prepares statistics needed in algorithms
+     */
     private void prepareStat() {
         Matrix temp = Adj;
         temp = Adj.sort(Calculation.Ret.NEW);
@@ -113,6 +150,12 @@ public class HighlightEdges {
         top10percent = temp.getAsDouble(rc[0],rc[1]);
 
     }
+    /**
+     * Helper function that returns a row and column given a number in a matrix
+     * @param place cell number of matrix
+     * @param temp matrix you are using
+     * @return array where out[0] is row of matrix and out[1] is col of matrix
+     */
     private int[] _getRowCol(int place, Matrix temp){
         int row;
         int col;

@@ -24,20 +24,36 @@ public class convertKnown {
     private ShapefileEdgeWriter sfew;
     private ShapefileNodeWriter sfnw;
    
+    /**
+    * Converts Data with known xy coordinates into a shapefile
+    * @param filenameE name of output edge shapefile
+    * @param filenameN name of output node shapefile
+    * @param xin vector matrix of x coordinates
+    * @param yin vector matrix of y coordinates
+    * @param adjin matrix containing edge data
+    * @param attbin matrix containing attribute data
+    */
+    public convertKnown(String filenameE, String filenameN, Matrix xin, Matrix yin, Matrix adjin, Matrix attbin){
 
-    public convertKnown(Matrix xin, Matrix yin, Matrix adjin, Matrix attbin){
-
-        sfew = new ShapefileEdgeWriter(xin,yin,adjin);
-        sfnw = new ShapefileNodeWriter(xin,yin,attbin);
+        sfew = new ShapefileEdgeWriter(filenameE, xin,yin,adjin);
+        sfnw = new ShapefileNodeWriter(filenameN, xin,yin,attbin);
 
         sfew.write();
         sfnw.write();
     }
 
-    public convertKnown(Matrix xin, Matrix yin, Matrix adjin){
+    /**
+    * Converts Data with known xy coordinates into a shapefile
+    * @param filenameE name of output edge shapefile
+    * @param filenameN name of output node shapefile
+    * @param xin vector matrix of x coordinates
+    * @param yin vector matrix of y coordinates
+    * @param adjin matrix containing edge data
+    */
+    public convertKnown(String filenameE, String filenameN,Matrix xin, Matrix yin, Matrix adjin){
 
-        sfew = new ShapefileEdgeWriter(xin,yin,adjin);
-        sfnw = new ShapefileNodeWriter(xin,yin);
+        sfew = new ShapefileEdgeWriter(filenameE, xin,yin,adjin);
+        sfnw = new ShapefileNodeWriter(filenameN, xin,yin);
 
         sfew.write();
         sfnw.write();
