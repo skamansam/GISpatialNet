@@ -30,10 +30,22 @@ public class DLwriter extends TextFileWriter {
     private String ext = ".dat";
 
     //constructors
+    /**
+     * Constructor
+     * @param map Matrix to be written to file (adj matrix)
+     * @param filename name of output file
+     */
     public DLwriter(Matrix map, String filename){
         this.setWorkingset(map);
         this.CreateFile(filename);
     }
+
+    /**
+     * Constructor
+     * @param map MAtrix to be written to file (adj matrix)
+     * @param filename name of output file
+     * @param type select extension (0:.dat, 1:.txt)
+     */
     public DLwriter(Matrix map, String filename, int type){
         this.setWorkingset(map);
         switch(type){

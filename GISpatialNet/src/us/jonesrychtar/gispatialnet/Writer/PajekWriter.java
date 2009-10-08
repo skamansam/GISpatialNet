@@ -1,5 +1,5 @@
 /*
- * This is a Pajek file writer writer
+ * This is a Pajek file writer
  *
  * For research by Eric Jones and Jan Rychtar.
  *
@@ -21,6 +21,13 @@ import org.ujmp.core.Matrix;
 public class PajekWriter extends TextFileWriter{
 
     Matrix verticies, arcs;
+
+    /**
+     * Constructor
+     * @param vert Matrix containing nodes (x,y)
+     * @param arc Matrix containing edges
+     * @param filename name of output file
+     */
     public PajekWriter(Matrix vert, Matrix arc, String filename){
         this.setFile(CreateFile(filename));
     }

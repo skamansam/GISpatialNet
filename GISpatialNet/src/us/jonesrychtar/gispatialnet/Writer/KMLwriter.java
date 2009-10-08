@@ -27,7 +27,11 @@ public class KMLwriter {
     private String file;
     private Matrix workingset;
 
-    //note Matrix must be in form {longitude, latitude, Name, description}
+    /**
+     * Constructor
+     * @param map Matrix of the form {longitude, latitude, Name, description}
+     * @param filename Name of output file
+     */
     public KMLwriter(Matrix map, String filename){
         workingset = map;
         file = filename;
@@ -36,6 +40,9 @@ public class KMLwriter {
         kml.setFeature(doc);
     }
 
+    /**
+     * Write data to file
+     */
     public void WriteFile() {
         try{
             //point data

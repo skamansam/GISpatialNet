@@ -31,24 +31,29 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.simple.SimpleFeature;
 
-public class ShapefileWriter {
+public class ShapefileWriter{
 
     private File file;
     private DataStore myData;
     private FeatureStore<SimpleFeatureType, SimpleFeature> store;
     private FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
     
-    //default constructor
-    public ShapefileWriter() {
-        createfile("out", "*geom:Point,name:String");
-    }
+    /**
+     * Default constructor, used for testing
+     */
+    //public ShapefileWriter() {
+    //    createfile("out", "*geom:Point,name:String");
+    //}
 
     /**
      * @param filename the name of the output shapefile
      * @param scheme the format of the database (list of field names and field Types) ex:"geom:Point,name:String"
      * */
-    public ShapefileWriter(String filename, String scheme) {
-        createfile(filename, scheme);
+    public ShapefileWriter(String filename, String scheme) throws IllegalArgumentException{
+        if(filename.length() > 8)
+            throw new IllegalArgumentException("Filename is too long.");
+        else
+            createfile(filename, scheme);
     }
     /**
      * @param name name of the output file without extenstion
@@ -96,6 +101,9 @@ public class ShapefileWriter {
         write();
     }
 
+    /**
+     * Writes data to shapefile
+     */
     private void write() {
         //transaction makes writing faster and safer with ability to rollback
         DefaultTransaction transaction= new DefaultTransaction("Add");

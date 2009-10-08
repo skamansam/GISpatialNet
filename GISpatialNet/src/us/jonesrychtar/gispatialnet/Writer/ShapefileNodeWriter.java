@@ -1,5 +1,9 @@
 /*
  * This will write a node with attributes shapefile
+ *
+ * For research by Eric Jones and Jan Rychtar.
+ *
+ * Requires: UJMP
  */
 
 package us.jonesrychtar.gispatialnet.Writer;
@@ -12,6 +16,8 @@ import org.ujmp.core.Matrix;
 /**
  *
  * @author cfbevan
+ * @date Oct 8, 2009
+ * @version 0.0.1
  */
 public class ShapefileNodeWriter {
 
@@ -21,7 +27,13 @@ public class ShapefileNodeWriter {
     private Matrix attb = null; //format: attributes...
     private String schemeNodes;
 
-
+    /**
+     *Constructor
+     * @param filename Name of output file
+     * @param xin Vector matrix of x coordinate values
+     * @param yin Vector matrix of y coordinate values
+     * @param attbin Matrix containing attribute data for nodes
+     */
     public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin, Matrix attbin){
 
         x = xin;
@@ -30,6 +42,13 @@ public class ShapefileNodeWriter {
         schemeNodes=_analyzeScheme(attbin);
         outN = new ShapefileWriter(filename,schemeNodes);
     }
+
+    /**
+     * Constructor (no attributes)
+     * @param filename Name of output file
+     * @param xin Vector matrix of x coordinate values
+     * @param yin Vector matrix of y coordinate values
+     */
     public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin){
 
         x = xin;
@@ -37,7 +56,10 @@ public class ShapefileNodeWriter {
         schemeNodes= "*geom:Point";
         outN = new ShapefileWriter(filename,schemeNodes);
     }
-    
+
+    /**
+     * Writes node data to shapefile
+     */
     public void write(){
         GeometryFactory gfact = new GeometryFactory();
         //write Node Shapefile
@@ -63,6 +85,11 @@ public class ShapefileNodeWriter {
         }
     }
 
+    /**
+     * Analyzes scheme of attribute data
+     * @param in MAtrix to analyze
+     * @return String containing the scheme
+     */
     private String _analyzeScheme(Matrix in){
         String sch="*geom:Point";
         for(int i=0; i<in.getColumnCount(); i++){

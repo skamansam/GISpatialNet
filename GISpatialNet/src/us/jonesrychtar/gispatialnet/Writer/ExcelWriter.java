@@ -32,11 +32,19 @@ public class ExcelWriter {
     private Matrix workingset;
     private WritableWorkbook workbook;
 
+    /**
+     * Constructor
+     * @param map MAtrix to be written
+     * @param Filename name of output file without extension
+     */
     public ExcelWriter(Matrix map, String Filename){
         filen = Filename;
         workingset = map;
     }
-    
+
+    /**
+     * Write matrix to .xls file
+     */
     public void WriteFile(){
         try{
             //setup workbook
