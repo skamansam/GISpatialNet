@@ -11,8 +11,11 @@ package us.jonesrychtar.gispatialnet;
 import java.awt.Dimension;
 import javax.naming.OperationNotSupportedException;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
-import org.ujmp.core.objectmatrix.EmptyMatrix;
+//TODO: remove EmptyMatrix - it won't compile on all platforms. 
+//TODO: replace 'new EmptyMatrix()' with 'MatrixFactory.emptyMatrix()'
+//import org.ujmp.core.objectmatrix.EmptyMatrix;
 import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.Reader.*;
 
@@ -24,11 +27,16 @@ import us.jonesrychtar.gispatialnet.Reader.*;
  */
 public class util {
 
-    private Matrix x = new EmptyMatrix(); //vector matrix (1 col) of x coordinates
+    private Matrix x = MatrixFactory.emptyMatrix(); //vector matrix (1 col) of x coordinates
+    private Matrix y = MatrixFactory.emptyMatrix(); //vector matrix of y coordinates
+    private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
+    private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
+
+    /*private Matrix x = new EmptyMatrix(); //vector matrix (1 col) of x coordinates
     private Matrix y = new EmptyMatrix(); //vector matrix of y coordinates
     private Matrix adj = new EmptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
     private Matrix attb = new EmptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
-
+     */
     private String[] loadedFiles = new String[]{};
 
     //loading functions
@@ -245,10 +253,10 @@ public class util {
      * Clears all matricies and loaded filenames
      */
     public void ClearData(){
-        x = new EmptyMatrix();
-        y = new EmptyMatrix();
-        adj = new EmptyMatrix();
-        attb = new EmptyMatrix(); 
+        x = MatrixFactory.emptyMatrix();
+        y = MatrixFactory.emptyMatrix();
+        adj = MatrixFactory.emptyMatrix();
+        attb = MatrixFactory.emptyMatrix(); 
 
         loadedFiles = new String[]{};
 
