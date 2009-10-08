@@ -23,7 +23,7 @@ public abstract class TextFileReader {
     public static int LOWER_MATRIX= 1;
     public static int UPPER_MATRIX= 2;
 
-    private File file;
+    protected File file;
 
     public File getFile(){
         return file;

@@ -19,9 +19,9 @@ import org.ujmp.core.Matrix;
  */
 public abstract class FileReader {
     //Type Definitions
-    public static int FULL_MATRIX= 0;
-    public static int LOWER_MATRIX= 1;
-    public static int UPPER_MATRIX= 2;
+    public static final int FULL_MATRIX= 0;
+    public static final int LOWER_MATRIX= 1;
+    public static final int UPPER_MATRIX= 2;
 
     private File file;
 
