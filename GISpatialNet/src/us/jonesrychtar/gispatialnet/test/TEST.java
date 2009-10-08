@@ -13,7 +13,7 @@ import us.jonesrychtar.gispatialnet.convertKnown;
 
 public class TEST {
 
-    Matrix x,y,a;
+    Matrix x,y,a, attb;
     static TestData td = new TestData();
 
     public static void main(String[] args) {

@@ -69,11 +69,11 @@ public class util {
      * Saves to 2 shapefiles, one with nodes, one with edges
      */
     public void saveShapefile(String Edgefilename, String Nodefilename){
-        if (attb != null) {
-            new convertKnown(Edgefilename, Nodefilename, x, y, adj, attb);
-        } else {
-            new convertKnown(Edgefilename, Nodefilename, x, y, adj);
-        }
+            if (attb != null) {
+                new convertKnown(Edgefilename, Nodefilename, x, y, adj, attb);
+            } else {
+                new convertKnown(Edgefilename, Nodefilename, x, y, adj);
+            }
     }
     /**
      * Saves to 2 shapefiles, one with nodes, one with edges

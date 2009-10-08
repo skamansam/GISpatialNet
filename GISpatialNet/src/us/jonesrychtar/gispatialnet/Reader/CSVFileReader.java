@@ -7,7 +7,7 @@ package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-//import java.io.FileReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -27,19 +27,23 @@ public class CSVFileReader extends TextFileReader{
 	private boolean includeEgo=false;
 	CSVReader matrixReader;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+    //formatting for file
+    private char distanceSeparatorChar=',';
+    private char quoteChar='\"';
+    private String commentChars="#";
+    private boolean hideComments = true;
+    private boolean trimQuoted=true;
+    private boolean allowMultiLineFields = false;
 
-	}
+    public CSVFileReader(String filename){
+        this.setFile(new File(filename));
+    }
 
 	@Override
 	public Matrix Read(int type, int rows, int cols) {
 		//try to read the file
 		try {
-			CSVReader matrixReader = new CSVReader(new FileReader(this.file),
+			matrixReader = new CSVReader(new FileReader(this.getFile()),
 					distanceSeparatorChar, quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
