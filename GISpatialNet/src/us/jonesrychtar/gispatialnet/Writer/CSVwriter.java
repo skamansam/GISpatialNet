@@ -28,12 +28,23 @@ public class CSVwriter extends TextFileWriter {
     private boolean trimQuote=true;
     //writer
     private CSVWriter out;
-    //consturctor (makes .csv file)
+
+    /**
+     * Constructor
+     * @param map Matrix to be written to file
+     * @param filename name of output file
+     */
     public CSVwriter(Matrix map, String filename){
         this.setWorkingset(map);
         this.setFile(CreateFile(filename));
     }
-    //consturctor with ability to define a different seperator (will make .txt file)
+    
+    /**
+     * Constructor
+     * @param map Matrix to be written to file
+     * @param filename name of output file
+     * @param sep character that seperates values
+     */
     public CSVwriter(Matrix map, String filename,char sep){
         seperator=sep;
         this.setWorkingset(map);
