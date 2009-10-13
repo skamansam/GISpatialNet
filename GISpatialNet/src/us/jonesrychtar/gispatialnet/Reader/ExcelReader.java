@@ -12,7 +12,8 @@ package us.jonesrychtar.gispatialnet.Reader;
 import java.io.File;
 import jxl.Workbook;
 import org.ujmp.core.Matrix;
-import org.ujmp.core.objectmatrix.EmptyMatrix;
+//import org.ujmp.core.objectmatrix;
+import org.ujmp.core.MatrixFactory;
 
 /**
  *
@@ -28,7 +29,7 @@ public class ExcelReader {
         in = new File(filename);
     }
     public Matrix read(){
-        Matrix out = new EmptyMatrix();
+        Matrix out = MatrixFactory.emptyMatrix();
         try{
             Workbook w1 = Workbook.getWorkbook(in);
             String loc;

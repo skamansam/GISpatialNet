@@ -14,8 +14,8 @@ public class XY extends CoordinateGraphBase {
 
     // TODO: Here is Sam
     public void readValue(java.util.Scanner sc) {
-        xCoord = sc.getDouble();
-        yCoord = sc.getDouble();
+        xCoord = sc.nextDouble();
+        yCoord = sc.nextDouble();
 
         if ((xCoord == 9999) || (yCoord == 9999)) {
             missingNodes.add(i);
