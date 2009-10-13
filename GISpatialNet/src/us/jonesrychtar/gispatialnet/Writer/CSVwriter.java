@@ -113,9 +113,10 @@ public class CSVwriter extends TextFileWriter {
             out.nl();
             //iterate through the matrix and write to file
             for(int j=1;j<this.getWorkingset().getRowCount();j++){
-
+            	out.put(j);
+            	out.put("Euclidean");
                 for(int k=0; k<this.getWorkingset().getColumnCount();k++){
-                    out.put(this.getWorkingset().getAsString(j,k));
+                	out.put(this.getWorkingset().getAsString(j,k));
                 }
                 out.nl();
             }

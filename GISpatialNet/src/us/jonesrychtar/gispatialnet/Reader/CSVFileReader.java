@@ -40,18 +40,11 @@ public class CSVFileReader extends TextFileReader{
     }
 
 	@Override
-	public Matrix Read(int type, int rows, int cols) {
+	public Matrix Read(int type, int rows, int cols) 
+		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
-		try {
-			matrixReader = new CSVReader(new FileReader(this.getFile()),
-					distanceSeparatorChar, quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		matrixReader = new CSVReader(new FileReader(this.getFile()),
+				distanceSeparatorChar, quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
 		
 		switch(type){
 		case TextFileReader.FULL_MATRIX:
@@ -105,10 +98,10 @@ public class CSVFileReader extends TextFileReader{
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
 			System.out.println("Error reading the network data for the next network.");
-			e1.printStackTrace();
 			return false;
 		}
 		
+		//if we are using an ego, add one to each row,col count
 		theMatrix = MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0));
 
 		//read each row
@@ -117,32 +110,15 @@ public class CSVFileReader extends TextFileReader{
 				reader.skip(2); //skip the two leading fields
 				//read the fields
 				for (int j = 0; j < cols; j++) {
-					int value = reader.getInt();
-					if (value > 3) {
-						value = getRandomEdgeValue();
-					}
-					if (edgeFormat == 1) {
-						if (value >= edgeMinValue) {
-							theMatrix.setAsDouble(1, i, j);
-						} else {
-							theMatrix.setAsDouble(0, i, j);
-						}
-					} else {
-						theMatrix.setAsDouble(value, i, j);
-					}
-				}
-				if (i < numVerts-1) {
-					reader.skipToNextLine(); //done reading this line, go to next line
+					float value = reader.getFloat();
+					theMatrix.setAsDouble(value, i, j);
 				}
 			} catch (MatrixException e) {
 				System.out.println("Error: Internal data writing error on line " + i + " of current network data.");
-				e.printStackTrace();
 			} catch (NumberFormatException e) {
 				System.out.println("Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.");
-				e.printStackTrace();
 			} catch (IOException e) {
 				System.out.println("An unspecified error occured at line " + i + " of the current network data.");
-				e.printStackTrace();
 			}
 		}
 		
@@ -157,7 +133,8 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 */
 	public boolean readUpperMatrix(CSVReader reader, int rows, int cols) {
-		String exitCondition = "";
+		return false;
+/*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
@@ -214,6 +191,7 @@ public class CSVFileReader extends TextFileReader{
 			System.out.println(exitCondition);
 			return false;
 		}
+		*/
 	}
 
 	/**
@@ -223,7 +201,8 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 */
 	public boolean readLowerMatrix(CSVReader reader, int rows, int cols) {
-		String exitCondition = "";
+		return false;
+/*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
@@ -280,7 +259,7 @@ public class CSVFileReader extends TextFileReader{
 			System.out.println(exitCondition);
 			return false;
 		}
-	}
+*/	}
 	
 	
 }
