@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Package xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_Ol6YALP5Ed6ws9__BE2yNQ" name="Classes-Eclipse">
+  <elementImport xmi:id="_Oq7a4LP5Ed6ws9__BE2yNQ">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+  </elementImport>
+  <elementImport xmi:id="_OrIPMLP5Ed6ws9__BE2yNQ">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+  </elementImport>
+  <elementImport xmi:id="_OrIPMbP5Ed6ws9__BE2yNQ">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+  </elementImport>
+  <elementImport xmi:id="_OrI2QLP5Ed6ws9__BE2yNQ">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+  </elementImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_Yqs2sLP5Ed6ws9__BE2yNQ" name="ShapeFileWriter"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_g2VbYLP5Ed6ws9__BE2yNQ" name="TextFileWriter"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_m69QQLP5Ed6ws9__BE2yNQ" name="implemets" memberEnd="_m693ULP5Ed6ws9__BE2yNQ _m6_FcbP5Ed6ws9__BE2yNQ">
+    <ownedEnd xmi:id="_m693ULP5Ed6ws9__BE2yNQ" name="src" type="_Yqs2sLP5Ed6ws9__BE2yNQ" association="_m69QQLP5Ed6ws9__BE2yNQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_m6_FcLP5Ed6ws9__BE2yNQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_m6-eYLP5Ed6ws9__BE2yNQ" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_m6_FcbP5Ed6ws9__BE2yNQ" name="dst" type="_g2VbYLP5Ed6ws9__BE2yNQ" association="_m69QQLP5Ed6ws9__BE2yNQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_m6_sgLP5Ed6ws9__BE2yNQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_m6_FcrP5Ed6ws9__BE2yNQ" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Package>
