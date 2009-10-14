@@ -25,7 +25,7 @@ public class KMLreader {
     private Kml kml;
     private Document doc;
     private String file;
-    private Matrix workingset;
+    private Matrix xout, yout, adjout, attbout;
 
     public KMLreader(String Filename){
         file = Filename;
@@ -34,13 +34,13 @@ public class KMLreader {
         kml.setFeature(doc);
     }
 
-    public Matrix read(){
+    public Matrix[] read(){
         try{
             kml.createKml(file);
 
         }catch(Exception e){
             e.printStackTrace();
         }
-        return workingset;
+        return new Matrix[]{xout,yout,adjout,attbout};
     }
 }

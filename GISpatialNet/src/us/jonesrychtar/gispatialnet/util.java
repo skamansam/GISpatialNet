@@ -27,29 +27,36 @@ import us.jonesrychtar.gispatialnet.Reader.*;
  */
 public class util {
 
+    //Matrix data
     private Matrix x = MatrixFactory.emptyMatrix(); //vector matrix (1 col) of x coordinates
     private Matrix y = MatrixFactory.emptyMatrix(); //vector matrix of y coordinates
     private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
     private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
 
-    /*private Matrix x = new EmptyMatrix(); //vector matrix (1 col) of x coordinates
-    private Matrix y = new EmptyMatrix(); //vector matrix of y coordinates
-    private Matrix adj = new EmptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
-    private Matrix attb = new EmptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
-     */
     private String[] loadedFiles = new String[]{};
 
     //loading functions
+    public void loadShapefile(String filenameN, String filenameE){
+        ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
+        Matrix temp[] = sfr.Read();
 
-       /* FileType:
-     * 0 Shapefile
-     * 1 Shapefile Unknown XY
-     * 2 Google Earth (.kml)
-     * 3 Pajek (.net)
-     * 4 DL/UCINET (.txt, .dat)
-     * 5 Excel (.csv, .xls)
-     * 6 txt file (.txt)
-     *
+        //TODO: Handle merging data
+        x = temp[0];
+        y = temp[1];
+        adj = temp[2];
+        attb = temp[3];
+    }
+
+    public void loadGoogleEarth(String filename) {
+        KMLreader kmlr = new KMLreader(filename);
+        Matrix temp[] = kmlr.read();
+
+        x = temp[0];
+        y = temp[1];
+        adj = temp[2];
+        attb = temp[3];
+    }
+    /*
      * Matrix:
      * 0 XYAttb
      * 1 Adj
@@ -63,7 +70,23 @@ public class util {
      * 2 Upper Matrix
      * ...
      * */
-        
+    public void loadExcel(String filename, int Matrix, int MatrixType){
+        ExcelReader er = new ExcelReader(filename);
+        if(MatrixType == 0){
+            switch(Matrix){
+                case 0: 
+            }
+        }
+    }
+    public void loadPajek(String filename, int Matrix, int MatrixType){
+
+    }
+    public void loadDL(String filename, int Matrix, int MatrixType){
+
+    }
+    public void loadTxt(String filename, int Matrix, int MatrixType){
+
+    }
     //saving functions
     /**
      * Saves to 2 shapefiles, one with nodes, one with edges
@@ -90,7 +113,7 @@ public class util {
      * @param filename Name of output file without extension
      */
     public void saveGoogleEarth(String filename){
-        new KMLwriter(combineXYAttb(),filename);
+        new KMLwriter(combineXYAttb(),filename).WriteFile();
     }
     /**
      * Saves to PAjek .net format
@@ -123,8 +146,8 @@ public class util {
      * @param seperator character that seperates values
      */
     public void saveCSV(String filenameNodes, String filenameArcs, char seperator){
-        new CSVwriter(combineXYAttb(), filenameNodes, seperator);
-        new CSVwriter(adj, filenameArcs, seperator);
+        new CSVwriter(combineXYAttb(), filenameNodes, seperator).WriteFile();
+        new CSVwriter(adj, filenameArcs, seperator).WriteFile();
     }
    
     //analyzing functions
