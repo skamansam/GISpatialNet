@@ -17,7 +17,7 @@ import java.util.Scanner;
  * @version 0.0.1
  */
 
-public class cli {
+public class cli extends userinterface {
 
     private static cli c;
     private static util u;
@@ -66,7 +66,7 @@ public class cli {
     private void LoadMenu1(){
         int option = getMenu(
                 "Load Menu:",
-                "Put more about what the program does here.",
+                u.Status(statusLevel),
                 new String[] {"Graph/Network Data","Node Coordinate/Location Data",
                 "Attribute Data","Exit"} );
         if(option<3 && option>0)
@@ -78,7 +78,7 @@ public class cli {
     private void LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
-                "",
+                u.Status(statusLevel),
                 new String[] {"Delimited text file (.csv,.txt)",
                 "DL/ucinet (.txt,.dat)","Pajek (.net)",
                 "Back"});
@@ -100,7 +100,7 @@ public class cli {
     private void SaveMenu() {
         int option = getMenu(
                 "Save Data:",
-                "",
+                u.Status(statusLevel),
                 new String[] {"Delimited text file (.csv,.txt)",
                 "DL/ucinet (.txt,.dat)","Pajek (.net)",
                 "Back"});
@@ -122,7 +122,7 @@ public class cli {
     private void AnalyzeMenu() {
         int option = getMenu(
                 "Analyze Data:",
-                "",
+                u.Status(statusLevel),
                 new String[] {"QAP"});
           switch (option) {
             case 1:
@@ -141,9 +141,8 @@ public class cli {
                 break;
         }
     }
-    //End menus ----------------------------------------------------------------------------
-
-    private int getMenu(String title, String info ,String[] items){
+    //End menus ---------------------------------------------------------------------------
+    public int getMenu(String title, String info ,String[] items){
         //return and err out if length of items is less than one.
         if(items.length<1){
             System.err.println("Incorrect length for menu items.");
