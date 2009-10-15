@@ -25,8 +25,8 @@ public class MatrixConversion {
      */
     public Matrix Translation(Matrix in, double moveX, double moveY){
         for(int row=0; row < in.getRowCount(); row++){
-            in.setAsDouble(in.getAsDouble(row,0)+moveX, 0);
-            in.setAsDouble(in.getAsDouble(row,1)+moveY, 1);
+            in.setAsDouble(in.getAsDouble(row,0)+moveX, row, 0);
+            in.setAsDouble(in.getAsDouble(row,1)+moveY, row, 1);
         }
         return in;
     }
@@ -40,9 +40,9 @@ public class MatrixConversion {
     public Matrix Reflection(Matrix in, int Axis){
         for(int row=0; row < in.getRowCount(); row++){
             if(Axis == YAXIS)
-                in.setAsDouble(in.getAsDouble(row,0)*(-1), 0);
+                in.setAsDouble(in.getAsDouble(row,0)*(-1), row, 0);
             if(Axis == XAXIS)
-                in.setAsDouble(in.getAsDouble(row,1)*(-1), 1);
+                in.setAsDouble(in.getAsDouble(row,1)*(-1), row, 1);
         }
         return in;
     }
@@ -59,8 +59,8 @@ public class MatrixConversion {
             double y = in.getAsDouble(row,1);
             double xPrime = (x*Math.cos(Degrees))-(y*Math.sin(Degrees));
             double yPrime = (x*Math.sin(Degrees))+(y*Math.cos(Degrees));
-            in.setAsDouble(xPrime, 0);
-            in.setAsDouble(yPrime, 1);
+            in.setAsDouble(xPrime,row, 0);
+            in.setAsDouble(yPrime,row, 1);
         }
         return in;
     }
@@ -77,8 +77,8 @@ public class MatrixConversion {
             double y = in.getAsDouble(row,1);
             double xPrime = (x*Math.cos(Degrees))+(y*Math.sin(Degrees));
             double yPrime = (y*Math.cos(Degrees))-(x*Math.sin(Degrees));
-            in.setAsDouble(xPrime, 0);
-            in.setAsDouble(yPrime, 1);
+            in.setAsDouble(xPrime,row, 0);
+            in.setAsDouble(yPrime,row, 1);
         }
         return in;
     }
@@ -91,8 +91,8 @@ public class MatrixConversion {
      */
     public Matrix Scale(Matrix in, double Factor){
         for(int row=0; row < in.getRowCount(); row++){
-            in.setAsDouble(in.getAsDouble(row,0)*Factor, 0);
-            in.setAsDouble(in.getAsDouble(row,1)*Factor, 1);
+            in.setAsDouble(in.getAsDouble(row,0)*Factor, row, 0);
+            in.setAsDouble(in.getAsDouble(row,1)*Factor, row, 1);
         }
         return in;
     }

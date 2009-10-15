@@ -23,7 +23,8 @@ public class PajekReader extends TextFileReader {
     }
 
     @Override
-    public Matrix Read(int type, int rows, int col) {
+    public Matrix Read(int type, int rows, int col) throws Exception{
+        //TODO: not implemented yet
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

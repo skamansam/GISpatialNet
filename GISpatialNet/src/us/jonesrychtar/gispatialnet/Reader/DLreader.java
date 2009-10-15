@@ -56,7 +56,7 @@ public class DLreader extends TextFileReader{
     }
 
     @Override
-    public Matrix Read(int type, int rows, int col) {
+    public Matrix Read(int type, int rows, int col) throws Exception {
         Scanner sc;
         header.nc = col;
         header.nr = rows;
@@ -131,10 +131,11 @@ public class DLreader extends TextFileReader{
                 System.err.println("Invalid format");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
          return output;
     }
+    //TODO: Finish _analyzeHEader
 	private boolean _analyzeHeader (String in, Scanner sc) {
 		//check for n
 		if(in.equals("n") || in.equals("n=")){
