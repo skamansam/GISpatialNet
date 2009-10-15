@@ -28,21 +28,25 @@ public class ExcelReader {
     public ExcelReader(String filename){
         in = new File(filename);
     }
-    public Matrix read(){
+    public Matrix read() throws Exception{
         Matrix out = MatrixFactory.emptyMatrix();
         try{
             Workbook w1 = Workbook.getWorkbook(in);
             String loc;
-            //TODO: Find a better way to do this
-            //cols A to IV
+            //cols characters
             char cols[] = new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
             //read all col, rows of sheet 1
             boolean quit = false;
             //i is row j is col
             for(int i = 1; !quit; i++){
                 boolean nextLine = false;
-                for(int j = 0; !nextLine; j++){
-                    loc = "Sheet1!"+cols[j]+i;
+                for(int j = 0; !nextLine && j<=256; j++){ //Max 256 col
+                    //calculate col (A - IV)
+                    String pos = "";
+                    if( j/26 > 1)
+                        pos += cols[(j/26)-1];
+                    pos+= cols[(j%26)-1];
+                    loc = "Sheet1!"+pos+i;
                     //check if cell is empty, if yes, go to next line
                     if(w1.getCell(loc).getContents().isEmpty()){
                         nextLine = true;
@@ -56,7 +60,7 @@ public class ExcelReader {
                 }
             }
         } catch(Exception e){
-            e.printStackTrace();
+            throw e;
         }
         return out;
     }

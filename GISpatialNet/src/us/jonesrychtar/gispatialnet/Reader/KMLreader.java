@@ -11,8 +11,6 @@ package us.jonesrychtar.gispatialnet.Reader;
 
 import org.boehn.kmlframework.kml.Document;
 import org.boehn.kmlframework.kml.Kml;
-import org.boehn.kmlframework.kml.Placemark;
-
 import org.ujmp.core.Matrix;
 /**
  *
@@ -34,12 +32,13 @@ public class KMLreader {
         kml.setFeature(doc);
     }
 
-    public Matrix[] read(){
+    public Matrix[] read() throws Exception{
         try{
             kml.createKml(file);
 
+            //TODO: find/make a reader for KML syntax
         }catch(Exception e){
-            e.printStackTrace();
+            throw e;
         }
         return new Matrix[]{xout,yout,adjout,attbout};
     }

@@ -8,13 +8,9 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import java.awt.Color;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.Writer.ShapefileEdgeWriter;
-import us.jonesrychtar.gispatialnet.Writer.ShapefileWriter;
 
 /**
  *
@@ -23,10 +19,9 @@ import us.jonesrychtar.gispatialnet.Writer.ShapefileWriter;
 public class Borders {
     private Matrix X;
     private Matrix Y;
-    private Matrix Adj;
-    private Matrix adjStyle;
-    private String filenameE;
+    private Matrix Adj, AdjH;
     int Alg = 0;
+    String filenameE, filenameEH;
     /**
      *
      * @param filenameEdgesin Name of output edgefile name
@@ -43,6 +38,7 @@ public class Borders {
         Adj = adj;
         Alg = Algorithm;
         filenameE = filenameEdgesin;
+        filenameEH = filenameEdgesin+"Highlighted";
     }
     /**
      *
@@ -63,24 +59,22 @@ public class Borders {
      * writes data to edgeshapefile
      */
     public void Write(){
-        StyleBuilder builder = new StyleBuilder();
-        Style origLineStyle = builder.createStyle(builder.createLineSymbolizer(Color.BLACK,1));
-        Style linestyle = builder.createStyle(builder.createLineSymbolizer(Color.GREEN, 2));
-        Style[] st = {origLineStyle,linestyle};
-
-        //make adjStyle
-        adjStyle = MatrixFactory.zeros(Adj.getRowCount(), Adj.getColumnCount());
-        for(int row=0; row<Adj.getRowCount(); row++)
-            for(int col=0; col<Adj.getColumnCount(); col++)
-                if(_Highlight(Adj.getAsDouble(row,col)))
-                    adjStyle.setAsInt(1,row,col);
-                else{
-                    adjStyle.setAsInt(0,row,col);
+        //prepare Adj matricies
+        AdjH = MatrixFactory.zeros( org.ujmp.core.enums.ValueType.DOUBLE, Adj.getRowCount(), Adj.getColumnCount());
+        for(int row=0; row < Adj.getRowCount(); row++){
+            for(int col=0; col < Adj.getColumnCount(); col++){
+                if(_Highlight(Adj.getAsDouble(row,col))){
+                    AdjH.setAsDouble(Adj.getAsDouble(row,col), row,col);
+                    Adj.setAsDouble(0,row,col);
                 }
+            }
+        }
 
-        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(filenameE, X,Y, Adj, adjStyle,st);
+        //write shapefiles
+        ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(filenameE, X,Y, Adj);
+        ShapefileEdgeWriter highlighted = new ShapefileEdgeWriter(filenameEH, X, Y, AdjH);
+        highlighted.write();
         sfew.write();
-        
     }
     /**
      * Default borders algorithm

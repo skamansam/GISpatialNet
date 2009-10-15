@@ -42,7 +42,7 @@ public class ShapeFileReader {
         file = new File(filenameNodes);
     }
 
-    public Matrix[] Read() {
+    public Matrix[] Read() throws Exception {
         Matrix x = MatrixFactory.emptyMatrix();
         Matrix y = MatrixFactory.emptyMatrix();
         Matrix attb = MatrixFactory.emptyMatrix();
@@ -91,7 +91,7 @@ public class ShapeFileReader {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw e;
             }
         }
         if (fileEdge != null) {
@@ -127,7 +127,7 @@ public class ShapeFileReader {
                     adj.setAsDouble(1,id2,id1);
                 }
             }catch(Exception e){
-                e.printStackTrace();
+                throw e;
             }
         }
         //testing-----------

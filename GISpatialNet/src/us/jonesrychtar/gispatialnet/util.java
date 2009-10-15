@@ -13,9 +13,6 @@ import javax.naming.OperationNotSupportedException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
-//TODO: remove EmptyMatrix - it won't compile on all platforms. 
-//TODO: replace 'new EmptyMatrix()' with 'MatrixFactory.emptyMatrix()'
-//import org.ujmp.core.objectmatrix.EmptyMatrix;
 import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.Reader.*;
 
@@ -28,6 +25,7 @@ import us.jonesrychtar.gispatialnet.Reader.*;
 public class util {
 
     //Matrix data
+    //use 'MatrixFactory.emptyMatrix()'
     private Matrix x = MatrixFactory.emptyMatrix(); //vector matrix (1 col) of x coordinates
     private Matrix y = MatrixFactory.emptyMatrix(); //vector matrix of y coordinates
     private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
@@ -36,18 +34,30 @@ public class util {
     private String[] loadedFiles = new String[]{};
 
     //loading functions
-    public void loadShapefile(String filenameN, String filenameE){
+    public void loadShapefile(String filenameN, String filenameE) throws Exception{
         ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
         Matrix temp[] = sfr.Read();
 
-        //TODO: Handle merging data
         x = temp[0];
         y = temp[1];
         adj = temp[2];
         attb = temp[3];
     }
 
-    public void loadGoogleEarth(String filename) {
+    public void loadShapefile(String filenameN, String filenameE, int[] MergeOn) throws Exception {
+        ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
+        Matrix temp[] = sfr.Read();
+
+        DataMerger m = new DataMerger(combineXYAttb(), adj, combine(combine(temp[0], temp[1]), temp[3]), temp[2]);
+        Matrix temp1[] = m.Merge(MergeOn);
+        Matrix temp2[] = splitXYAttb(temp1[0]);
+        adj = temp1[1];
+        x = temp2[0];
+        y = temp2[1];
+        attb = temp2[2];
+    }
+
+    public void loadGoogleEarth(String filename) throws Exception {
         KMLreader kmlr = new KMLreader(filename);
         Matrix temp[] = kmlr.read();
 
@@ -70,7 +80,7 @@ public class util {
      * 2 Upper Matrix
      * ...
      * */
-    public void loadExcel(String filename, int Matrix, int MatrixType){
+    public void loadExcel(String filename, int Matrix, int MatrixType) throws Exception{
         ExcelReader er = new ExcelReader(filename);
         if(MatrixType == 0){
             switch(Matrix){
@@ -78,13 +88,13 @@ public class util {
             }
         }
     }
-    public void loadPajek(String filename, int Matrix, int MatrixType){
+    public void loadPajek(String filename, int Matrix, int MatrixType) throws Exception{
 
     }
-    public void loadDL(String filename, int Matrix, int MatrixType){
+    public void loadDL(String filename, int Matrix, int MatrixType) throws Exception{
 
     }
-    public void loadTxt(String filename, int Matrix, int MatrixType){
+    public void loadTxt(String filename, int Matrix, int MatrixType) throws Exception{
 
     }
     //saving functions
@@ -294,6 +304,19 @@ public class util {
             return x.appendHorizontally(y).appendHorizontally(attb);
        else
            throw new IllegalArgumentException("Matrix Sizes do not match.");
+    }
+    /**
+     * Combines Matrix A and B
+     * @param a Matrix to append to
+     * @param b Matrix to append
+     * @return B appended to A horizontallly
+     * @throws java.lang.IllegalArgumentException
+     */
+    public Matrix combine(Matrix a, Matrix b) throws IllegalArgumentException{
+        if(a.getRowCount() == b.getRowCount())
+            return a.appendHorizontally(b);
+        else
+            throw new IllegalArgumentException("Matrix Sizes do not match.");
     }
     /**
      * Splits a big matrix into 3 smaller matricies
