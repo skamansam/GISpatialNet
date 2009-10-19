@@ -9,6 +9,9 @@
 
 package us.jonesrychtar.gispatialnet;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation;
@@ -59,7 +62,7 @@ public class HighlightEdges {
     /**
      * Writes data to edge shapefile
      */
-    public void write(){
+    public void write() throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
         //build adj and adjH
         AdjH = MatrixFactory.zeros( org.ujmp.core.enums.ValueType.DOUBLE, Adj.getRowCount(), Adj.getColumnCount());

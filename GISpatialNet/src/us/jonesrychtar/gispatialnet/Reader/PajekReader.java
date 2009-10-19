@@ -19,17 +19,21 @@ import java.util.Scanner;
  * @version 0.0.1
  */
 public class PajekReader extends TextFileReader {
-	Matrix vertices, arcs, edges;
-	
-    public PajekReader(Matrix in, String filename){
+	//Matrix vertices, arcs, edges;
+    //arcs and edges are the same thing
+	Matrix vertices, arcs;
+
+    public PajekReader(String filename){
         this.setFile(this.openFile(filename));
     }
 
     @Override
+    //TODO: This should return 2 matricies, one with XY coordinates, one with Adj matrix for arcs
     public Matrix Read(int type, int rows, int col) throws Exception{
-        //TODO: not implemented yet
+        
     	Scanner theFile = new Scanner(this.file);
-    	Matrix theMatrix=MatrixFactory.emptyMatrix();
+    	//Matrix theMatrix=MatrixFactory.emptyMatrix();
+        Matrix theMatrix = MatrixFactory.zeros(rows,col);
     	while (theFile.hasNext()){
     		String theType=theFile.next();
     		if (theType.equalsIgnoreCase("*Vertices")){
@@ -44,9 +48,9 @@ public class PajekReader extends TextFileReader {
     			}
     		}else if(theType.equalsIgnoreCase("*Arcs")){
     			
-    		}else if(theType.equalsIgnoreCase("*Edges")){
+    		}//else if(theType.equalsIgnoreCase("*Edges")){
     			
-    		}
+    		//}
     	}
     	
     	

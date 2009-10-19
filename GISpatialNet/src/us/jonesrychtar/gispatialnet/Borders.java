@@ -8,6 +8,9 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.Writer.ShapefileEdgeWriter;
@@ -58,7 +61,7 @@ public class Borders {
     /**
      * writes data to edgeshapefile
      */
-    public void Write(){
+    public void Write() throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         //prepare Adj matricies
         AdjH = MatrixFactory.zeros( org.ujmp.core.enums.ValueType.DOUBLE, Adj.getRowCount(), Adj.getColumnCount());
         for(int row=0; row < Adj.getRowCount(); row++){

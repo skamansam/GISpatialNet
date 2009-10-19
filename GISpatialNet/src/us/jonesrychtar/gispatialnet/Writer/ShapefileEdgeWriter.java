@@ -10,6 +10,9 @@ package us.jonesrychtar.gispatialnet.Writer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 
 /**
@@ -33,7 +36,7 @@ public class ShapefileEdgeWriter {
      * @param yin Vector matrix containing Y coordinate data
      * @param adjin Matrix containing edge values between nodes
      */
-    public ShapefileEdgeWriter(String filename, Matrix xin, Matrix yin, Matrix adjin) {
+    public ShapefileEdgeWriter(String filename, Matrix xin, Matrix yin, Matrix adjin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException {
 
         x = xin;
         y = yin;
@@ -47,7 +50,7 @@ public class ShapefileEdgeWriter {
     /**
      * Write data to edge shapefile
      */
-    public void write() {
+    public void write() throws IOException {
         GeometryFactory gfact = new GeometryFactory();
         
             for (int r = 0; r < x.getRowCount(); r++) {

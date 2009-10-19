@@ -50,52 +50,47 @@ public class ShapeFileReader {
         URL shapeURL;
 
         if (file != null) {
-            try {
-                shapeURL = file.toURI().toURL();
-                store = new ShapefileDataStore(shapeURL);
-                String[] names = store.getTypeNames(); //filenames
-                FeatureSource source = store.getFeatureSource(names[0]);
-                featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
-                int featureCount = featureCollection.size();
-                FeatureType type = featureCollection.getSchema(); //gets schema of db
-                FeatureIterator fi = featureCollection.features();
-                //set up matrix
-                x = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
-                y = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
-                attb = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, featureCount, names.length);
-                //copy featureCollection to Matrix
-                //set col labels
-                for (int i = 0; i < names.length; i++) {
-                    attb.setColumnLabel(i, names[i]);
-                }
+            shapeURL = file.toURI().toURL();
+            store = new ShapefileDataStore(shapeURL);
+            String[] names = store.getTypeNames(); //filenames
+            FeatureSource source = store.getFeatureSource(names[0]);
+            featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
+            int featureCount = featureCollection.size();
+            FeatureType type = featureCollection.getSchema(); //gets schema of db
+            FeatureIterator fi = featureCollection.features();
+            //set up matrix
+            x = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
+            y = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
+            attb = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, featureCount, names.length);
+            //copy featureCollection to Matrix
+            //set col labels
+            for (int i = 0; i < names.length; i++) {
+                attb.setColumnLabel(i, names[i]);
+            }
 
-                for (int i = 0; i < featureCount; i++) {
-                    //x,y matrix
-                    Feature data = fi.next();
-                    Iterator<? extends Property> iterator = data.getValue().iterator();
-                    Point pt = (Point) iterator.next().getValue();
-                    x.setAsDouble(pt.getX(), i, 0);
-                    y.setAsDouble(pt.getY(), i, 0);
+            for (int i = 0; i < featureCount; i++) {
+                //x,y matrix
+                Feature data = fi.next();
+                Iterator<? extends Property> iterator = data.getValue().iterator();
+                Point pt = (Point) iterator.next().getValue();
+                x.setAsDouble(pt.getX(), i, 0);
+                y.setAsDouble(pt.getY(), i, 0);
 
-                    //attb matrix
-                    int col = 1;
-                    while(iterator.hasNext()){
-                        Object temp = iterator.next().getValue();
-                        if(temp instanceof java.lang.Double){
-                            attb.setAsDouble((Double)temp, i, col);
-                        }
-                        else{
-                            attb.setAsString((String)temp, i,col);
-                        }
-                        col++;
+                //attb matrix
+                int col = 1;
+                while (iterator.hasNext()) {
+                    Object temp = iterator.next().getValue();
+                    if (temp instanceof java.lang.Double) {
+                        attb.setAsDouble((Double) temp, i, col);
+                    } else {
+                        attb.setAsString((String) temp, i, col);
                     }
+                    col++;
                 }
-            } catch (Exception e) {
-                throw e;
             }
         }
         if (fileEdge != null) {
-            try{
+            try {
                 shapeURL = fileEdge.toURI().toURL();
                 store = new ShapefileDataStore(shapeURL);
                 String[] names = store.getTypeNames(); //filenames
@@ -107,42 +102,43 @@ public class ShapeFileReader {
                 adj = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, featureCount);
 
                 //copy feature collection to adj matrix
-                for(int row=0; row<featureCount; row++){
+                for (int row = 0; row < featureCount; row++) {
                     int setr, setc;
-                    MultiLineString temp =(MultiLineString) fi.next().getValue().iterator().next().getValue();
+                    MultiLineString temp = (MultiLineString) fi.next().getValue().iterator().next().getValue();
                     Coordinate[] ctemp = temp.getCoordinates();
 
                     //find id number to first x,y pair
-                    double xn,yn;
+                    double xn, yn;
                     int id1, id2;
-                    xn=ctemp[0].x;
-                    yn=ctemp[0].y;
-                    id1 = _seqSearch(xn,yn,x, y);
+                    xn = ctemp[0].x;
+                    yn = ctemp[0].y;
+                    id1 = _seqSearch(xn, yn, x, y);
                     //find id number of second x,y pair
-                    xn=ctemp[1].x;
-                    yn=ctemp[1].y;
-                    id2 = _seqSearch(xn,yn,x,y);
+                    xn = ctemp[1].x;
+                    yn = ctemp[1].y;
+                    id2 = _seqSearch(xn, yn, x, y);
                     //set id1, id2 in adj matirx
-                    adj.setAsDouble(1,id1, id2);
-                    adj.setAsDouble(1,id2,id1);
+                    adj.setAsDouble(1, id1, id2);
+                    adj.setAsDouble(1, id2, id1);
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw e;
             }
         }
         //testing-----------
         //System.out.println(x);
         //System.out.println(y);
-        System.out.println(adj);
+        //System.out.println(adj);
         //System.out.println(attb);
         //testing-----------
         return new Matrix[]{x, y, adj, attb};
     }
 
     private int _seqSearch(double x, double y, Matrix mapX, Matrix mapY) {
-        for(int id=0;id<mapX.getRowCount(); id++){
-            if(x == mapX.getAsDouble(id,0) && y == mapY.getAsDouble(id,0))
+        for (int id = 0; id < mapX.getRowCount(); id++) {
+            if (x == mapX.getAsDouble(id, 0) && y == mapY.getAsDouble(id, 0)) {
                 return id;
+            }
         }
         return -1;
     }

@@ -9,8 +9,10 @@
  */
 package us.jonesrychtar.gispatialnet.Writer;
 
+import java.io.IOException;
 import org.boehn.kmlframework.kml.Document;
 import org.boehn.kmlframework.kml.Kml;
+import org.boehn.kmlframework.kml.KmlException;
 import org.boehn.kmlframework.kml.Placemark;
 import org.ujmp.core.Matrix;
 
@@ -43,8 +45,7 @@ public class KMLwriter {
     /**
      * Write data to file
      */
-    public void WriteFile() {
-        try{
+    public void WriteFile() throws KmlException, IOException {
             //point data
             String name = "";
             String Description= "";
@@ -70,10 +71,6 @@ public class KMLwriter {
             //write file
             kml.createKml(file);
             kml.write(kml);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
     }
 
 }
