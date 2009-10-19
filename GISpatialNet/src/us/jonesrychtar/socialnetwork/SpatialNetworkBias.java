@@ -147,8 +147,8 @@ public class SpatialNetworkBias {
     System.out.println("Program completed successfully.");
     }*/
 
-
-	@SuppressWarnings("unused")
+//Moved to CoordinateGraph.CoordinateGraphBase.createRandomCoordinateGraphDataInFiles()
+/*	@SuppressWarnings("unused")
 	private void createCoordinateGraphData() throws FileNotFoundException {
 		rand = new Random();
 		PrintStream outx = new PrintStream(new FileOutputStream("x.csv"));
@@ -180,8 +180,9 @@ public class SpatialNetworkBias {
 		}
 		outa.close();
 	}
-	
-	
+	*/
+
+//Moved to CoordinateGraph.CoordinateGraphBase.setCoordinateFormat(type)
 /*	private void setCoordinateFormat() {
 		System.out.println("Is the coordinate dataset in x,y format, or in direction and distance format?\n" +
 			"Please enter the option number from the menu below.\n" +
@@ -600,7 +601,7 @@ public class SpatialNetworkBias {
 	
 	public boolean readDistance(CSVReader reader) {
 		String exitCondition = "";
-		try {
+/*		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
 			exitCondition += "Error reading the spatial data for the next network.";
@@ -699,7 +700,7 @@ public class SpatialNetworkBias {
 				y.setAsDouble(totalYCoord/((double) (numVerts - missingNodes.size())), i, 0);
 			}
 		}
-
+*/
 		if (exitCondition.equals("")) {
 			return true;
 		} else {
