@@ -65,6 +65,6 @@ public abstract class TextFileWriter {
     /**
      * Abstract function used to write file
      */
-    public abstract void WriteFile();
+    public abstract void WriteFile() throws Exception;
 
 }

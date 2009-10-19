@@ -18,9 +18,14 @@ public class TestData {
         return MatrixFactory.zeros(rows,cols);
     }
     public Matrix RandomMatrix(int rows, int cols,int min, int max){
+
         max ++;
         Random rand = new Random();
         Matrix out = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, rows,cols);
+        //set col headers
+        for(int col=0; col<cols; col++){
+            out.setColumnLabel(col, "Label");
+        }
         for(int i=0; i<rows; i++)
             for(int j=0; j<cols; j++)
                 out.setAsDouble((rand.nextInt(max))+min,i,j);

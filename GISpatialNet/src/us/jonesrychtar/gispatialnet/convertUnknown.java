@@ -10,7 +10,12 @@
 package us.jonesrychtar.gispatialnet;
 
 import java.awt.Dimension;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 
 /**
@@ -35,7 +40,7 @@ public class convertUnknown {
      * @param alg
      * @param args
      */
-    public convertUnknown(String filenameE, String filenameN, Matrix adjin, Matrix attbin, int alg, Dimension args){
+    public convertUnknown(String filenameE, String filenameN, Matrix adjin, Matrix attbin, int alg, Dimension args) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         //set x, y
         _use(alg,args);
 
@@ -53,9 +58,18 @@ public class convertUnknown {
 
         //set adj
         adj = adjin;
-
-        //make convert known
-        ck = new convertKnown(filenameE, filenameN, x,y,adjin);
+        try {
+            //make convert known
+            ck = new convertKnown(filenameE, filenameN, x, y, adjin);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(convertUnknown.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(convertUnknown.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(convertUnknown.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SchemaException ex) {
+            Logger.getLogger(convertUnknown.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

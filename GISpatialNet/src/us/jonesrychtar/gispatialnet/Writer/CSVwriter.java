@@ -10,6 +10,7 @@ package us.jonesrychtar.gispatialnet.Writer;
 
 import com.mindprod.csv.CSVWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import org.ujmp.core.Matrix;
 
@@ -103,28 +104,23 @@ public class CSVwriter extends TextFileWriter {
     }
 
     @Override
-    public void WriteFile() {
-        try {
-            //create output writer
-            out = new CSVWriter(new PrintWriter(this.getFile()), quoteLevel, seperator, quote, comment, trimQuote);
-            //write headers
-            for(int i=0;i<this.getWorkingset().getColumnCount();i++)
-                out.put(this.getWorkingset().getColumnLabel(i));
-            out.nl();
-            //iterate through the matrix and write to file
-            for(int j=1;j<this.getWorkingset().getRowCount();j++){
-            	out.put(j);
-            	out.put("Euclidean");
-                for(int k=0; k<this.getWorkingset().getColumnCount();k++){
-                	out.put(this.getWorkingset().getAsString(j,k));
-                }
-                out.nl();
-            }
-
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public void WriteFile() throws FileNotFoundException {
+        //create output writer
+        out = new CSVWriter(new PrintWriter(this.getFile()), quoteLevel, seperator, quote, comment, trimQuote);
+        //write headers
+        for (int i = 0; i < this.getWorkingset().getColumnCount(); i++) {
+            out.put(this.getWorkingset().getColumnLabel(i));
         }
+        out.nl();
+        //iterate through the matrix and write to file
+        for (int j = 0; j < this.getWorkingset().getRowCount(); j++) {
+            //out.put(j);
+            //out.put("Euclidean");
+            for (int k = 0; k < this.getWorkingset().getColumnCount(); k++) {
+                out.put(this.getWorkingset().getAsString(j, k));
+            }
+            out.nl();
+        }
+        out.close();
     }
-
 }

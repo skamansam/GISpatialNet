@@ -9,9 +9,9 @@
 package us.jonesrychtar.gispatialnet.Writer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import org.ujmp.core.Matrix;
-import org.ujmp.core.enums.FileFormat;
 
 /**
  *
@@ -37,7 +37,7 @@ public class DLwriter extends TextFileWriter {
      */
     public DLwriter(Matrix map, String filename){
         this.setWorkingset(map);
-        this.CreateFile(filename);
+        this.setFile(CreateFile(filename));
     }
 
     /**
@@ -53,36 +53,41 @@ public class DLwriter extends TextFileWriter {
             case 1: ext=".txt"; break;
             default: ext=".dat"; break;
         }
-        this.CreateFile(filename);
+        this.setFile(CreateFile(filename));
     }
 
     @Override
     public File CreateFile(String name) {
-        return new File(name, ext);
+        return new File(name+ext);
     }
 
     @Override
-    public void WriteFile() {
-        try {
+    public void WriteFile() throws FileNotFoundException {
+
             PrintWriter pw = new PrintWriter(this.getFile());
             //write header information
             pw.print("dl nr="+this.getWorkingset().getRowCount()+" nc="+this.getWorkingset().getColumnCount()+"\n");
             //write labels
             pw.print("col labels:\n");
+        String test; //TODO: Remove after testing
             for(int i=0; i<this.getWorkingset().getColumnCount();i++){
-                if(i<this.getWorkingset().getColumnCount()-1)
+                if(i<this.getWorkingset().getColumnCount()-1){
                     //all labels except last have ,
+                    //TODO: remove after testing
+                    test = this.getWorkingset().getColumnLabel(i);
+                    //testing end
                     pw.print(this.getWorkingset().getColumnLabel(i)+", ");
-                else
+                }
+                else{
                     pw.print(this.getWorkingset().getColumnLabel(i));
+                }
             }
             pw.print("\n");
             //write data
             pw.println("data:");
             pw.print(this.getWorkingset()); //this should print whole matrix to file
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+            pw.flush();
+            pw.close();
     }
 
 }

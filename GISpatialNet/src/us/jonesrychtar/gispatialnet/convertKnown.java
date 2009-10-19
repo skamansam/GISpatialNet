@@ -8,6 +8,9 @@
  * 
  */
 package us.jonesrychtar.gispatialnet;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.geotools.feature.SchemaException;
 import us.jonesrychtar.gispatialnet.Writer.*;
 
 import org.ujmp.core.Matrix;
@@ -33,7 +36,7 @@ public class convertKnown {
     * @param adjin matrix containing edge data
     * @param attbin matrix containing attribute data
     */
-    public convertKnown(String filenameE, String filenameN, Matrix xin, Matrix yin, Matrix adjin, Matrix attbin){
+    public convertKnown(String filenameE, String filenameN, Matrix xin, Matrix yin, Matrix adjin, Matrix attbin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
         sfew = new ShapefileEdgeWriter(filenameE, xin,yin,adjin);
         sfnw = new ShapefileNodeWriter(filenameN, xin,yin,attbin);
@@ -50,7 +53,7 @@ public class convertKnown {
     * @param yin vector matrix of y coordinates
     * @param adjin matrix containing edge data
     */
-    public convertKnown(String filenameE, String filenameN,Matrix xin, Matrix yin, Matrix adjin){
+    public convertKnown(String filenameE, String filenameN,Matrix xin, Matrix yin, Matrix adjin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
         sfew = new ShapefileEdgeWriter(filenameE, xin,yin,adjin);
         sfnw = new ShapefileNodeWriter(filenameN, xin,yin);

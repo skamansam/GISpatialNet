@@ -9,7 +9,13 @@
 package us.jonesrychtar.gispatialnet;
 
 import java.awt.Dimension;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import javax.naming.OperationNotSupportedException;
+import jxl.write.WriteException;
+import org.boehn.kmlframework.kml.KmlException;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
@@ -28,7 +34,7 @@ public class util {
     //use 'MatrixFactory.emptyMatrix()'
     private Matrix x = MatrixFactory.emptyMatrix(); //vector matrix (1 col) of x coordinates
     private Matrix y = MatrixFactory.emptyMatrix(); //vector matrix of y coordinates
-    private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj)
+    private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj). Always stored as FULL MATRIX
     private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
 
     private String[] loadedFiles = new String[]{};
@@ -70,9 +76,8 @@ public class util {
      * Matrix:
      * 0 XYAttb
      * 1 Adj
-     * 2 X
-     * 3 Y
-     * 4 Attb
+     * 2 XY
+     * 3 Attb
      *
      * MatrixType
      * 0 Full Matrix
@@ -82,26 +87,52 @@ public class util {
      * */
     public void loadExcel(String filename, int Matrix, int MatrixType) throws Exception{
         ExcelReader er = new ExcelReader(filename);
-        if(MatrixType == 0){
-            switch(Matrix){
-                case 0: 
+        //TODO: Finish load Excel
+    }
+    public void loadPajek(String filename, int Matrix, int MatrixType, int rows, int cols) throws Exception{
+        PajekReader pr = new PajekReader(filename);
+        Matrix temp = pr.Read(MatrixType, rows, cols);
+
+        switch(Matrix){
+            case 0: //no attb matrix in pajek
+            {
+                throw new IllegalArgumentException("No attributes in a Pajek file");
+            }
+            case 1:{
+                adj = temp;
+            }
+            case 2:{
+                x = temp.selectColumns(Calculation.Ret.NEW, 0);
+                y = temp.selectColumns(Calculation.Ret.NEW, 1);
+                break;
+            }
+            case 3:
+            {
+                throw new IllegalArgumentException("No attributes in a Pajek file");
             }
         }
     }
-    public void loadPajek(String filename, int Matrix, int MatrixType) throws Exception{
+    public void loadDL(String filename, int Matrix, int MatrixType, int rows, int col) throws Exception{
+        DLreader dlr = new DLreader(filename);
+        Matrix temp = dlr.Read(MatrixType, rows, col);
+
+        switch(Matrix){
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+        }
 
     }
-    public void loadDL(String filename, int Matrix, int MatrixType) throws Exception{
-
-    }
-    public void loadTxt(String filename, int Matrix, int MatrixType) throws Exception{
+    public void loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
+        //also covers CSV
 
     }
     //saving functions
     /**
      * Saves to 2 shapefiles, one with nodes, one with edges
      */
-    public void saveShapefile(String Edgefilename, String Nodefilename){
+    public void saveShapefile(String Edgefilename, String Nodefilename) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
             if (attb != null) {
                 new convertKnown(Edgefilename, Nodefilename, x, y, adj, attb);
             } else {
@@ -114,7 +145,7 @@ public class util {
      * @param Height height of final map
      * @param Width width of final map
      */
-    public void saveShapefileUnknown(String Edgefilename, String Nodefilename, int alg, int Height, int Width){
+    public void saveShapefileUnknown(String Edgefilename, String Nodefilename, int alg, int Height, int Width) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         Dimension temp = new Dimension(Height,Width);
         new convertUnknown(Edgefilename, Nodefilename,x,y, alg , temp);
     }
@@ -122,14 +153,14 @@ public class util {
      * Saves to Google Earth kml format
      * @param filename Name of output file without extension
      */
-    public void saveGoogleEarth(String filename){
+    public void saveGoogleEarth(String filename) throws KmlException, IOException{
         new KMLwriter(combineXYAttb(),filename).WriteFile();
     }
     /**
      * Saves to PAjek .net format
      * @param filename name of output file without extension
      */
-    public void savePajek(String filename){
+    public void savePajek(String filename) throws FileNotFoundException{
         new PajekWriter(x.appendHorizontally(y), adj, filename).WriteFile();
     }
     /**
@@ -137,7 +168,7 @@ public class util {
      * @param filename name of output file without extension
      * @param ext extension (0:.dat, 1:.txt)
      */
-    public void saveDL(String filename, int ext){
+    public void saveDL(String filename, int ext) throws FileNotFoundException{
         new DLwriter(adj,filename,ext).WriteFile();
     }
     /**
@@ -145,7 +176,7 @@ public class util {
      * @param filenameNodes name of output file for nodes without extension
      * @param filenameArcs name of output file for edges without extension
      */
-    public void saveExcel(String filenameNodes, String filenameArcs){
+    public void saveExcel(String filenameNodes, String filenameArcs) throws IOException, WriteException{
         new ExcelWriter(combineXYAttb(), filenameNodes).WriteFile();
         new ExcelWriter(adj, filenameArcs).WriteFile();
     }
@@ -155,7 +186,7 @@ public class util {
      * @param filenameArcs name of output file for edges without extension
      * @param seperator character that seperates values
      */
-    public void saveCSV(String filenameNodes, String filenameArcs, char seperator){
+    public void saveCSV(String filenameNodes, String filenameArcs, char seperator) throws FileNotFoundException{
         new CSVwriter(combineXYAttb(), filenameNodes, seperator).WriteFile();
         new CSVwriter(adj, filenameArcs, seperator).WriteFile();
     }
@@ -166,7 +197,7 @@ public class util {
      * @param alg Algorithm to use
      * Options: 0 - default Borders algorithm
      */
-    public void Border(String filename, int alg){
+    public void Border(String filename, int alg) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         Borders b = new Borders(filename, x,y,adj,alg);
         b.Write();
     }
@@ -193,7 +224,7 @@ public class util {
      *              2 more than median length
      *              3 top 10 percent
      */
-    public void Highlight(int alg, String filename){
+    public void Highlight(int alg, String filename) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         HighlightEdges h = new HighlightEdges(filename, x,y,adj,alg);
         h.write();
     }
@@ -202,6 +233,7 @@ public class util {
      * @throws javax.naming.OperationNotSupportedException
      */
     public void SNB() throws OperationNotSupportedException{
+        //TODO: write SNB (this is robert's function)
         throw new OperationNotSupportedException("function not done yet");
     }
 
@@ -332,5 +364,17 @@ public class util {
         //copy rest to out[2]
         out[2] = in.selectColumns(Calculation.Ret.NEW, 2, in.getColumnCount());
         return out;
+    }
+    /**
+     * Adds a numbered column to the front of the matrix
+     * @param in Matrix to add number column to
+     * @return Original matrix with numbered column added to front
+     */
+    public Matrix addNumberCol(Matrix in){
+        Matrix numCol = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.FLOAT, in.getRowCount(), 1);
+        for(int row=0; row<numCol.getRowCount(); row++){
+            numCol.setAsFloat(row, row, 0);
+        }
+        return numCol.appendHorizontally(in);
     }
 }

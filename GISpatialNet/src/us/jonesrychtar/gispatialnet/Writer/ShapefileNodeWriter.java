@@ -11,6 +11,9 @@ package us.jonesrychtar.gispatialnet.Writer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 
 /**
@@ -34,7 +37,7 @@ public class ShapefileNodeWriter {
      * @param yin Vector matrix of y coordinate values
      * @param attbin Matrix containing attribute data for nodes
      */
-    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin, Matrix attbin){
+    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin, Matrix attbin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
         x = xin;
         y = yin;
@@ -49,7 +52,7 @@ public class ShapefileNodeWriter {
      * @param xin Vector matrix of x coordinate values
      * @param yin Vector matrix of y coordinate values
      */
-    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin){
+    public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin) throws IllegalArgumentException, IOException, MalformedURLException, SchemaException{
 
         x = xin;
         y = yin;
@@ -60,7 +63,7 @@ public class ShapefileNodeWriter {
     /**
      * Writes node data to shapefile
      */
-    public void write(){
+    public void write() throws IOException{
         GeometryFactory gfact = new GeometryFactory();
         //write Node Shapefile
         //use X, Y, and attb

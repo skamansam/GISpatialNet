@@ -33,13 +33,9 @@ public class KMLreader {
     }
 
     public Matrix[] read() throws Exception{
-        try{
-            kml.createKml(file);
+        kml.createKml(file);
 
-            //TODO: find/make a reader for KML syntax
-        }catch(Exception e){
-            throw e;
-        }
+        //TODO: find/make a reader for KML syntax
         return new Matrix[]{xout,yout,adjout,attbout};
     }
 }
