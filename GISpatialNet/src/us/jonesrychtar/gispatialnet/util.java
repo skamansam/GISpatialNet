@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Vector;
 import javax.naming.OperationNotSupportedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
@@ -37,10 +38,12 @@ public class util {
     private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj). Always stored as FULL MATRIX
     private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
 
-    private String[] loadedFiles = new String[]{};
+    private Vector<String> loadedFiles = new Vector<String>();
 
     //loading functions
-    public void loadShapefile(String filenameN, String filenameE) throws Exception{
+    //TODO: comment loading functions
+    //TODO: have loading functions update status (mainly loadedFiles)
+    public void loadShapefile(String filenameN, String filenameE) throws MalformedURLException, IOException  {
         ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
         Matrix temp[] = sfr.Read();
 
@@ -54,7 +57,7 @@ public class util {
         ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
         Matrix temp[] = sfr.Read();
 
-        DataMerger m = new DataMerger(combineXYAttb(), adj, combine(combine(temp[0], temp[1]), temp[3]), temp[2]);
+        DataMerger m = new DataMerger(combine(combine(x,y),attb), adj, combine(combine(temp[0], temp[1]), temp[3]), temp[2]);
         Matrix temp1[] = m.Merge(MergeOn);
         Matrix temp2[] = splitXYAttb(temp1[0]);
         adj = temp1[1];
@@ -73,17 +76,19 @@ public class util {
         attb = temp[3];
     }
     /*
-     * Matrix:
+     * Handled in Util:
+     * Matrix to be loaded:
      * 0 XYAttb
      * 1 Adj
      * 2 XY
      * 3 Attb
      *
-     * MatrixType
+     * Handled in Reader:
+     * MatrixType:
      * 0 Full Matrix
      * 1 Lower Matrix
      * 2 Upper Matrix
-     * ...
+     * 
      * */
     public void loadExcel(String filename, int Matrix, int MatrixType) throws Exception{
         ExcelReader er = new ExcelReader(filename);
@@ -154,7 +159,7 @@ public class util {
      * @param filename Name of output file without extension
      */
     public void saveGoogleEarth(String filename) throws KmlException, IOException{
-        new KMLwriter(combineXYAttb(),filename).WriteFile();
+        new KMLwriter(combine(combine(x,y),attb),filename).WriteFile();
     }
     /**
      * Saves to PAjek .net format
@@ -177,7 +182,7 @@ public class util {
      * @param filenameArcs name of output file for edges without extension
      */
     public void saveExcel(String filenameNodes, String filenameArcs) throws IOException, WriteException{
-        new ExcelWriter(combineXYAttb(), filenameNodes).WriteFile();
+        new ExcelWriter(combine(combine(x,y),attb), filenameNodes).WriteFile();
         new ExcelWriter(adj, filenameArcs).WriteFile();
     }
     /**
@@ -187,7 +192,7 @@ public class util {
      * @param seperator character that seperates values
      */
     public void saveCSV(String filenameNodes, String filenameArcs, char seperator) throws FileNotFoundException{
-        new CSVwriter(combineXYAttb(), filenameNodes, seperator).WriteFile();
+        new CSVwriter(combine(combine(x,y),attb), filenameNodes, seperator).WriteFile();
         new CSVwriter(adj, filenameArcs, seperator).WriteFile();
     }
    
@@ -247,12 +252,12 @@ public class util {
         String out= "Loaded Files: ";
 
         //add loaded files
-        if(loadedFiles.length == 0){
+        if(loadedFiles.isEmpty()){
             out+=" NO FILES LOADED";
         }
         else
-            for(int i=0; i< loadedFiles.length; i++){
-                out+=loadedFiles[i]+" ";
+            for(int i=0; i< loadedFiles.size(); i++){
+                out+=loadedFiles.get(i)+" ";
             }
             
         out+="\n";
@@ -323,20 +328,10 @@ public class util {
         adj = MatrixFactory.emptyMatrix();
         attb = MatrixFactory.emptyMatrix(); 
 
-        loadedFiles = new String[]{};
+        loadedFiles.clear();
 
     }
-    /**
-     * Combines x y and attb into one matrix
-     * @return a single matrix made from x, y, and attb
-     * @throws java.lang.IllegalArgumentException
-     */
-    public Matrix combineXYAttb() throws IllegalArgumentException{
-       if(x.getRowCount() == y.getRowCount() && y.getRowCount() == attb.getRowCount())
-            return x.appendHorizontally(y).appendHorizontally(attb);
-       else
-           throw new IllegalArgumentException("Matrix Sizes do not match.");
-    }
+    
     /**
      * Combines Matrix A and B
      * @param a Matrix to append to
@@ -345,9 +340,20 @@ public class util {
      * @throws java.lang.IllegalArgumentException
      */
     public Matrix combine(Matrix a, Matrix b) throws IllegalArgumentException{
-        if(a.getRowCount() == b.getRowCount())
-            return a.appendHorizontally(b);
-        else
+        if(a.getRowCount() == b.getRowCount()){
+           Matrix temp = a.appendHorizontally(b);
+           //set headers
+           int col=0;
+           while(col<a.getColumnCount()){
+               temp.setColumnLabel(col, a.getColumnLabel(col));
+               col++;
+           }
+           while(col< a.getColumnCount()+b.getColumnCount()){
+               temp.setColumnLabel(col, b.getColumnLabel(col-a.getColumnCount()));
+               col++;
+           }
+            return temp;
+        }else
             throw new IllegalArgumentException("Matrix Sizes do not match.");
     }
     /**
@@ -371,10 +377,11 @@ public class util {
      * @return Original matrix with numbered column added to front
      */
     public Matrix addNumberCol(Matrix in){
-        Matrix numCol = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.FLOAT, in.getRowCount(), 1);
+        Matrix numCol = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.INT, in.getRowCount(), 1);
         for(int row=0; row<numCol.getRowCount(); row++){
-            numCol.setAsFloat(row, row, 0);
+            numCol.setAsInt(row+1, row, 0);
         }
-        return numCol.appendHorizontally(in);
+        numCol.setColumnLabel(0, "id");
+        return combine(numCol,in);
     }
 }

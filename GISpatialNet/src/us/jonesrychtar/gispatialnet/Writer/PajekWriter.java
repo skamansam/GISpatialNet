@@ -31,6 +31,8 @@ public class PajekWriter extends TextFileWriter {
      */
     public PajekWriter(Matrix vert, Matrix arc, String filename) {
         this.setFile(CreateFile(filename));
+        verticies = vert;
+        arcs = arc;
     }
 
     @Override
@@ -43,21 +45,21 @@ public class PajekWriter extends TextFileWriter {
         PrintWriter pw = new PrintWriter(this.getFile());
         //write verticies
         pw.println("*Verticies\t" + verticies.getRowCount());
-        for (int i = 0; i < verticies.getColumnCount(); i++) {
-            for (int j = 0; j < verticies.getRowCount(); j++) {
+        for (int row = 0; row < verticies.getRowCount(); row++) {
+            for (int col = 0; col < verticies.getColumnCount(); col++) {
                 //matrix get function (row, col)
-                pw.print(verticies.getAsString(j, i));
+                pw.print(verticies.getAsString(row, col)+" ");
             }
             pw.print("\n");
         }
         //write arcs
         pw.println("*Arcs ");
-        for (int i = 0; i < arcs.getColumnCount(); i++) {
-            for (int j = 0; j < arcs.getRowCount(); j++) {
-                pw.print(arcs.getAsString(j, i));
+        for (int row = 0; row < arcs.getRowCount(); row++) {
+            for (int col = 0; col < arcs.getColumnCount(); col++) {
+                if(arcs.getAsDouble(row,col) > 0)
+                    pw.println(" "+row+" "+col+" "+arcs.getAsString(row, col));
             }
-            pw.print("\n");
         }
-
+        pw.close();
     }
 }
