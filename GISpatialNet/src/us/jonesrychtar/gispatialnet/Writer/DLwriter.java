@@ -69,13 +69,9 @@ public class DLwriter extends TextFileWriter {
             pw.print("dl nr="+this.getWorkingset().getRowCount()+" nc="+this.getWorkingset().getColumnCount()+"\n");
             //write labels
             pw.print("col labels:\n");
-        String test; //TODO: Remove after testing
             for(int i=0; i<this.getWorkingset().getColumnCount();i++){
                 if(i<this.getWorkingset().getColumnCount()-1){
                     //all labels except last have ,
-                    //TODO: remove after testing
-                    test = this.getWorkingset().getColumnLabel(i);
-                    //testing end
                     pw.print(this.getWorkingset().getColumnLabel(i)+", ");
                 }
                 else{

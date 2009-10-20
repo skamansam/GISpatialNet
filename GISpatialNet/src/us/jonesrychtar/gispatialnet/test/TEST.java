@@ -28,7 +28,7 @@ public class TEST {
 
     public static void main(String[] args) {
        TEST run = new TEST();
-       run.printData();
+       //run.printData();
 
        //functions
        //run.testHE();
@@ -39,7 +39,8 @@ public class TEST {
        //run.TestXLSwriter();
        //run.TestKMLwriter();
        //run.TestCSVwriter();
-       run.TestDLwriter();
+       //run.TestDLwriter();
+       run.TestPajekWriter();
 
 
        //readers
@@ -55,8 +56,9 @@ public class TEST {
     }
 
     public void printData(){
-         System.out.println(u.combine(x, y));
-         System.out.println(a);
+        System.out.println("  "+x.getColumnLabel(0)+"  "+y.getColumnLabel(0));
+        System.out.println(u.combine(x, y));
+        System.out.println(a);
     }
 
     //test functions
@@ -109,7 +111,7 @@ public class TEST {
     }
     public void TestXLSwriter(){
         //Works!
-            ExcelWriter ew = new ExcelWriter(x.appendHorizontally(y),"nodes.xls");
+            ExcelWriter ew = new ExcelWriter(u.combine(x,y),"nodes.xls");
             ExcelWriter eew = new ExcelWriter(a, "edges.xls");
         try {
             ew.WriteFile();
@@ -124,8 +126,8 @@ public class TEST {
         //works
         //must have "long, lat, name, desc" ONLY!
         attb = td.ZeroMatrix(10, 2);
-        System.out.println(u.combine(x, y));
-        System.out.println(attb);
+        //System.out.println(u.combine(x, y));
+        //System.out.println(attb);
         KMLwriter kmlw = new KMLwriter(u.combine(u.combine(x, y),attb),"test.kml");
         try {
             kmlw.WriteFile();
@@ -146,10 +148,21 @@ public class TEST {
         }
     }
     public void TestDLwriter(){
-        //does not write column labels correctly
-        DLwriter dlw = new DLwriter(u.combine(x, y), "test");
+        //works
+        Matrix temp = u.combine(x,y);
+        //System.out.println("Temp Labels:  "+temp.getColumnLabel(0)+"  "+temp.getColumnLabel(1));
+        DLwriter dlw = new DLwriter(temp, "test");
         try {
             dlw.WriteFile();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void TestPajekWriter(){
+        //works
+        PajekWriter pw = new PajekWriter(u.addNumberCol(u.combine(x,y)),a,"Test");
+        try {
+            pw.WriteFile();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,7 +174,11 @@ public class TEST {
         //Works
        try{
            ShapeFileReader shpr = new ShapeFileReader("outN.shp", "outE.shp");
-            shpr.Read();
+            Matrix[] temp = shpr.Read();
+            x = temp[0];
+            y = temp[1];
+            a = temp[2];
+            attb = temp[3];
             printData();
        }
        catch (Exception e){

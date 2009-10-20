@@ -12,6 +12,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -41,8 +43,12 @@ public class ShapeFileReader {
         fileEdge = new File(filenameEdges);
         file = new File(filenameNodes);
     }
-
-    public Matrix[] Read() throws Exception {
+    /**
+     * Reads shapefile
+     * @return Matrix[] 0=x 1=y 2=adj 3=attb
+     * @throws java.lang.Exception
+     */
+    public Matrix[] Read() throws MalformedURLException, IOException  {
         Matrix x = MatrixFactory.emptyMatrix();
         Matrix y = MatrixFactory.emptyMatrix();
         Matrix attb = MatrixFactory.emptyMatrix();
@@ -90,47 +96,37 @@ public class ShapeFileReader {
             }
         }
         if (fileEdge != null) {
-            try {
-                shapeURL = fileEdge.toURI().toURL();
-                store = new ShapefileDataStore(shapeURL);
-                String[] names = store.getTypeNames(); //filenames
-                FeatureSource source = store.getFeatureSource(names[0]);
-                featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
-                int featureCount = (int) x.getRowCount();
-                FeatureType type = featureCollection.getSchema(); //gets schema of db
-                FeatureIterator fi = featureCollection.features();
-                adj = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, featureCount);
+            shapeURL = fileEdge.toURI().toURL();
+            store = new ShapefileDataStore(shapeURL);
+            String[] names = store.getTypeNames(); //filenames
+            FeatureSource source = store.getFeatureSource(names[0]);
+            featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
+            int featureCount = (int) x.getRowCount();
+            FeatureType type = featureCollection.getSchema(); //gets schema of db
+            FeatureIterator fi = featureCollection.features();
+            adj = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, featureCount);
 
-                //copy feature collection to adj matrix
-                for (int row = 0; row < featureCount; row++) {
-                    int setr, setc;
-                    MultiLineString temp = (MultiLineString) fi.next().getValue().iterator().next().getValue();
-                    Coordinate[] ctemp = temp.getCoordinates();
+            //copy feature collection to adj matrix
+            for (int row = 0; row < featureCount; row++) {
+                int setr, setc;
+                MultiLineString temp = (MultiLineString) fi.next().getValue().iterator().next().getValue();
+                Coordinate[] ctemp = temp.getCoordinates();
 
-                    //find id number to first x,y pair
-                    double xn, yn;
-                    int id1, id2;
-                    xn = ctemp[0].x;
-                    yn = ctemp[0].y;
-                    id1 = _seqSearch(xn, yn, x, y);
-                    //find id number of second x,y pair
-                    xn = ctemp[1].x;
-                    yn = ctemp[1].y;
-                    id2 = _seqSearch(xn, yn, x, y);
-                    //set id1, id2 in adj matirx
-                    adj.setAsDouble(1, id1, id2);
-                    adj.setAsDouble(1, id2, id1);
-                }
-            } catch (Exception e) {
-                throw e;
+                //find id number to first x,y pair
+                double xn, yn;
+                int id1, id2;
+                xn = ctemp[0].x;
+                yn = ctemp[0].y;
+                id1 = _seqSearch(xn, yn, x, y);
+                //find id number of second x,y pair
+                xn = ctemp[1].x;
+                yn = ctemp[1].y;
+                id2 = _seqSearch(xn, yn, x, y);
+                //set id1, id2 in adj matirx
+                adj.setAsDouble(1, id1, id2);
+                adj.setAsDouble(1, id2, id1);
             }
         }
-        //testing-----------
-        //System.out.println(x);
-        //System.out.println(y);
-        //System.out.println(adj);
-        //System.out.println(attb);
-        //testing-----------
         return new Matrix[]{x, y, adj, attb};
     }
 

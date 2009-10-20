@@ -8,7 +8,11 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,115 +20,87 @@ import java.util.Scanner;
  * @date September 17, 2009
  * @version 0.0.1
  */
-
 public class cli extends userinterface {
 
     private static cli c;
     private static util u;
     private int statusLevel = 0;
+    Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-       c = new cli();
-       u = new util();
-       c.Menu();
+        c = new cli();
+        u = new util();
+        c.Menu();
     }
 
-    public void cli(){
+    public void cli() {
     }
 
-     //Menus----------------------------------------------------------------------------------
+    //Menus----------------------------------------------------------------------------------
     public void Menu() {
-        int option= getMenu(
+        int option = getMenu(
                 "Main Menu:",
                 u.Status(statusLevel),
-                new String[] {"Load data","Save Data","Analyze Data","Print Full Status","Exit"} );
+                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Exit"});
 
-            switch (option) {
-                case 1:
-                    LoadMenu1();
-                    break;
-                case 2:
-                    SaveMenu();
-                    break;
-                case 3:
-                    AnalyzeMenu();
-                    break;
-                case 4:
-                    u.Status(3);
-                    break;
-                case 5:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Invalid input. Please re-enter.");
-                    break;
-            }
-
-//        }
+        switch (option) {
+            case 1:
+                LoadMenu1();
+                break;
+            case 2:
+                SaveMenu();
+                break;
+            case 3:
+                AnalyzeMenu();
+                break;
+            case 4:
+                u.Status(3);
+                break;
+            case 5:
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
+        }
     }
 
-    private void LoadMenu1(){
+    private void LoadMenu1() {
         int option = getMenu(
                 "Load Menu:",
                 u.Status(statusLevel),
-                new String[] {"Graph/Network Data","Node Coordinate/Location Data",
-                "Attribute Data","Exit"} );
-        if(option<3 && option>0)
+                new String[]{"Delimited text file (.csv,.txt){NT}",
+                    "DL/ucinet (.txt,.dat){NT}", "Pajek (.net){NT}", "Excel file (.xls){NT}",
+                    "Google Earth (.kml){NT}", "Shape File (.shp)", "Back"});
+        if (option < 4 && option > 0) {
             LoadMenu2(option);
-        else
+        } else if (option == 5) {
+        } else if (option == 6) {
+            System.out.println("Enter the name for the node shapefile (with .shp extension):");
+            String n = sc.next();
+            System.out.println("Enter the name for the edge shapefile (with .shp extension:");
+            String e = sc.next();
+            try {
+                u.loadShapefile(n, e);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                System.out.println("File not found.");
+                ex.getCause();
+            }
+        } else {
             Menu();
+        }
 
     }
+
     private void LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
                 u.Status(statusLevel),
-                new String[] {"Delimited text file (.csv,.txt)",
-                "DL/ucinet (.txt,.dat)","Pajek (.net)",
-                "Back"});
-          switch (option) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                LoadMenu1();
-                break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
-                break;
-        }
-    }
-    private void SaveMenu() {
-        int option = getMenu(
-                "Save Data:",
-                u.Status(statusLevel),
-                new String[] {"Delimited text file (.csv,.txt)",
-                "DL/ucinet (.txt,.dat)","Pajek (.net)",
-                "Back"});
-           switch (option) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                Menu();
-                break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
-                break;
-        }
-    }
-    private void AnalyzeMenu() {
-        int option = getMenu(
-                "Analyze Data:",
-                u.Status(statusLevel),
-                new String[] {"QAP"});
-          switch (option) {
+                new String[]{"All data (nodes with attributes)", "Graph/Network/Edge Data",
+                    "Node Coordinate/Location Data", "Attribute Data", "Exit"});
+        switch (option) {
             case 1:
                 break;
             case 2:
@@ -134,6 +110,55 @@ public class cli extends userinterface {
             case 4:
                 break;
             case 5:
+                LoadMenu1();
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
+        }
+    }
+
+    private void SaveMenu() {
+        int option = getMenu(
+                "Save Data:",
+                u.Status(statusLevel),
+                new String[]{"Delimited text file (.csv,.txt)",
+                    "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
+                    "Google Earth (.kml)", "Shape File (.shp)", "Back"});
+        switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                Menu();
+                break;
+            default:
+                System.out.println("Invalid input. Please re-enter.");
+                break;
+        }
+    }
+
+    private void AnalyzeMenu() {
+        int option = getMenu(
+                "Analyze Data:",
+                u.Status(statusLevel),
+                new String[]{"QAP", "Simple Network Bias", "Borders",
+                    "Highlight Edges", "Matrix Conversion"});
+        switch (option) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
                 Menu();
                 break;
             default:
@@ -142,31 +167,36 @@ public class cli extends userinterface {
         }
     }
     //End menus ---------------------------------------------------------------------------
-    public int getMenu(String title, String info ,String[] items){
+
+    public int getMenu(String title, String info, String[] items) {
         //return and err out if length of items is less than one.
-        if(items.length<1){
+        if (items.length < 1) {
             System.err.println("Incorrect length for menu items.");
             return 0;
         }
 
-        Scanner sc = new Scanner(System.in);    //new Scanner for getting input.
-        int option=0;                           //the option input value
-        boolean validInput=false;               //whether the input is valid
+        int option = 0;                           //the option input value
+        boolean validInput = false;               //whether the input is valid
 
         //do menu while the input is not valid
-        while(!validInput){
+        while (!validInput) {
             //print the menu.
-            System.out.println("\n\n"+title+"\n");
-            System.out.print(info+"\n");
-            for(int i=0;i<items.length;i++) System.out.println("\t"+(i+1)+") "+items[i]+"\n");
-            System.out.println("Please enter your selection (1-"+items.length+"): ");
+            System.out.println("\n\n" + title + "\n");
+            System.out.print(info + "\n");
+            for (int i = 0; i < items.length; i++) {
+                System.out.println("\t" + (i + 1) + ") " + items[i] + "\n");
+            }
+            System.out.println("Please enter your selection (1-" + items.length + "): ");
 
             //get user input
             option = sc.nextInt();
 
             //validate input
-            if(option>=1 && option <=items.length) validInput=true;
-            else System.out.println("Invalid Input.");
+            if (option >= 1 && option <= items.length) {
+                validInput = true;
+            } else {
+                System.out.println("Invalid Input.");
+            }
         }
 
         return option;
