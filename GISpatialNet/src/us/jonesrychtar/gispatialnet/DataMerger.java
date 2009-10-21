@@ -13,6 +13,13 @@ public class DataMerger {
     Matrix adj1, adj2;
     Matrix xyAttbOut, adjOut;
 
+    /**
+     * Merge two sets of data into one
+     * @param data1 Matrix containing columns X,Y, Attributes
+     * @param adjacency1 Adjacency matrix
+     * @param data2 Matrix containing columns X,Y, Attributes
+     * @param adjacency2 Adjacency matrix
+     */
     public DataMerger(Matrix data1, Matrix adjacency1, Matrix data2, Matrix adjacency2){
         xyAttb1 = data1;
         adj1 = adjacency1;
@@ -21,6 +28,11 @@ public class DataMerger {
         adj2 = adjacency2;
     }
 
+    /**
+     * Merges data based on selected columns
+     * @param MatchOn
+     * @return Merged data where Matrix[0] is XYAttb and Matrix[1] is Adj
+     */
     public Matrix[] Merge(int[] MatchOn){
         //TODO: implement matching alg
         return new Matrix[]{xyAttbOut, adjOut};

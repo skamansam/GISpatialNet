@@ -8,11 +8,16 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jxl.write.WriteException;
+import org.boehn.kmlframework.kml.KmlException;
+import org.geotools.feature.SchemaException;
 
 /**
  *
@@ -30,7 +35,8 @@ public class cli extends userinterface {
     public static void main(String[] args) {
         c = new cli();
         u = new util();
-        c.Menu();
+        while(true)
+            c.Menu();
     }
 
     public void cli() {
@@ -41,7 +47,7 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Main Menu:",
                 u.Status(statusLevel),
-                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Exit"});
+                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status","Clear Data", "Exit"});
 
         switch (option) {
             case 1:
@@ -54,9 +60,12 @@ public class cli extends userinterface {
                 AnalyzeMenu();
                 break;
             case 4:
-                u.Status(3);
+                System.out.println(u.Status(3));
                 break;
             case 5:
+                u.ClearData();
+                break;
+            case 6:
                 System.exit(0);
                 break;
             default:
@@ -69,46 +78,138 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Load Menu:",
                 u.Status(statusLevel),
-                new String[]{"Delimited text file (.csv,.txt){NT}",
-                    "DL/ucinet (.txt,.dat){NT}", "Pajek (.net){NT}", "Excel file (.xls){NT}",
-                    "Google Earth (.kml){NT}", "Shape File (.shp)", "Back"});
-        if (option < 4 && option > 0) {
-            LoadMenu2(option);
+                new String[]{"Delimited text file (.csv,.txt)",
+                    "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
+                    "Google Earth (.kml)", "Shape File (.shp)", "Back"});
+        if (option <= 4 && option > 0) {
+            _LoadMenu2(option);
         } else if (option == 5) {
         } else if (option == 6) {
-            System.out.println("Enter the name for the node shapefile (with .shp extension):");
-            String n = sc.next();
-            System.out.println("Enter the name for the edge shapefile (with .shp extension:");
-            String e = sc.next();
-            try {
-                u.loadShapefile(n, e);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                System.out.println("File not found.");
-                ex.getCause();
+            if(u.HasData(0) || u.HasData(1) || u.HasData(2) || u.HasData(3)){
+                if(_overwrite()){
+                    System.out.println("Enter the name for the node shapefile (with .shp extension):");
+                    String n = sc.next();
+                    System.out.println("Enter the name for the edge shapefile (with .shp extension:");
+                    String e = sc.next();
+                    try {
+                        u.loadShapefile(n, e);
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        System.out.println("File not found.");
+                        ex.getMessage();
+                    }
+                }else{
+                    //Unsupported
+                    System.out.println("Function unsupported");
+                }
+            }
+            else{
+                System.out.println("Enter the name for the node shapefile (with .shp extension):");
+                String n = sc.next();
+                System.out.println("Enter the name for the edge shapefile (with .shp extension:");
+                String e = sc.next();
+                try {
+                    u.loadShapefile(n, e);
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    System.out.println("File not found.");
+                    System.out.println(ex.getMessage());
+                }
             }
         } else {
             Menu();
         }
 
     }
-
-    private void LoadMenu2(int what) {
+    // what: 1=txt/csv 2=dl/ucinet 3=pajek 4=excel
+    private void _LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
                 u.Status(statusLevel),
-                new String[]{"All data (nodes with attributes)", "Graph/Network/Edge Data",
+                new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
                     "Node Coordinate/Location Data", "Attribute Data", "Exit"});
-        switch (option) {
-            case 1:
+
+        boolean merge = false;
+        switch(option){
+            case 1:{
+                if(u.HasData(0) || u.HasData(1) || u.HasData(3)){
+                    merge = _overwrite();
+                }
                 break;
-            case 2:
+            }
+            case 2:{
+                if(u.HasData(2))
+                    merge = _overwrite();
                 break;
-            case 3:
+            }
+            case 3:{
+                if(u.HasData(0) || u.HasData(1))
+                    merge = _overwrite();
                 break;
-            case 4:
+            }
+            case 4:{
+                if(u.HasData(3))
+                    merge = _overwrite();
                 break;
+            }
+        }
+        System.out.println("What is the filename: ");
+        String fn = sc.next();
+        int format = _MatrixType();
+        System.out.println("Enter the number of rows: ");
+        int rows = sc.nextInt();
+        System.out.println("Enter the number of columns: ");
+        int cols = sc.nextInt();
+        
+        switch (what) {
+            case 1:{ //txt/csv
+                System.out.print("What is the field seperator? ");
+                char sp = sc.next().charAt(0);
+                if(!merge)
+                    try {
+                        u.loadTxt(fn, option, format, rows, cols, sp);
+                    } catch (Exception ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                else
+                    System.out.println("Merging not supported yet.");
+                break;
+            }
+            case 2:{ //dl ucinet
+                if(!merge)
+                    try {
+                        u.loadDL(fn, option, format, rows, cols);
+                    } catch (Exception ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                else
+                    System.out.println("Merging not supported yet.");
+                break;
+            }
+            case 3:{ //pajek
+                if(!merge)
+                    try {
+                        u.loadPajek(fn, option, format, rows, cols);
+                    } catch (Exception ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                else
+                    System.out.println("Merging not supported yet.");
+                break;
+            }
+            case 4:{ //excel
+                if(!merge)
+                    try {
+                        u.loadExcel(fn, option, format);
+                    } catch (Exception ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                else
+                    System.out.println("Merging not supported yet.");
+                break;
+            }
             case 5:
                 LoadMenu1();
                 break;
@@ -126,13 +227,134 @@ public class cli extends userinterface {
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
         switch (option) {
-            case 1:
+            case 1:{ //txt,csv
+                System.out.println("Enter field seperator: ");
+                char sp = sc.next().charAt(0);
+                System.out.println("Enter the name of the Node File: ");
+                String fnn = sc.next();
+                System.out.println("Enter the name of the Edge File:");
+                String efn = sc.next();
+                try {
+                    u.saveCSV(fnn, efn, sp);
+                } catch (FileNotFoundException ex) {
+                    System.out.println(ex.getMessage());
+                }
                 break;
-            case 2:
+            }
+            case 2:{ //dl ucinet
+                int type = getMenu("Select extension type: ",
+                        "",
+                        new String[]{".txt",".dat"});
+                System.out.println("Enter the name of the File: ");
+                String fnn = sc.next();
+                try{
+                    u.saveDL(fnn, type);
+                } catch (FileNotFoundException ex){
+                    System.out.println(ex.getMessage());
+                }
                 break;
-            case 3:
+            }
+            case 3:{ //pajek
+                System.out.println("Enter the name of the File: ");
+                String fnn = sc.next();
+                try {
+                    u.savePajek(fnn);
+                } catch (FileNotFoundException ex) {
+                    System.out.println(ex.getMessage());
+                }
                 break;
-            case 4:
+            }
+            case 4:{ //excel
+                System.out.println("Enter the name of the Node File: ");
+                String fnn = sc.next();
+                System.out.println("Enter the name of the Edge File:");
+                String efn = sc.next();
+                try {
+                    u.saveExcel(fnn, efn);
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (WriteException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case 5:{ //google earth
+                System.out.println("Enter the name of the File: ");
+                String fnn = sc.next();
+                try {
+                    u.saveGoogleEarth(fnn);
+                } catch (KmlException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+                break;
+            }
+            case 6:{ //shapefile
+                if(!(u.HasData(0)&&u.HasData(1))){
+                    int op = getMenu("Node data not found: ",
+                            "What do you want to do?",
+                            new String[]{"Create XY data", "Write only Edge file"});
+                    System.out.println("Enter the name of the Node File: ");
+                    String fnn = sc.next();
+                    System.out.println("Enter the name of the Edge File:");
+                    String efn = sc.next();
+                    switch(op){
+                        case 1:{
+                            int alg = getMenu("Choose an algorithm:",
+                                    "",
+                                    new String[]{"GeoNet Algorithm"});
+                            System.out.println("Enter max height of network: ");
+                            int ht = sc.nextInt();
+                            System.out.println("Enter max width of network: ");
+                            int wd = sc.nextInt();
+                            try {
+                                u.saveShapefileUnknown(fnn, efn, alg, ht, wd);
+                            } catch (IllegalArgumentException ex) {
+                                System.out.println(ex.getMessage());
+                            } catch (MalformedURLException ex) {
+                                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (IOException ex) {
+                                System.out.println(ex.getMessage());
+                            } catch (SchemaException ex) {
+                                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        case 2:{
+                            try {
+                                u.saveShapefile(fnn, efn);
+                            } catch (IllegalArgumentException ex) {
+                                System.out.println(ex.getMessage());
+                            } catch (MalformedURLException ex) {
+                                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (IOException ex) {
+                                System.out.println(ex.getMessage());
+                            } catch (SchemaException ex) {
+                                Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                    
+                }else{
+                    System.out.println("Enter the name of the Node File: ");
+                    String fnn = sc.next();
+                    System.out.println("Enter the name of the Edge File:");
+                    String efn = sc.next();
+                try {
+                    u.saveShapefile(fnn, efn);
+                } catch (IllegalArgumentException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (SchemaException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
+                break;
+            }
+            case 7:
                 Menu();
                 break;
             default:
@@ -145,19 +367,94 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Analyze Data:",
                 u.Status(statusLevel),
-                new String[]{"QAP", "Simple Network Bias", "Borders",
+                new String[]{"QAP", "Sample Network Bias", "Borders",
                     "Highlight Edges", "Matrix Conversion"});
         switch (option) {
-            case 1:
+            case 1:{ //QAP
+                System.out.println("Enter Arguments: ");
+                Vector<String> arg = new Vector<String>();
+                while(sc.hasNext())
+                    arg.add(sc.next());
+                u.QAP((String[])arg.toArray());
                 break;
-            case 2:
+            }
+            case 2:{ //SNB
+                System.out.println("Function not supported yet.");
                 break;
-            case 3:
+            }
+            case 3:{ //Borders
+                System.out.println("Input file to analyze: ");
+                String filename = sc.next();
+                int op = getMenu("Select Algorithm",
+                        "",
+                        new String[]{"Original Borders Algorithm"});
+                try {
+                    u.Border(filename, op);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SchemaException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 break;
-            case 4:
+            }
+            case 4:{ //Highlight edges
+                System.out.println("Output Files prefix: ");
+                String filename = sc.next();
+                int op = getMenu("Select Highlighting Algorithm",
+                        "",
+                        new String[]{"Less than average length",
+                "Less than median length","More than median length","Top 10%"
+                });
+                try {
+                    u.Highlight(op - 1, filename);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SchemaException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 break;
-            case 5:
+            }
+            case 5:{ //Conversions
+                int op = getMenu("Select Conversion",
+                        "",
+                        new String[]{"Translate", "Reflect", "Rotate", "Scale"});
+                switch(op){
+                    case 1:{ //translate
+                        System.out.println("Input amount to move on x direction: ");
+                        double xm = sc.nextDouble();
+                        System.out.println("input amount to move on y direction: ");
+                        double ym = sc.nextDouble();
+                        u.translate( xm,ym );
+                        break;
+                    }
+                    case 2:{
+                        int axis = getMenu("Select Axis:", "", new String[]{"X axis", "Y axis"}) -1;
+                        u.reflect(axis);
+                        break;
+                    }
+                    case 3:{
+                        System.out.println("Enter number of degrees: ");
+                        double deg = sc.nextDouble();
+                        u.rotate(deg);
+                        break;
+                    }
+                    case 4:{
+                        System.out.println("Enter scale factor: ");
+                        double fac = sc.nextDouble();
+                        u.scale(fac);
+                        break;
+                    }
+                }
                 break;
+            }
             case 6:
                 Menu();
                 break;
@@ -167,7 +464,24 @@ public class cli extends userinterface {
         }
     }
     //End menus ---------------------------------------------------------------------------
-
+    //helper menus
+    private boolean _overwrite(){
+        int t = getMenu(
+                "Data already exists. Do you wish to overwrite or merge data?",
+                "Merging not supported yet.",
+                new String[]{"Overwirte", "Merge"});
+        switch(t){
+            case 1: return true;
+            case 2: return false;
+            default: return true;
+        }
+    }
+    private int _MatrixType(){
+        return getMenu("What format is the file in?",
+                "",
+                new String[]{"Full Matrix","Upper Matrix","Lower Matrix"});
+    }
+    //end helper menus
     public int getMenu(String title, String info, String[] items) {
         //return and err out if length of items is less than one.
         if (items.length < 1) {
