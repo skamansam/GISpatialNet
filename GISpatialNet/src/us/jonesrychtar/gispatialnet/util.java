@@ -40,42 +40,81 @@ public class util {
 
     private Vector<String> loadedFiles = new Vector<String>();
 
-    //loading functions
-    //TODO: comment loading functions
-    //TODO: have loading functions update status (mainly loadedFiles)
+    //loading functions-----------------------------------------------------------------------------------
+    /**
+     * Loads data from a shapefile into memory
+     * @param filenameN name of Node shapefile
+     * @param filenameE name of edge shapefile
+     * @throws java.net.MalformedURLException
+     * @throws java.io.IOException
+     */
     public void loadShapefile(String filenameN, String filenameE) throws MalformedURLException, IOException  {
         ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
         Matrix temp[] = sfr.Read();
 
+        loadedFiles.add(filenameE);
+        loadedFiles.add(filenameN);
         x = temp[0];
         y = temp[1];
         adj = temp[2];
         attb = temp[3];
     }
-
+    /**
+     *Loads data from shapefile into memory
+     * @param filenameN File name of node data
+     * @param filenameE File name of edge data
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
     public void loadShapefile(String filenameN, String filenameE, int[] MergeOn) throws Exception {
         ShapeFileReader sfr = new ShapeFileReader(filenameN, filenameE);
         Matrix temp[] = sfr.Read();
 
+        loadedFiles.add(filenameE);
+        loadedFiles.add(filenameN);
         DataMerger m = new DataMerger(combine(combine(x,y),attb), adj, combine(combine(temp[0], temp[1]), temp[3]), temp[2]);
         Matrix temp1[] = m.Merge(MergeOn);
-        Matrix temp2[] = splitXYAttb(temp1[0]);
+        Matrix temp2[] = _splitXYAttb(temp1[0]);
         adj = temp1[1];
         x = temp2[0];
         y = temp2[1];
         attb = temp2[2];
     }
-
+    /**
+     * Loads data from a google earth file into memory
+     * @param filename name of file to load
+     * @throws java.lang.Exception
+     */
     public void loadGoogleEarth(String filename) throws Exception {
         KMLreader kmlr = new KMLreader(filename);
         Matrix temp[] = kmlr.read();
 
+        loadedFiles.add(filename);
         x = temp[0];
         y = temp[1];
         adj = temp[2];
         attb = temp[3];
     }
-    /*
+    /**
+     * Loads data from a google earth file into memory
+     * @param filename name of file to load
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
+    public void loadGoogleEarth(String filename, int[] MergeOn) throws Exception{
+        KMLreader kmlr = new KMLreader(filename);
+        Matrix temp[] = kmlr.read();
+
+        loadedFiles.add(filename);
+        DataMerger m = new DataMerger(combine(combine(x,y),attb), adj, combine(combine(temp[0], temp[1]), temp[3]), temp[2]);
+        Matrix temp1[] = m.Merge(MergeOn);
+        Matrix temp2[] = _splitXYAttb(temp1[0]);
+        adj = temp1[1];
+        x = temp2[0];
+        y = temp2[1];
+        attb = temp2[2];
+    }
+    /*****************************************
      * Handled in Util:
      * Matrix to be loaded:
      * 0 XYAttb
@@ -88,16 +127,72 @@ public class util {
      * 0 Full Matrix
      * 1 Lower Matrix
      * 2 Upper Matrix
-     * 
+     * ***************************************
      * */
+    
+    /**
+     * Load data from Excel file into memory
+     * @param filename File to load
+     * @param Matrix Which matrix to load into
+     * @param MatrixType Format of data in file
+     * @throws java.lang.Exception
+     */
     public void loadExcel(String filename, int Matrix, int MatrixType) throws Exception{
         ExcelReader er = new ExcelReader(filename);
-        //TODO: Finish load Excel
+        Matrix temp = er.read();
+
+        loadedFiles.add(filename);
+        switch(Matrix){
+            case 0: {
+                Matrix[] t2 = _splitXYAttb(temp);
+                x = t2[0];
+                y = t2[1];
+                adj = t2[2];
+                break;
+            }
+            case 1:{
+                adj=temp;
+                break;
+            }
+            case 2:{
+                x = temp.selectColumns(Calculation.Ret.NEW, 0);
+                y = temp.selectColumns(Calculation.Ret.NEW, 1);
+                break;
+            }
+            case 3:{
+                attb = temp;
+                break;
+            }
+        }
     }
+    /**
+     * Load data from Excel file into mamory
+     * @param filename file to load
+     * @param Matrix Matrix to load into
+     * @param MatrixType Format of file
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
+    public void loadExcel(String filename, int Matrix, int MatrixType, int[] MergeOn) throws Exception{
+        ExcelReader er = new ExcelReader(filename);
+        Matrix temp = er.read();
+        loadedFiles.add(filename);
+        //Merge data not supported yet
+    }
+    /**
+     * Loads Data from a Pajek file into memory
+     * @param filename Name of file to load
+     * @param Matrix Matrix to load data into
+     * @param MatrixType Format of saved data
+     * @param rows Number of rows in File
+     * @param cols Number of cols in file
+     * @throws java.lang.Exception
+     */
     public void loadPajek(String filename, int Matrix, int MatrixType, int rows, int cols) throws Exception{
         PajekReader pr = new PajekReader(filename);
         Matrix temp = pr.Read(MatrixType, rows, cols);
 
+        loadedFiles.add(filename);
         switch(Matrix){
             case 0: //no attb matrix in pajek
             {
@@ -117,23 +212,128 @@ public class util {
             }
         }
     }
+    /**
+     * Loads Data from a Pajek file into memory
+     * @param filename Name of file to load
+     * @param Matrix Matrix to load data into
+     * @param MatrixType Format of saved data
+     * @param rows Number of rows in File
+     * @param cols Number of cols in file
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
+    public void loadPajek(String filename, int Matrix, int MatrixType, int rows, int cols, int[] MergeOn) throws Exception{
+        PajekReader pr = new PajekReader(filename);
+        Matrix temp = pr.Read(MatrixType, rows, cols);
+
+        loadedFiles.add(filename);
+        //merge not supported
+    }
+    /**
+     * Loads data from a DL/UCINET file into memory
+     * @param filename name of file to load
+     * @param Matrix Matrix to load into
+     * @param MatrixType Format of data (may be overwritten if defined in file)
+     * @param rows number of rows (may be overwritten if defined in file)
+     * @param col number of cols (may be overwritten if defined  in file)
+     * @throws java.lang.Exception
+     */
     public void loadDL(String filename, int Matrix, int MatrixType, int rows, int col) throws Exception{
         DLreader dlr = new DLreader(filename);
         Matrix temp = dlr.Read(MatrixType, rows, col);
 
+        loadedFiles.add(filename);
         switch(Matrix){
-            case 0:
-            case 1:
-            case 2:
-            case 3:
+            case 0:{
+                throw new IllegalArgumentException("No attributes in a DL/UCINET file");
+            }
+            case 1:{
+                adj = temp;
+            }
+            case 2:{
+                x = temp.selectColumns(Calculation.Ret.NEW, 0);
+                y = temp.selectColumns(Calculation.Ret.NEW, 1);
+                break;
+            }
+            case 3:{
+                throw new IllegalArgumentException("No attributes in a DL/UCINET file");
+            }
         }
-
     }
+    /**
+      * Loads data from a DL/UCINET file into memory
+     * @param filename name of file to load
+     * @param Matrix Matrix to load into
+     * @param MatrixType Format of data (may be overwritten if defined in file)
+     * @param rows number of rows (may be overwritten if defined in file)
+     * @param col number of cols (may be overwritten if defined  in file)
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
+    public void loadDL(String filename, int Matrix, int MatrixType, int rows, int col, int[] MergeOn) throws Exception{
+        DLreader dlr = new DLreader(filename);
+        Matrix temp = dlr.Read(MatrixType, rows, col);
+
+        loadedFiles.add(filename);
+        //Merge not supported yet
+    }
+    /**
+     * Loads data from a txt/csv file into memory
+     * @param filename name of file to load
+     * @param Matrix Matrix to load into
+     * @param MatrixType Format of file
+     * @param rows number of rows in file
+     * @param col number of cols in file
+     * @param sep Field Seperator character
+     * @throws java.lang.Exception
+     */
     public void loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
-        //also covers CSV
+        CSVFileReader csvr = new CSVFileReader(filename);
+        //cswvr.setSep(sep);
+        Matrix temp = csvr.Read(MatrixType, rows, col);
+        loadedFiles.add(filename);
 
+        switch(Matrix){
+            case 0: {
+                Matrix[] t2 = _splitXYAttb(temp);
+                x = t2[0];
+                y = t2[1];
+                adj = t2[2];
+                break;
+            }
+            case 1:{
+                adj=temp;
+                break;
+            }
+            case 2:{
+                x = temp.selectColumns(Calculation.Ret.NEW, 0);
+                y = temp.selectColumns(Calculation.Ret.NEW, 1);
+                break;
+            }
+            case 3:{
+                attb = temp;
+                break;
+            }
+        }
     }
-    //saving functions
+    /**
+     * Loads data from a txt/csv file into memory
+     * @param filename name of file to load
+     * @param Matrix Matrix to load into
+     * @param MatrixType Format of file
+     * @param rows number of rows in file
+     * @param col number of cols in file
+     * @param sep Field Seperator character
+     * @param MergeOn Array containing index of columns to match during merge
+     * @throws java.lang.Exception
+     */
+    public void loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep, int[] MergeOn) throws Exception{
+        CSVFileReader csvr = new CSVFileReader(filename);
+        //csvr.setSep(sep);
+        Matrix temp = csvr.Read(MatrixType, rows, col);
+        loadedFiles.add(filename);
+    }
+    //saving functions------------------------------------------------------------------------------------
     /**
      * Saves to 2 shapefiles, one with nodes, one with edges
      */
@@ -162,7 +362,7 @@ public class util {
         new KMLwriter(combine(combine(x,y),attb),filename).WriteFile();
     }
     /**
-     * Saves to PAjek .net format
+     * Saves to Pajek .net format
      * @param filename name of output file without extension
      */
     public void savePajek(String filename) throws FileNotFoundException{
@@ -196,7 +396,7 @@ public class util {
         new CSVwriter(adj, filenameArcs, seperator).WriteFile();
     }
    
-    //analyzing functions
+    //analyzing functions---------------------------------------------------------------------------------
     /**
      * Performes a borders analysis on data, writes out edge shapefile
      * @param alg Algorithm to use
@@ -241,8 +441,67 @@ public class util {
         //TODO: write SNB (this is robert's function)
         throw new OperationNotSupportedException("function not done yet");
     }
+    //Matrix conversion functions-------------------------------------------------------------------------
+    /**
+     * Translates the stored xy to a new xy
+     * @param xmove amount to move in x direction
+     * @param ymove amount to move in y direction
+     */
+    public void translate(double xmove, double ymove)throws IllegalStateException{
+        if(HasData(0) && HasData(1)){
+            MatrixConversion mc = new MatrixConversion();
+            Matrix temp = combine(x,y);
+            temp = mc.Translation(temp, xmove, ymove);
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
+        }
+        else throw new IllegalStateException("no XY data loaded");
+    }
+    /**
+     * Reflects the xy data over an axis
+     * @param Axis Axis to reflect over (X=0, Y=1)
+     * @throws java.lang.IllegalStateException
+     */
+    public void reflect(int Axis)throws IllegalStateException{
+        //x=0 y=1
+        if(HasData(0) && HasData(1)){
+            MatrixConversion mc = new MatrixConversion();
+            Matrix temp = combine(x,y);
+            temp = mc.Reflection(temp, Axis);
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
+        } else throw new IllegalStateException("no XY data loaded");
+    }
+    /**
+     * Rotates the xy data about the origin
+     * @param Degrees Degrees to rotate
+     * @throws java.lang.IllegalStateException
+     */
+    public void rotate(double Degrees)throws IllegalStateException{
+        if(HasData(0) && HasData(1)){
+        MatrixConversion mc = new MatrixConversion();
+        Matrix temp = combine(x,y);
+        temp = mc.RotateClockwise(temp, Degrees);
+        x = temp.selectColumns(Calculation.Ret.NEW, 0);
+        y = temp.selectColumns(Calculation.Ret.NEW, 1);
+        } else throw new IllegalStateException("no XY data loaded");
+    }
+    /**
+     * Scales the xy data
+     * @param factor Factor to scale by
+     * @throws java.lang.IllegalStateException
+     */
+    public void scale(double factor)throws IllegalStateException{
+        if(HasData(0) && HasData(1)){
+            MatrixConversion mc = new MatrixConversion();
+            Matrix temp = combine(x,y);
+            temp = mc.Scale(temp, factor);
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
+        } else throw new IllegalStateException("no XY data loaded");
+    }
 
-    //extra functions
+    //extra functions-------------------------------------------------------------------------------------
     /**
      * Displays detail of loaded files
      * @param Detail level of detail to be recorded (the higher the number, the more detail)
@@ -277,7 +536,7 @@ public class util {
         }
         //add y attributes
         if(!y.isEmpty()){
-            out+="X: ["+y.getRowCount()+","+y.getColumnCount()+"] \n";
+            out+="Y: ["+y.getRowCount()+","+y.getColumnCount()+"] \n";
             if(Detail>=1){
                 //print headers
                 for(int i=0; i<y.getColumnCount(); i++)
@@ -291,7 +550,7 @@ public class util {
         }
         //add adj attributes
         if(!adj.isEmpty()){
-            out+="X: ["+adj.getRowCount()+","+adj.getColumnCount()+"] \n";
+            out+="Edges: ["+adj.getRowCount()+","+adj.getColumnCount()+"] \n";
             if(Detail>=1){
                 //print headers
                 for(int i=0; i<adj.getColumnCount(); i++)
@@ -305,7 +564,7 @@ public class util {
         }
         //add attb attributes
         if(!attb.isEmpty()){
-            out+="X: ["+attb.getRowCount()+","+attb.getColumnCount()+"] \n";
+            out+="Attributes: ["+attb.getRowCount()+","+attb.getColumnCount()+"] \n";
             if(Detail>=1){
                 //print headers
                 for(int i=0; i<attb.getColumnCount(); i++)
@@ -361,7 +620,7 @@ public class util {
      * @param in matrix containing x, y, and attb
      * @return matrix array where out[0] = x, out[1] =y , and out[2] = attb
      */
-    public Matrix[] splitXYAttb(Matrix in){
+    private Matrix[] _splitXYAttb(Matrix in){
         Matrix[] out = new Matrix[3];
         //copy all rows of col 0 to out[0]
         out[0] = in.selectColumns(Calculation.Ret.NEW, 0);
@@ -383,5 +642,31 @@ public class util {
         }
         numCol.setColumnLabel(0, "id");
         return combine(numCol,in);
+    }
+
+    //funcrtion to test if matricies already have data
+    /**
+     *
+     * @param Matrix number corresponding to Matrix to check: 0 = x, 1 = y, 2 = Adj, 3 = Attb
+     * @return True if Matrix has data, false otherwise;
+     */
+    public boolean HasData(int Matrix){
+        /*
+         * X = 0
+         * Y = 1
+         * Adj = 2
+         * Attb = 3
+         * */
+        //testing
+        boolean empty = x.isEmpty();
+        //testing
+
+        switch(Matrix){
+            case 0: return !(x.isEmpty());
+            case 1: return !(y.isEmpty());
+            case 2: return !(adj.isEmpty());
+            case 3: return !(attb.isEmpty());
+            default: return false;
+        }
     }
 }
