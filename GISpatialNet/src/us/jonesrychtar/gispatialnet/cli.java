@@ -304,9 +304,9 @@ public class cli extends userinterface {
                             int alg = getMenu("Choose an algorithm:",
                                     "",
                                     new String[]{"GeoNet Algorithm"});
-                            System.out.println("Enter max height of network: ");
+                            System.out.println("Enter max height of network (usually 10xNumber of rows): ");
                             int ht = sc.nextInt();
-                            System.out.println("Enter max width of network: ");
+                            System.out.println("Enter max width of network (usually 10xNumber of rows): ");
                             int wd = sc.nextInt();
                             try {
                                 u.saveShapefileUnknown(fnn, efn, alg, ht, wd);
@@ -402,7 +402,9 @@ public class cli extends userinterface {
                 break;
             }
             case 4:{ //Highlight edges
-                System.out.println("Output Files prefix: ");
+                System.out.println("Output Node File name: ");
+                String nfilename = sc.next();
+                System.out.println("Output Edge Files prefix: ");
                 String filename = sc.next();
                 int op = getMenu("Select Highlighting Algorithm",
                         "",
@@ -410,7 +412,7 @@ public class cli extends userinterface {
                 "Less than median length","More than median length","Top 10%"
                 });
                 try {
-                    u.Highlight(op - 1, filename);
+                    u.Highlight(op - 1, filename, nfilename);
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (MalformedURLException ex) {

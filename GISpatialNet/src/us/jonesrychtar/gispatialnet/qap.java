@@ -67,7 +67,6 @@ public class qap {
 
 	private int c;
 	private int tmem,  res;
-	private param myp;             /* struct for storing parameters */
 
 	private Random rand = new Random(); //random number generator
 	Scanner scA, scB, scC;
@@ -96,6 +95,7 @@ public class qap {
 
 	};
 
+    private param myp = new param();             /* struct for storing parameters */
     /**
      *
      * @param argc number of arguments
@@ -132,7 +132,7 @@ public class qap {
 		System.out.print ("mailto: eric.bonnet@psb.ugent.be\n\n");*/
 
 		/* parse arguments a la Kernighan & Ritchie */
-		if (argc == 1 || argv[1].charAt(0) != '-') {
+		if (argc == 0 || argv[0].charAt(0) != '-') {
 			myp.help = 1;
 			System.out.println("Error: unknown option");
 		} else {
@@ -217,10 +217,10 @@ public class qap {
 		}
 
 		/* get filenames */
-		fnameA = argv[argc + 1];
-		fnameB = argv[argc + 2];
+		fnameA = argv[argc-1 + 1];
+		fnameB = argv[argc-1 + 2];
 		if (myp.partial == 1) {
-			fnameC = argv[argc + 3];
+			fnameC = argv[argc-1 + 3];
 		}
 
 		/* open files and look for matrix size */
@@ -272,6 +272,7 @@ public class qap {
 		myp.matsize = NA;
 		myp.numelt = (myp.matsize * (myp.matsize - 1)) / 2;
 
+        //TODO: Getting error here
 		if (myp.matsize < MIN_MAT_SIZE) {
 			System.out.print("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
 		//return(1);

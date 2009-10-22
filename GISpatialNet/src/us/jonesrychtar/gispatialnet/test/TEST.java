@@ -4,6 +4,7 @@ package us.jonesrychtar.gispatialnet.test;
  * This is a dummy test class used to test other classes
  */
 
+import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -18,6 +19,8 @@ import us.jonesrychtar.gispatialnet.MatrixConversion;
 import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.convertKnown;
+import us.jonesrychtar.gispatialnet.convertUnknown;
+import us.jonesrychtar.gispatialnet.qap;
 import us.jonesrychtar.gispatialnet.util;
 
 public class TEST {
@@ -33,6 +36,8 @@ public class TEST {
        //functions
        //run.testHE();
        //run.testConversion();
+       //run.testUnknownShapeFile();
+       run.testQAP();
 
        //writers
        //run.TESTShapefileWriter();
@@ -40,7 +45,7 @@ public class TEST {
        //run.TestKMLwriter();
        //run.TestCSVwriter();
        //run.TestDLwriter();
-       run.TestPajekWriter();
+       //run.TestPajekWriter();
 
 
        //readers
@@ -61,10 +66,22 @@ public class TEST {
         System.out.println(a);
     }
 
-    //test functions
+    //test functions--------------------------------------------------------------------------------------
     public void testHE() {
+        try {
+            ShapefileNodeWriter sfnw = new ShapefileNodeWriter("OutNH", x, y);
+            sfnw.write();
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SchemaException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //does write shapefile, not tested algs
-        HighlightEdges he = new HighlightEdges("OutEH",x,y,a,0);
+        //alg == 0-3
+        int alg = 0;
+        HighlightEdges he = new HighlightEdges("OutEH",x,y,a,alg);
         try {
             he.write();
         } catch (IllegalArgumentException ex) {
@@ -92,8 +109,15 @@ public class TEST {
 
         System.out.println(xy);
     }
-
-    //test writers
+    public void testUnknownShapeFile(){
+        //works
+        //Dimension needs to have large numbers (about 10xNumber of rows)
+        convertUnknown cu = new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
+    }
+    public void testQAP(){
+        qap q = new qap(1,new String[]{"-s","assoc.txt", "gond.txt", "10000"});
+    }
+    //test writers----------------------------------------------------------------------------------------
     public void TESTShapefileWriter(){
         try {
             //Works
@@ -169,7 +193,7 @@ public class TEST {
     }
 
 
-    //test readers
+    //test readers----------------------------------------------------------------------------------------
     public void TestSHPreader(){
         //Works
        try{
