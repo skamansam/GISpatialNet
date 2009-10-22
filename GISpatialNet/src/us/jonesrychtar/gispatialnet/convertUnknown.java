@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
 
 /**
  *
@@ -41,11 +42,13 @@ public class convertUnknown {
      * @param args
      */
     public convertUnknown(String filenameE, String filenameN, Matrix adjin, Matrix attbin, int alg, Dimension args) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
-        //set x, y
-        _use(alg,args);
-
         //set adj
         adj = adjin;
+
+        //set x, y
+        x = MatrixFactory.zeros(adj.getRowCount(),1);
+        y = MatrixFactory.zeros(adj.getRowCount(),1);
+        _use(alg,args);
         
         //make convert known
         ck = new convertKnown(filenameE, filenameN, x,y,adjin, attbin);
@@ -53,11 +56,14 @@ public class convertUnknown {
 
 
     public convertUnknown(String filenameE, String filenameN, Matrix adjin, int alg, Dimension args){
-        //set x, y
-        _use(alg,args);
-
         //set adj
         adj = adjin;
+
+        //set x, y
+        x = MatrixFactory.zeros(adj.getRowCount(),1);
+        y = MatrixFactory.zeros(adj.getRowCount(),1);
+        _use(alg,args);
+
         try {
             //make convert known
             ck = new convertKnown(filenameE, filenameN, x, y, adjin);
@@ -116,13 +122,18 @@ public class convertUnknown {
                 else {
                     yIsolate += 25;
                 }
+                
                 //set x,y
                 x.setAsDouble(xIsolate, i, 0);
                 y.setAsDouble(yIsolate, i, 0);
             } else {
+                double xt, yt;
+                xt = rand.nextDouble() * d.width;
+                yt = rand.nextDouble() * d.height;
+                
                 //set x,y
-                x.setAsDouble(rand.nextDouble() * d.width, i, 0);
-                y.setAsDouble(rand.nextDouble() * d.height, i, 0);
+                x.setAsDouble(xt, i, 0);
+                y.setAsDouble(yt, i, 0);
             }
         }
     }

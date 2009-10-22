@@ -338,7 +338,7 @@ public class util {
      * Saves to 2 shapefiles, one with nodes, one with edges
      */
     public void saveShapefile(String Edgefilename, String Nodefilename) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
-            if (attb != null) {
+            if (!(attb.isEmpty())) {
                 new convertKnown(Edgefilename, Nodefilename, x, y, adj, attb);
             } else {
                 new convertKnown(Edgefilename, Nodefilename, x, y, adj);
@@ -352,7 +352,10 @@ public class util {
      */
     public void saveShapefileUnknown(String Edgefilename, String Nodefilename, int alg, int Height, int Width) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         Dimension temp = new Dimension(Height,Width);
-        new convertUnknown(Edgefilename, Nodefilename,x,y, alg , temp);
+        if(attb.isEmpty())
+            new convertUnknown(Edgefilename, Nodefilename,adj, alg , temp);
+        else
+            new convertUnknown(Edgefilename, Nodefilename,adj,attb, alg , temp);
     }
     /**
      * Saves to Google Earth kml format
@@ -429,7 +432,9 @@ public class util {
      *              2 more than median length
      *              3 top 10 percent
      */
-    public void Highlight(int alg, String filename) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
+    public void Highlight(int alg, String filename, String nodeFilename) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
+        ShapefileNodeWriter sfnw = new ShapefileNodeWriter(nodeFilename, x,y);
+        sfnw.write();
         HighlightEdges h = new HighlightEdges(filename, x,y,adj,alg);
         h.write();
     }
