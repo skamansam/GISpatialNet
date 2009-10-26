@@ -15,6 +15,7 @@ import java.util.Scanner;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.CannotProceedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
@@ -35,8 +36,9 @@ public class cli extends userinterface {
     public static void main(String[] args) {
         c = new cli();
         u = new util();
-        while(true)
+        while (true) {
             c.Menu();
+        }
     }
 
     public void cli() {
@@ -47,7 +49,7 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Main Menu:",
                 u.Status(statusLevel),
-                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status","Clear Data", "Exit"});
+                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Clear Data", "Exit"});
 
         switch (option) {
             case 1:
@@ -85,8 +87,8 @@ public class cli extends userinterface {
             _LoadMenu2(option);
         } else if (option == 5) {
         } else if (option == 6) {
-            if(u.HasData(0) || u.HasData(1) || u.HasData(2) || u.HasData(3)){
-                if(_overwrite()){
+            if (u.HasData(0) || u.HasData(1) || u.HasData(2) || u.HasData(3)) {
+                if (_overwrite()) {
                     System.out.println("Enter the name for the node shapefile (with .shp extension):");
                     String n = sc.next();
                     System.out.println("Enter the name for the edge shapefile (with .shp extension:");
@@ -99,12 +101,11 @@ public class cli extends userinterface {
                         System.out.println("File not found.");
                         ex.getMessage();
                     }
-                }else{
+                } else {
                     //Unsupported
                     System.out.println("Function unsupported");
                 }
-            }
-            else{
+            } else {
                 System.out.println("Enter the name for the node shapefile (with .shp extension):");
                 String n = sc.next();
                 System.out.println("Enter the name for the edge shapefile (with .shp extension:");
@@ -124,6 +125,7 @@ public class cli extends userinterface {
 
     }
     // what: 1=txt/csv 2=dl/ucinet 3=pajek 4=excel
+
     private void _LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
@@ -132,26 +134,29 @@ public class cli extends userinterface {
                     "Node Coordinate/Location Data", "Attribute Data", "Exit"});
 
         boolean merge = false;
-        switch(option){
-            case 1:{
-                if(u.HasData(0) || u.HasData(1) || u.HasData(3)){
+        switch (option) {
+            case 1: {
+                if (u.HasData(0) || u.HasData(1) || u.HasData(3)) {
                     merge = _overwrite();
                 }
                 break;
             }
-            case 2:{
-                if(u.HasData(2))
+            case 2: {
+                if (u.HasData(2)) {
                     merge = _overwrite();
+                }
                 break;
             }
-            case 3:{
-                if(u.HasData(0) || u.HasData(1))
+            case 3: {
+                if (u.HasData(0) || u.HasData(1)) {
                     merge = _overwrite();
+                }
                 break;
             }
-            case 4:{
-                if(u.HasData(3))
+            case 4: {
+                if (u.HasData(3)) {
                     merge = _overwrite();
+                }
                 break;
             }
         }
@@ -162,52 +167,56 @@ public class cli extends userinterface {
         int rows = sc.nextInt();
         System.out.println("Enter the number of columns: ");
         int cols = sc.nextInt();
-        
+
         switch (what) {
-            case 1:{ //txt/csv
+            case 1: { //txt/csv
                 System.out.print("What is the field seperator? ");
                 char sp = sc.next().charAt(0);
-                if(!merge)
+                if (!merge) {
                     try {
                         u.loadTxt(fn, option, format, rows, cols, sp);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                else
+                } else {
                     System.out.println("Merging not supported yet.");
+                }
                 break;
             }
-            case 2:{ //dl ucinet
-                if(!merge)
+            case 2: { //dl ucinet
+                if (!merge) {
                     try {
                         u.loadDL(fn, option, format, rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                else
+                } else {
                     System.out.println("Merging not supported yet.");
+                }
                 break;
             }
-            case 3:{ //pajek
-                if(!merge)
+            case 3: { //pajek
+                if (!merge) {
                     try {
                         u.loadPajek(fn, option, format, rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                else
+                } else {
                     System.out.println("Merging not supported yet.");
+                }
                 break;
             }
-            case 4:{ //excel
-                if(!merge)
+            case 4: { //excel
+                if (!merge) {
                     try {
                         u.loadExcel(fn, option, format);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                else
+                } else {
                     System.out.println("Merging not supported yet.");
+                }
                 break;
             }
             case 5:
@@ -227,7 +236,7 @@ public class cli extends userinterface {
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
         switch (option) {
-            case 1:{ //txt,csv
+            case 1: { //txt,csv
                 System.out.println("Enter field seperator: ");
                 char sp = sc.next().charAt(0);
                 System.out.println("Enter the name of the Node File: ");
@@ -241,20 +250,20 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 2:{ //dl ucinet
+            case 2: { //dl ucinet
                 int type = getMenu("Select extension type: ",
                         "",
-                        new String[]{".txt",".dat"});
+                        new String[]{".txt", ".dat"});
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
-                try{
+                try {
                     u.saveDL(fnn, type);
-                } catch (FileNotFoundException ex){
+                } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
                 break;
             }
-            case 3:{ //pajek
+            case 3: { //pajek
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
@@ -264,7 +273,7 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 4:{ //excel
+            case 4: { //excel
                 System.out.println("Enter the name of the Node File: ");
                 String fnn = sc.next();
                 System.out.println("Enter the name of the Edge File:");
@@ -278,7 +287,7 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 5:{ //google earth
+            case 5: { //google earth
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
@@ -290,8 +299,8 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 6:{ //shapefile
-                if(!(u.HasData(0)&&u.HasData(1))){
+            case 6: { //shapefile
+                if (!(u.HasData(0) && u.HasData(1))) {
                     int op = getMenu("Node data not found: ",
                             "What do you want to do?",
                             new String[]{"Create XY data", "Write only Edge file"});
@@ -299,8 +308,8 @@ public class cli extends userinterface {
                     String fnn = sc.next();
                     System.out.println("Enter the name of the Edge File:");
                     String efn = sc.next();
-                    switch(op){
-                        case 1:{
+                    switch (op) {
+                        case 1: {
                             int alg = getMenu("Choose an algorithm:",
                                     "",
                                     new String[]{"GeoNet Algorithm"});
@@ -320,7 +329,7 @@ public class cli extends userinterface {
                                 Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                        case 2:{
+                        case 2: {
                             try {
                                 u.saveShapefile(fnn, efn);
                             } catch (IllegalArgumentException ex) {
@@ -334,23 +343,23 @@ public class cli extends userinterface {
                             }
                         }
                     }
-                    
-                }else{
+
+                } else {
                     System.out.println("Enter the name of the Node File: ");
                     String fnn = sc.next();
                     System.out.println("Enter the name of the Edge File:");
                     String efn = sc.next();
-                try {
-                    u.saveShapefile(fnn, efn);
-                } catch (IllegalArgumentException ex) {
-                    System.out.println(ex.getMessage());
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
-                } catch (SchemaException ex) {
-                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    try {
+                        u.saveShapefile(fnn, efn);
+                    } catch (IllegalArgumentException ex) {
+                        System.out.println(ex.getMessage());
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    } catch (SchemaException ex) {
+                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 break;
             }
@@ -370,19 +379,105 @@ public class cli extends userinterface {
                 new String[]{"QAP", "Sample Network Bias", "Borders",
                     "Highlight Edges", "Matrix Conversion"});
         switch (option) {
-            case 1:{ //QAP
-                System.out.println("Enter Arguments: ");
-                Vector<String> arg = new Vector<String>();
-                while(sc.hasNext())
-                    arg.add(sc.next());
-                u.QAP((String[])arg.toArray());
+            case 1: { //QAP
+                int o = getMenu("Choose Options: ",
+                        "",
+                        new String[]{"Simple Mantel Test", "SMT with exact permutation",
+                            "Partial Mantel Test", "PMT with exact permutation", "PMT with raw values",
+                            "PMT with exact permutation and raw values"});
+                String[] args = new String[4];
+                String fa, fb, fc;
+                int perm = 0;
+
+                switch (o) {
+                    case 1: { //-s
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-s", fa, fb, Integer.toString(perm)};
+                        break;
+                    }
+                    case 2: { //-s -e
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-se", fa, fb, Integer.toString(perm)};
+                        break;
+                    }
+                    case 3: { //-p
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the name of the third file: ");
+                        fc = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-p", fa, fb, fc, Integer.toString(perm)};
+                        break;
+                    }
+                    case 4: { //-p -e
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the name of the third file: ");
+                        fc = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-pe", fa, fb, fc, Integer.toString(perm)};
+                        break;
+                    }
+                    case 5: { //-p -r
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the name of the third file: ");
+                        fc = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-pr", fa, fb, fc, Integer.toString(perm)};
+                        break;
+                    }
+                    case 6: { //-pre
+                        System.out.println("Enter the name of the first file: ");
+                        fa = sc.next();
+                        System.out.println("Enter the name of the second file: ");
+                        fb = sc.next();
+                        System.out.println("Enter the name of the third file: ");
+                        fc = sc.next();
+                        System.out.println("Enter the number of randomizations: ");
+                        perm = sc.nextInt();
+                        args = new String[]{"-pre", fa, fb, fc, Integer.toString(perm)};
+                        break;
+                    }
+                }
+
+                try {
+                    u.QAP(args);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Error ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (CannotProceedException ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 break;
             }
-            case 2:{ //SNB
+            case 2: { //SNB
                 System.out.println("Function not supported yet.");
                 break;
             }
-            case 3:{ //Borders
+            case 3: { //Borders
                 System.out.println("Input file to analyze: ");
                 String filename = sc.next();
                 int op = getMenu("Select Algorithm",
@@ -401,7 +496,7 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 4:{ //Highlight edges
+            case 4: { //Highlight edges
                 System.out.println("Output Node File name: ");
                 String nfilename = sc.next();
                 System.out.println("Output Edge Files prefix: ");
@@ -409,8 +504,8 @@ public class cli extends userinterface {
                 int op = getMenu("Select Highlighting Algorithm",
                         "",
                         new String[]{"Less than average length",
-                "Less than median length","More than median length","Top 10%"
-                });
+                            "Less than median length", "More than median length", "Top 10%"
+                        });
                 try {
                     u.Highlight(op - 1, filename, nfilename);
                 } catch (IllegalArgumentException ex) {
@@ -424,31 +519,31 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 5:{ //Conversions
+            case 5: { //Conversions
                 int op = getMenu("Select Conversion",
                         "",
                         new String[]{"Translate", "Reflect", "Rotate", "Scale"});
-                switch(op){
-                    case 1:{ //translate
+                switch (op) {
+                    case 1: { //translate
                         System.out.println("Input amount to move on x direction: ");
                         double xm = sc.nextDouble();
                         System.out.println("input amount to move on y direction: ");
                         double ym = sc.nextDouble();
-                        u.translate( xm,ym );
+                        u.translate(xm, ym);
                         break;
                     }
-                    case 2:{
-                        int axis = getMenu("Select Axis:", "", new String[]{"X axis", "Y axis"}) -1;
+                    case 2: {
+                        int axis = getMenu("Select Axis:", "", new String[]{"X axis", "Y axis"}) - 1;
                         u.reflect(axis);
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         System.out.println("Enter number of degrees: ");
                         double deg = sc.nextDouble();
                         u.rotate(deg);
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         System.out.println("Enter scale factor: ");
                         double fac = sc.nextDouble();
                         u.scale(fac);
@@ -467,23 +562,29 @@ public class cli extends userinterface {
     }
     //End menus ---------------------------------------------------------------------------
     //helper menus
-    private boolean _overwrite(){
+
+    private boolean _overwrite() {
         int t = getMenu(
                 "Data already exists. Do you wish to overwrite or merge data?",
                 "Merging not supported yet.",
                 new String[]{"Overwirte", "Merge"});
-        switch(t){
-            case 1: return true;
-            case 2: return false;
-            default: return true;
+        switch (t) {
+            case 1:
+                return true;
+            case 2:
+                return false;
+            default:
+                return true;
         }
     }
-    private int _MatrixType(){
+
+    private int _MatrixType() {
         return getMenu("What format is the file in?",
                 "",
-                new String[]{"Full Matrix","Upper Matrix","Lower Matrix"});
+                new String[]{"Full Matrix", "Upper Matrix", "Lower Matrix"});
     }
     //end helper menus
+
     public int getMenu(String title, String info, String[] items) {
         //return and err out if length of items is less than one.
         if (items.length < 1) {
