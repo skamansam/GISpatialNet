@@ -13,6 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.CannotProceedException;
 import javax.naming.OperationNotSupportedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
@@ -420,8 +423,8 @@ public class util {
 			-l print licence terms
 			-h display help
      */
-    public void QAP(String arg[]){
-        qap q = new qap (arg.length-2, arg);
+    public void QAP(String arg[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{
+        qap q = new qap(arg.length - 2, arg);
     }
     /**
      * Highlighrs edges and saves edge shapefile

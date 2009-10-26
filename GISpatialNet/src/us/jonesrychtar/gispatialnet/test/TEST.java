@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.CannotProceedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
@@ -115,7 +116,18 @@ public class TEST {
         convertUnknown cu = new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
     }
     public void testQAP(){
-        qap q = new qap(1,new String[]{"-s","assoc.txt", "gond.txt", "10000"});
+        //works
+        try {
+              qap q = new qap(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
+        } catch (CannotProceedException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Error ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     //test writers----------------------------------------------------------------------------------------
     public void TESTShapefileWriter(){

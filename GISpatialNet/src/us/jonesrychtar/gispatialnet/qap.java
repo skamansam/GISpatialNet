@@ -18,13 +18,15 @@
  *
  *
  */
-//TODO: Simplify algorithms!
+
 package us.jonesrychtar.gispatialnet;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.Random;
 import java.lang.Math.*;
+import javax.naming.CannotProceedException;
 
 /**
  * This program was originally written in C, recoded into java by Charles Bevan
@@ -68,8 +70,9 @@ public class qap {
 	private int c;
 	private int tmem,  res;
 
-	private Random rand = new Random(); //random number generator
-	Scanner scA, scB, scC;
+	private Random rand = new Random(System.currentTimeMillis()); //random number generator
+    //private Random rand = new Random();
+	private Scanner scA, scB, scC;
 
 	class param {
 
@@ -101,8 +104,8 @@ public class qap {
      * @param argc number of arguments
      * @param argv arguments and filenames
      */
-    //TODO: Change arguments from filenames to matrix
-	public qap(int argc, String argv[]) {
+
+	public qap(int argc, String argv[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{
 
 
 		tmem = 0;
@@ -127,14 +130,15 @@ public class qap {
 		//srand = new long ((unsigned) time (0));
 
 		/* header */
-		/*System.out.print ("\nzt - version 1.1\n\n");
-		System.out.print ("copyright (c) Eric Bonnet 2001 - 2007\n\n");
-		System.out.print ("mailto: eric.bonnet@psb.ugent.be\n\n");*/
+		//System.out.print ("\nzt - version 1.1\n\n");
+		System.out.print ("Original zt copyright (c) Eric Bonnet 2001 - 2007\n\n");
+		System.out.print ("mailto: eric.bonnet@psb.ugent.be\n\n");
 
 		/* parse arguments a la Kernighan & Ritchie */
 		if (argc == 0 || argv[0].charAt(0) != '-') {
 			myp.help = 1;
-			System.out.println("Error: unknown option");
+            throw new IllegalArgumentException("Error: unknown option");
+			//System.out.println("Error: unknown option");
 		} else {
 			int a = 0;
 			while (a < argc && argv[a].charAt(0) == '-') {
@@ -159,10 +163,11 @@ public class qap {
 						myp.licence = 1;
 						break;
 					default:
-						System.out.print("Error: unknown option" + c + "\n");
-						myp.help = 1;
+                        myp.help = 1;
 						argc = 0;
-						break;
+                        //throw new IllegalArgumentException("Error: unknown option"+c+"\n");
+						System.out.print("Error: unknown option" + c + "\n");
+                        break;
 				}
 				a++;
 			}
@@ -178,6 +183,7 @@ public class qap {
 			System.out.print("-e force exact permutations procedure\n");
 			System.out.print("-l print licence terms\n");
 			System.out.print("-h display this help\n\n");
+            throw new CannotProceedException("Usage printed");
 		//return(1);
 		}
 
@@ -194,60 +200,70 @@ public class qap {
 			System.out.print("You should have received a copy of the GNU General Public License\n");
 			System.out.print("along with this program; if not, write to the Free Software\n");
 			System.out.print("Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307\n\n");
-		//return(1);
+            throw new CannotProceedException("licence printed");
+            //return(1);
 		}
 
 		/* test mandatory parameters */
 		if (myp.partial == -1) {
-			System.out.print("Error: -s or -p mandatory parameters.\n\n");
+            throw new IllegalArgumentException("Error: -s or -p mandatory parameters.\n\n");
+			//System.out.print("Error: -s or -p mandatory parameters.\n\n");
 		//return(1);
 		}
 
 		/* test number of arguments */
 		if (myp.partial == 0) {
 			if ((myp.exact == 0 && argc < 3) || (myp.exact == 1 && argc < 2)) {
-				System.out.print("Error: bad number of arguments.\n\n");
+                throw new IllegalArgumentException("Error: bad number of arguments");
+				//System.out.print("Error: bad number of arguments.\n\n");
 			//return(1);
 			}
 		} else {
 			if ((myp.exact == 0 && argc < 4) || (myp.exact == 1 && argc < 3)) {
-				System.out.print("Error: bad number of arguments.\n\n");
+                throw new IllegalArgumentException("Error: bad number of arguments.\n\n");
+				//System.out.print("Error: bad number of arguments.\n\n");
 			//return(1);
 			}
 		}
 
 		/* get filenames */
-		fnameA = argv[argc-1 + 1];
-		fnameB = argv[argc-1 + 2];
+		fnameA = argv[argc-3 + 1];
+		fnameB = argv[argc-3 + 2];
 		if (myp.partial == 1) {
-			fnameC = argv[argc-1 + 3];
+			fnameC = argv[argc-3 + 3];
 		}
 
 		/* open files and look for matrix size */
 		try {
 			fileA = new File(fnameA);
 			if (fileA == null) {
-				System.out.print("Error: can't open fileA.\n");
+                throw new IOException("Error: can't open FileA.\n");
+				//System.out.print("Error: can't open fileA.\n");
 			//return(1);
 			}
-			scA = new Scanner(fileA);
+			scA = new Scanner(fileA); //TODO: This does not do the same thing
+            NA = scA.nextInt();
 			//fscanf (fileA, "%li", &NA);
 
 			fileB = new File(fnameB);
 			if (fileB == null) {
-				System.out.print("Error: can't open fileB.\n");
+                throw new IOException("Error: can't open FileB.\n");
+				//System.out.print("Error: can't open fileB.\n");
 			//return(1);
 			}
 			scB = new Scanner(fileB);
+            NB = scB.nextInt();
 			//fscanf (fileB, "%li", &NB);
 
 			if (myp.partial == 1) {
 				fileC = new File(fnameC);
 				if (fileC == null) {
-					System.out.print("Error: can't open fileC\n");
+                    throw new IOException("Error: can't open FileC.\n");
+					//System.out.print("Error: can't open fileC\n");
 				//return(1);
 				}
 				scC = new Scanner(fileC);
+                NC = scC.nextInt();
 			//fscanf (fileC, "%li", &NC);
 			}
 		} catch (Exception e) {
@@ -257,12 +273,14 @@ public class qap {
 		/* test matrices size */
 		if (myp.partial == 0) {
 			if (NA != NB) {
-				System.out.print("Error: matrices of different size.\n\n");
+                throw new IllegalArgumentException("Error: matrices of different size.\n\n");
+				//ystem.out.print("Error: matrices of different size.\n\n");
 			//return(1);
 			}
 		} else {
 			if (NA != NB || NA != NC || NB != NC) {
-				System.out.print("Error: matrices of different size.\n\n");
+                throw new IllegalArgumentException("Error: matrices of different size.\n\n");
+				//System.out.print("Error: matrices of different size.\n\n");
 			//return(1);
 			}
 		}
@@ -274,12 +292,14 @@ public class qap {
 
         //TODO: Getting error here
 		if (myp.matsize < MIN_MAT_SIZE) {
-			System.out.print("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
+            throw new IllegalArgumentException("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
+			//System.out.print("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
 		//return(1);
 		}
 
 		if (myp.exact == 1 && myp.matsize > MAX_EXACT_SIZE) {
-			System.out.print("Error: matrix size is too big for exact permutations (should be <=" + MAX_EXACT_SIZE + ").\n\n");
+            throw new IllegalArgumentException("Error: matrix size is too big for exact permutations (should be <=" + MAX_EXACT_SIZE + ").\n\n");
+			//System.out.print("Error: matrix size is too big for exact permutations (should be <=" + MAX_EXACT_SIZE + ").\n\n");
 		//return(1);
 		}
 
@@ -290,54 +310,58 @@ public class qap {
 
 		/* define and test number of randomizations */
 		if (myp.exact == 0) {
-			int times;
-			if (myp.partial == 0) {
-				times = argv[3].charAt(0);
-			} else {
-				times = argv[3].charAt(0);
-			}
-			myp.numrand = times;
+            //myp.numrand = atoi (*++argv);
+			myp.numrand = Integer.parseInt(argv[3]);
 
 			if (myp.numrand < 99 || myp.numrand > 999999999) {
-				System.out.print("Error: Number of iterations must be between 99 and 999999999.\n\n");
+                throw new IllegalArgumentException("Error: Number of iterations must be between 99 and 999999999.\n\n");
+				//System.out.print("Error: Number of iterations must be between 99 and 999999999.\n\n");
 			//return(1);
 			}
 		}
 
 		/* memory allocation */
-		/*matA = malloc (NA * sizeof (double));
-		matB = malloc (NA * sizeof (double));
+		//matA = malloc (NA * sizeof (double));
+        matA = new double[NA][];
+		//matB = malloc (NA * sizeof (double));
+        matB = new double[NB][];
 
 		if (myp.partial == 1)
-		matC = malloc (NA * sizeof (double));
-
+            //matC = malloc (NA * sizeof (double));
+            matC = new double[NC][];
 		if (myp.partial == 0) {
-		for (i = 0; i < NA; i++) {
-		matA[i] = malloc ((i + 1) * sizeof (double));
-		matB[i] = malloc ((i + 1) * sizeof (double));
-		if (matA[i] == NULL || matB[i] == NULL) {
-		tmem = 1;
-		break;
-		}
-		}
+            for (int i = 0; i < NA; i++) {
+                //matA[i] = malloc ((i + 1) * sizeof (double));
+                matA[i] = new double[i+1];
+                //matB[i] = malloc ((i + 1) * sizeof (double));
+                matB[i] = new double[i+1];
+                if (matA[i] == null || matB[i] == null) {
+                    tmem = 1;
+                    break;
+                }
+            }
 		}
 		else {
-		for (i = 0; i < NA; i++) {
-		matA[i] = malloc ((i + 1) * sizeof (double));
-		matB[i] = malloc ((i + 1) * sizeof (double));
-		matC[i] = malloc ((i + 1) * sizeof (double));
-		if (matA[i] == NULL || matB[i] == NULL || matC[i] == NULL) {
-		tmem = 1;
-		break;
-		}
-		}
+            for (int i = 0; i < NA; i++) {
+                //matA[i] = malloc ((i + 1) * sizeof (double));
+                matA[i] = new double[i+1];
+                //matB[i] = malloc ((i + 1) * sizeof (double));
+                matB[i] = new double[i+1];
+                //matC[i] = malloc ((i + 1) * sizeof (double));
+                matC[i] = new double[i+1];
+                if (matA[i] == null || matB[i] == null || matC[i] == null) {
+                    tmem = 1;
+                    break;
+                }
+            }
 		}
 
-		if (tmem == 1) {
+		/*if (tmem == 1) {
 		System.out.print ("Error: not enough memory.\n\n");
 		return(1);
-		}
-		 */
+		}*/
+
+
 		/* get data into matrices */
 		if (myp.partial == 0) {
 			for (int i = 0; i < NA - 1; i++) {
@@ -397,7 +421,8 @@ public class qap {
 				System.out.print("r =\t\t\t" + myp.coef + "\n");
 				System.out.print("p =\t\t\t" + myp.proba + " (one-tailed)\n\n");
 			} else {
-				System.out.print("An error has occurred during permutation procedure.\nPlease retry.\n\n");
+                throw new Error("An error has occurred during permutation procedure.\nPlease retry.\n\n");
+				//System.out.print("An error has occurred during permutation procedure.\nPlease retry.\n\n");
 			}
 		} else {
 			res = smt(matA, matB, myp);
@@ -405,7 +430,8 @@ public class qap {
 				System.out.printf("r =\t\t\t%f\n", myp.coef);
 				System.out.printf("p =\t\t\t%f (one-tailed)\n\n", myp.proba);
 			} else {
-				System.out.print("An error has occurred during permutation procedure.\nPlease retry.\n\n");
+                throw new Error("An error has occurred during permutation procedure.\nPlease retry.\n\n");
+				//System.out.print("An error has occurred during permutation procedure.\nPlease retry.\n\n");
 			}
 		}
 	}
@@ -421,7 +447,7 @@ public class qap {
 		int i;
 		long ret = 1;
 		for (i = 1; i <= n; i++) {
-			ret = i;
+			ret *= i;
 		}
 		return ret;
 
@@ -439,7 +465,7 @@ public class qap {
 		double ret = 0;
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				ret = a[i][j];
+				ret += a[i][j];
 			}
 		}
 		return ret;
@@ -458,7 +484,7 @@ public class qap {
 		double ret = 0;
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				ret = a[i][j] * a[i][j];
+				ret += a[i][j] * a[i][j];
 			}
 		}
 		return ret;
@@ -476,10 +502,10 @@ public class qap {
 		int j;
 		long N;
 		double ret = 0;
-		N = stop * stop - 1 / 2 + stop;
+		N = (stop * (stop - 1) / 2) + stop;
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				ret = a[i][j];
+				ret += a[i][j];
 			}
 		}
 		ret = ret / N;
@@ -498,8 +524,8 @@ public class qap {
 		double ret = 0;
 		double lsomx = somx(a, stop);
 		double lsomx2 = somx2(a, stop);
-		N = stop * stop - 1 / 2 + stop;
-		ret = java.lang.Math.sqrt(lsomx2 - lsomx * lsomx / N / N - 1);
+		N = (stop * (stop - 1) / 2) + stop;
+		ret = java.lang.Math.sqrt((lsomx2 - (lsomx * lsomx) / N )/ (N - 1));
 		return ret;
 
 	}
@@ -514,7 +540,7 @@ public class qap {
 		int aleat;
 		long tmp;
 		for (i = 0; i < f - 1; i++) {
-			aleat = i + (1 + rand.nextInt()) % ((int) f - i - 1);
+			aleat = i + (1 + rand.nextInt((int)f-i-1));
 			tmp = a[i];
 			a[i] = a[aleat];
 			a[aleat] = tmp;
@@ -533,8 +559,8 @@ public class qap {
 		long N;
 		double lsomx = somx(a, stop);
 		double lsomx2 = somx2(a, stop);
-		N = stop * stop - 1 / 2 + stop;
-		ret = lsomx2 - lsomx * lsomx / N;
+		N = ((stop * (stop - 1)) / 2) + stop;
+        ret = (lsomx2 - ((lsomx * lsomx) / N));
 		return ret;
 
 	}
@@ -551,7 +577,7 @@ public class qap {
 		double ret = 0;
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				ret = a[i][j] * b[i][j] - lmoyA * lmoyB;
+				ret += (a[i][j] * b[i][j]) - (lmoyA * lmoyB);
 			}
 		}
 		return ret;
@@ -568,11 +594,11 @@ public class qap {
 		double coef_a;
 		int i;
 		int j;
-		coef_b = sompxy(a, b, stop, lmoyA, lmoyB) / sompx(b, stop);
-		coef_a = lmoyA - coef_b * lmoyB;
+		coef_b = sompxy (a, b, stop, lmoyA, lmoyB) / sompx (b, stop);
+        coef_a = lmoyA - (coef_b * lmoyB);
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				a[i][j] = a[i][j] - coef_a + coef_b * b[i][j];
+				a[i][j] = a[i][j] - (coef_a + (coef_b * b[i][j]));
 			}
 		}
 
@@ -592,7 +618,7 @@ public class qap {
 		lecta = ect(a, stop);
 		for (i = 0; i < stop; i++) {
 			for (j = 0; j <= i; j++) {
-				a[i][j] = a[i][j] - lmoya / lecta;
+				a[i][j] = (a[i][j] - lmoya) / lecta;
 			}
 		}
 
@@ -624,25 +650,21 @@ public class qap {
 		norm(A, N);
 		norm(B, N);
 		norm(C, N);
-		for (i = 0; i < N; i++) {
-			for (j = 0; j <= i; j++) {
-				r_ab = A[i][j] * B[i][j];
-			}
-		}
-		r_ab = r_ab / p.numelt - 1;
-		for (i = 0; i < N; i++) {
-			for (j = 0; j <= i; j++) {
-				r_ac = A[i][j] * C[i][j];
-			}
-		}
-		r_ac = r_ac / p.numelt - 1;
-		for (i = 0; i < N; i++) {
-			for (j = 0; j <= i; j++) {
-				r_bc = B[i][j] * C[i][j];
-			}
-		}
-		r_bc = r_bc / p.numelt - 1;
-		r_abc = r_ab - r_ac * r_bc / java.lang.Math.sqrt(1 - r_ac * r_ac) * java.lang.Math.sqrt(1 - r_bc * r_bc);
+		for (i = 0; i < N; i++) 
+			for (j = 0; j <= i; j++) 
+				r_ab += A[i][j] * B[i][j];
+        r_ab = r_ab / (p.numelt - 1);
+		
+		for (i = 0; i < N; i++) 
+			for (j = 0; j <= i; j++) 
+				r_ac += A[i][j] * C[i][j];
+        r_ac = r_ac / (p.numelt - 1);
+		
+		for (i = 0; i < N; i++) 
+			for (j = 0; j <= i; j++) 
+				r_bc += B[i][j] * C[i][j];
+        r_bc = r_bc / (p.numelt - 1);
+		r_abc =(r_ab -(r_ac * r_bc)) / (Math.sqrt (1 - (r_ac * r_ac)) * Math.sqrt (1 - (r_bc * r_bc)));
 		p.coef = r_abc;
 		if (p.exact == 0) {
 			ret = pmt_perm(A, B, C, r_bc, p);
@@ -695,7 +717,7 @@ public class qap {
 					}
 				}
 			}
-			r_ab = r_ab / p.numelt - 1;
+			r_ab = r_ab / (p.numelt - 1);
 			r_ac = 0;
 			for (i = 1; i < p.matsize; i++) {
 				for (j = 0; j < i; j++) {
@@ -714,17 +736,17 @@ public class qap {
 				cptega = 1;
 			} else {
 				if (rrand > p.coef) {
-					cptsup = 1;
+					cptsup += 1;
 				}
 				if (rrand < p.coef) {
-					cptinf = 1;
+					cptinf += 1;
 				}
 			}
 		}
 		if (p.coef < 0) {
-			p.proba = (double) cptinf + cptega / p.numrand + 1;
+			p.proba = (double) (cptinf + cptega) / (p.numrand + 1);
 		} else {
-			p.proba = (double) cptsup + cptega / p.numrand + 1;
+			p.proba = (double) (cptsup + cptega) / (p.numrand + 1);
 		}
 		return 1;
 
@@ -747,10 +769,10 @@ public class qap {
 		zini = 0;
 		for (i = 0; i < N; i++) {
 			for (j = 0; j <= i; j++) {
-				zini = A[i][j] * B[i][j];
+				zini += A[i][j] * B[i][j];
 			}
 		}
-		p.coef = zini / p.numelt - 1;
+		p.coef = zini / (p.numelt - 1);
 		if (p.exact == 0) {
 			ret = smt_perm(A, B, p);
 		} else {
@@ -794,28 +816,28 @@ public class qap {
 			for (i = 1; i < p.matsize; i++) {
 				for (j = 0; j < i; j++) {
 					if (ord[j] < ord[i]) {
-						zrand = A[i - 1][j] * B[(int) ord[i] - 1][(int) ord[j]];
+						zrand += A[i - 1][j] * B[(int) ord[i] - 1][(int) ord[j]];
 					} else {
-						zrand = A[i - 1][j] * B[(int) ord[j] - 1][(int) ord[i]];
+						zrand += A[i - 1][j] * B[(int) ord[j] - 1][(int) ord[i]];
 					}
 				}
 			}
-			zrand = zrand / p.numelt - 1;
+			zrand = zrand / (p.numelt - 1);
 			if (fabs(zrand - p.coef) <= epsilon * fabs(zrand)) {
-				cptega = 1;
+				cptega += 1;
 			} else {
 				if (zrand > p.coef) {
-					cptsup = 1;
+					cptsup += 1;
 				}
 				if (zrand < p.coef) {
-					cptinf = 1;
+					cptinf += 1;
 				}
 			}
 		}
 		if (p.coef < 0) {
-			p.proba = (double) cptinf + cptega / p.numrand + 1;
+			p.proba = (double) (cptinf + cptega) / (p.numrand + 1);
 		} else {
-			p.proba = (double) cptsup + cptega / p.numrand + 1;
+			p.proba = (double) (cptsup + cptega) / (p.numrand + 1);
 		}
 		//free (ord );
 		return 1;
@@ -864,21 +886,21 @@ public class qap {
 			for (li = 1; li < p.matsize; li++) {
 				for (lj = 0; lj < li; lj++) {
 					if (ord[(int) lj] < ord[(int) li]) {
-						zrand = A[(int) li - 1][(int) lj] * B[(int) ord[(int) li] - 1][(int) ord[(int) lj]];
+						zrand += A[(int) li - 1][(int) lj] * B[(int) ord[(int) li] - 1][(int) ord[(int) lj]];
 					} else {
-						zrand = A[(int) li - 1][(int) lj] * B[(int) ord[(int) lj] - 1][(int) ord[(int) li]];
+						zrand += A[(int) li - 1][(int) lj] * B[(int) ord[(int) lj] - 1][(int) ord[(int) li]];
 					}
 				}
 			}
 			zrand = zrand / (p.numelt - 1);
 			if (fabs(zrand - p.coef) <= epsilon * fabs(zrand)) {
-				cptega = 1;
+				cptega += 1;
 			} else {
 				if (zrand > p.coef) {
-					cptsup = 1;
+					cptsup += 1;
 				}
 				if (zrand < p.coef) {
-					cptinf = 1;
+					cptinf += 1;
 				}
 			}
 			i = (int) n - 1;
@@ -905,9 +927,9 @@ public class qap {
 			}
 		}
 		if (p.coef < 0) {
-			p.proba = (double) cptinf + cptega / cpt;
+			p.proba = (double) (cptinf + cptega) / cpt;
 		} else {
-			p.proba = (double) cptsup + cptega / cpt;
+			p.proba = (double) (cptsup + cptega) / cpt;
 		}
 		//free (ord );
 		return 1;
@@ -960,32 +982,32 @@ public class qap {
 			for (li = 1; li < p.matsize; li++) {
 				for (lj = 0; lj < li; lj++) {
 					if (ord[lj] < ord[li]) {
-						r_ab = B[li - 1][lj] * A[(int) ord[li] - 1][(int) ord[lj]];
+						r_ab += B[li - 1][lj] * A[(int) ord[li] - 1][(int) ord[lj]];
 					} else {
-						r_ab = B[li - 1][lj] * A[(int) ord[lj] - 1][(int) ord[li]];
+						r_ab += B[li - 1][lj] * A[(int) ord[lj] - 1][(int) ord[li]];
 					}
 				}
 			}
-			r_ab = r_ab / p.numelt - 1;
+			r_ab = r_ab / (p.numelt - 1);
 			for (li = 1; li < p.matsize; li++) {
 				for (lj = 0; lj < li; lj++) {
 					if (ord[lj] < ord[li]) {
-						r_ac = C[li - 1][lj] * A[(int) ord[li] - 1][(int) ord[lj]];
+						r_ac += C[li - 1][lj] * A[(int) ord[li] - 1][(int) ord[lj]];
 					} else {
-						r_ac = C[li - 1][lj] * A[(int) ord[lj] - 1][(int) ord[li]];
+						r_ac += C[li - 1][lj] * A[(int) ord[lj] - 1][(int) ord[li]];
 					}
 				}
 			}
 			r_ac = r_ac / p.numelt - 1;
 			rrand = r_ab - r_ac * r_bc / java.lang.Math.sqrt(1 - r_ac * r_ac) * java.lang.Math.sqrt(1 - r_bc * r_bc);
 			if (fabs(rrand - p.coef) <= epsilon * fabs(rrand)) {
-				cptega = 1;
+				cptega += 1;
 			} else {
 				if (rrand > p.coef) {
-					cptsup = 1;
+					cptsup += 1;
 				}
 				if (rrand < p.coef) {
-					cptinf = 1;
+					cptinf += 1;
 				}
 			}
 			i = n - 1;
@@ -1013,9 +1035,9 @@ public class qap {
 			}
 		}
 		if (p.coef < 0) {
-			p.proba = (double) cptinf + cptega / cpt;
+			p.proba = (double) (cptinf + cptega) / cpt;
 		} else {
-			p.proba = (double) cptsup + cptega / cpt;
+			p.proba = (double) (cptsup + cptega) / cpt;
 		}
 		//free (ord );
 		return 1;
