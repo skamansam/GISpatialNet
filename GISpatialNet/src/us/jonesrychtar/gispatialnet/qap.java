@@ -241,7 +241,7 @@ public class qap {
 				//System.out.print("Error: can't open fileA.\n");
 			//return(1);
 			}
-			scA = new Scanner(fileA); //TODO: This does not do the same thing
+			scA = new Scanner(fileA);
             NA = scA.nextInt();
 			//fscanf (fileA, "%li", &NA);
 
@@ -290,7 +290,7 @@ public class qap {
 		myp.matsize = NA;
 		myp.numelt = (myp.matsize * (myp.matsize - 1)) / 2;
 
-        //TODO: Getting error here
+        
 		if (myp.matsize < MIN_MAT_SIZE) {
             throw new IllegalArgumentException("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
 			//System.out.print("Error: matrix size must be >= " + MIN_MAT_SIZE + "\n\n");
