@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class PajekReader extends TextFileReader {
 	//Matrix vertices, arcs, edges;
     //arcs and edges are the same thing
-	Matrix vertices, arcs;
+	Matrix vertXY, vertY, vertZ, attr, vertices, arcs;
 
     public PajekReader(String filename){
         this.setFile(this.openFile(filename));
@@ -41,10 +41,9 @@ public class PajekReader extends TextFileReader {
     			for(int i=0;i<numVerts;i++){
     				int theID=theFile.nextInt();
     				String theName=theFile.next();
-    				int theCol=0;
+    				int theCol=-1;
     				while(theFile.hasNextFloat())
-    					theMatrix.setAsFloat(theFile.nextFloat(), i,theCol);
-    				
+    					vertXY.setAsFloat(theFile.nextFloat(), i,theCol++);    				
     			}
     		}else if(theType.equalsIgnoreCase("*Arcs")){
     			
