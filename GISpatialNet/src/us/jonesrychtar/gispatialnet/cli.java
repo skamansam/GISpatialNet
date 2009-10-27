@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Scanner;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
@@ -210,7 +209,7 @@ public class cli extends userinterface {
             case 4: { //excel
                 if (!merge) {
                     try {
-                        u.loadExcel(fn, option, format);
+                        u.loadExcel(fn, option, format,rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }

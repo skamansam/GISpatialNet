@@ -48,7 +48,8 @@ public class DLreader extends TextFileReader {
         //diagonal: absent
         public boolean isDiagAbsent = false;
     }
-    DLHeaders header = new DLHeaders();
+    private DLHeaders header = new DLHeaders();
+    private ReaderUtil ru = new ReaderUtil();
 
     public DLreader(String file) {
         this.setFile(this.openFile(file));
@@ -124,6 +125,10 @@ public class DLreader extends TextFileReader {
             }
         } else {
             System.err.println("Invalid format");
+        }
+
+        if(header.isDiagAbsent){
+            ru.addDiag(output);
         }
         return output;
     }

@@ -15,6 +15,7 @@ import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.HighlightEdges;
 import us.jonesrychtar.gispatialnet.MatrixConversion;
 import us.jonesrychtar.gispatialnet.Reader.*;
@@ -38,7 +39,7 @@ public class TEST {
        //run.testHE();
        //run.testConversion();
        //run.testUnknownShapeFile();
-       run.testQAP();
+       //run.testQAP();
 
        //writers
        //run.TESTShapefileWriter();
@@ -51,10 +52,12 @@ public class TEST {
 
        //readers
        //run.TestSHPreader();
+       //run.TestExcelReader();
     }
     public TEST(){
         makeData();
     }
+
     private void makeData(){
         x = td.RandomMatrix(10,1,0,10);
         y = td.RandomMatrix(10,1,0,10);
@@ -220,5 +223,29 @@ public class TEST {
        catch (Exception e){
            e.printStackTrace();
        }
+    }
+
+    public void TestExcelReader(){
+        //works
+        ExcelReader er = new ExcelReader("nodes.xls");
+        Matrix temp = MatrixFactory.emptyMatrix();
+        try {
+            temp = er.read(0, 10, 3);
+        } catch (Exception ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        u.stripNumCol(temp);
+
+       System.out.println(temp);
+
+       Matrix tempa = MatrixFactory.emptyMatrix();
+       ExcelReader era = new ExcelReader("edges.xls");
+        try {
+            tempa = era.read(1, 10, 10);
+        } catch (Exception ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       System.out.println(tempa);
     }
 }

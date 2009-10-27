@@ -13,8 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
 import javax.naming.OperationNotSupportedException;
 import jxl.write.WriteException;
@@ -140,9 +138,9 @@ public class util {
      * @param MatrixType Format of data in file
      * @throws java.lang.Exception
      */
-    public void loadExcel(String filename, int Matrix, int MatrixType) throws Exception{
+    public void loadExcel(String filename, int Matrix, int MatrixType, int row, int col) throws Exception{
         ExcelReader er = new ExcelReader(filename);
-        Matrix temp = er.read();
+        Matrix temp = er.read(MatrixType, row, col);
 
         loadedFiles.add(filename);
         switch(Matrix){
@@ -150,7 +148,7 @@ public class util {
                 Matrix[] t2 = _splitXYAttb(temp);
                 x = t2[0];
                 y = t2[1];
-                adj = t2[2];
+                attb = t2[2];
                 break;
             }
             case 1:{
@@ -176,9 +174,9 @@ public class util {
      * @param MergeOn Array containing index of columns to match during merge
      * @throws java.lang.Exception
      */
-    public void loadExcel(String filename, int Matrix, int MatrixType, int[] MergeOn) throws Exception{
+    public void loadExcel(String filename, int Matrix, int MatrixType, int row, int col, int[] MergeOn) throws Exception{
         ExcelReader er = new ExcelReader(filename);
-        Matrix temp = er.read();
+        Matrix temp = er.read(MatrixType, row, col);
         loadedFiles.add(filename);
         //Merge data not supported yet
     }
@@ -301,7 +299,7 @@ public class util {
                 Matrix[] t2 = _splitXYAttb(temp);
                 x = t2[0];
                 y = t2[1];
-                adj = t2[2];
+                attb = t2[2];
                 break;
             }
             case 1:{
@@ -635,7 +633,7 @@ public class util {
         //copy all rows of col 1 to out[1]
         out[1] = in.selectColumns(Calculation.Ret.NEW, 1);
         //copy rest to out[2]
-        out[2] = in.selectColumns(Calculation.Ret.NEW, 2, in.getColumnCount());
+        out[2] = in.selectColumns(Calculation.Ret.NEW, 2, in.getColumnCount()-1);
         return out;
     }
     /**
@@ -650,6 +648,15 @@ public class util {
         }
         numCol.setColumnLabel(0, "id");
         return combine(numCol,in);
+    }
+
+    /**
+     * Removes number colu (used when reading XY or XYAttb)
+     * @param in Matrix to strip from
+     * @return New MAtrix without first column
+     */
+    public Matrix stripNumCol(Matrix in){
+        return in.selectColumns(Calculation.Ret.NEW, 1, in.getColumnCount()-1);
     }
 
     //funcrtion to test if matricies already have data
