@@ -252,9 +252,7 @@ public class util {
                 adj = temp;
             }
             case 2:{
-                x = temp.selectColumns(Calculation.Ret.NEW, 0);
-                y = temp.selectColumns(Calculation.Ret.NEW, 1);
-                break;
+               throw new IllegalArgumentException("No coordinates in DL/UCINET file");
             }
             case 3:{
                 throw new IllegalArgumentException("No attributes in a DL/UCINET file");

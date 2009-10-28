@@ -9,9 +9,20 @@
 
 package us.jonesrychtar.gispatialnet.Reader;
 
-import org.boehn.kmlframework.kml.Document;
-import org.boehn.kmlframework.kml.Kml;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Collection;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 /**
  *
  * @author cfbevan
@@ -20,22 +31,33 @@ import org.ujmp.core.Matrix;
  */
 public class KMLreader {
     
-    private Kml kml;
-    private Document doc;
-    private String file;
-    private Matrix xout, yout, adjout, attbout;
+    FileInputStream instream = null;
+    InputSource is=null;
+    XMLReader xmlReader;
+    Collection collection;
+    
+     private Matrix xout,  yout,  adjout,  attbout;
 
-    public KMLreader(String Filename){
-        file = Filename;
-        kml=new Kml();
-        doc= new Document();
-        kml.setFeature(doc);
+    public KMLreader(String Filename) throws ParserConfigurationException, SAXException, FileNotFoundException, JAXBException{
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setNamespaceAware(true);
+        xmlReader = spf.newSAXParser().getXMLReader();
+
+        instream = new FileInputStream(Filename);
+        is = new InputSource(instream);
+
+        JAXBContext jc = JAXBContext.newInstance("test.jaxb");
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        collection= (Collection)unmarshaller.unmarshal(new File(Filename));
+
+
     }
 
     public Matrix[] read() throws Exception{
-        kml.createKml(file);
-
-        //TODO: find/make a reader for KML syntax
-        return new Matrix[]{xout,yout,adjout,attbout};
+         xmlReader.parse(is);
+         //TODO: parse xml
+         //CollectionType.
+        
+        return new Matrix[]{MatrixFactory.emptyMatrix()};
     }
 }

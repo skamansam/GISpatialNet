@@ -22,8 +22,8 @@ import java.util.Vector;
 public class DLreader extends TextFileReader {
 
     private class DLHeaders {
+        public int rORc = 0; //temp used in analyzing label lists
         //covers nr, nc, and n
-
         public int nr,  nc;
         //format (defined in FileReader)
         //fullmatrix =0, lowerhalf = 1, upperhalf =2;
@@ -32,21 +32,23 @@ public class DLreader extends TextFileReader {
         //Labels: and col lables:
         //separated either by spaces, commas or carriage returns (or both).
         //Labels cannot contain embedded spaces unless you enclose them in quotes, as in "Tom Smith".
-        public Vector<String> labels;
+        public Vector<String> labels = new Vector<String>();
         //row labels embedded
         public boolean rembed = false;
-        public Vector<String> rlabels; //used in row labels:
+        public Vector<String> rlabels = new Vector<String>(); //used in row labels:
         //col labels embedded
         public boolean cembed = false;
-        public Vector<String> clables; //used in col labels:
+        public Vector<String> clables = new Vector<String>(); //used in col labels:
         //number of matricies nm
         public int nm = 1;
         //matrix labels
-        public Vector<String> mlabels;
+        public Vector<String> mlabels = new Vector<String>();
         //datafile, defines a pointer to data in seperate file
         public String datafileName;
         //diagonal: absent
         public boolean isDiagAbsent = false;
+        //used if labels are last in header
+        boolean ended = false;
     }
     private DLHeaders header = new DLHeaders();
     private ReaderUtil ru = new ReaderUtil();
@@ -61,14 +63,15 @@ public class DLreader extends TextFileReader {
         header.nc = col;
         header.nr = rows;
         //make empty matrix
-        Matrix output = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.STRING, header.nr, header.nc);
+        Matrix output = MatrixFactory.zeros(header.nr, header.nc);
         sc = new Scanner(this.getFile());
         //read headers
         String word = sc.next().toLowerCase();
-        while (!(word.equals("data:"))) {
+        while (!(word.equals("data:")) && !header.ended) {
             //analyze header
             _analyzeHeader(word, sc);
-            word = sc.next().toLowerCase();
+            if(!header.ended)
+                word = sc.next().toLowerCase();
         }
         //read matrix
 
@@ -130,11 +133,18 @@ public class DLreader extends TextFileReader {
         if(header.isDiagAbsent){
             ru.addDiag(output);
         }
+
+        //add labels if needed
+        if(header.clables.size()>0)
+            for(int c=0; c<header.clables.size(); c++){
+                output.setColumnLabel(c, header.clables.elementAt(c));
+            }
         return output;
     }
 
     private boolean _analyzeHeader(String in, Scanner sc) throws Exception {
         //check for n
+        in = in.toLowerCase();
         if (in.equals("n") || in.equals("n=")) {
             if (in.equals("n")) {
                 sc.next();
@@ -182,6 +192,7 @@ public class DLreader extends TextFileReader {
             //row labes:
             if (word.equals("labels:")) {
                 in = word;
+                header.rORc = 1;
             }
             //row labels embeded
             if (word.equals("lables") && sc.next().equals("embedded")){
@@ -190,14 +201,14 @@ public class DLreader extends TextFileReader {
             }
         }
         //check for col
-        else if (in.equals("col")) {
+        else if (in.equals("col") || in.equals("column")) {
             String word = sc.next().toLowerCase();
             //col labes:
             if (word.equals("labels:")) {
-                //TODO: this needs to set first col of entire table
-
+                in = word;
+                header.rORc = 2;
             }
-            //row labels embeded
+            //col labels embeded
             if (word.equals("lables") && sc.next().equals("embedded")){
                 header.cembed =true;
                 return true;
@@ -212,7 +223,7 @@ public class DLreader extends TextFileReader {
             return true;
         }
         //check for diagonal: absent
-        else if(in.equals("diagonal:") && sc.next().equals("absent")){
+        else if((in.equals("diagonal:") || in.equals("diagonal")) && sc.next().equals("absent")){
             header.isDiagAbsent=true;
             return true;
         }
@@ -232,9 +243,15 @@ public class DLreader extends TextFileReader {
         //check for labels
         if (in.equals("labels:")) {
             String word = sc.next();
-            if (!(_analyzeHeader(word, sc))) {
-                header.labels.add(word);
+            while (!(_analyzeHeader(word, sc)) && !(word.toLowerCase().equals("data:"))) {
+                if(header.rORc==1)
+                    header.labels.add(word);
+                else if(header.rORc==2)
+                    header.clables.add(word);
+                word = sc.next();
             }
+            if(word.toLowerCase().equals("data:"))
+                header.ended = true;
             return true;
         }
         return false;
