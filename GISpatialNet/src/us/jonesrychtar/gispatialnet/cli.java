@@ -182,7 +182,7 @@ public class cli extends userinterface {
                 }
                 break;
             }
-            case 2: { //dl ucinet
+            case 2: { //dl ucinet (adj matrix only!)
                 if (!merge) {
                     try {
                         u.loadDL(fn, option, format, rows, cols);

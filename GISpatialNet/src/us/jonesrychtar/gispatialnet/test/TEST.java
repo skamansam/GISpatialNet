@@ -11,11 +11,14 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
+import org.xml.sax.SAXException;
 import us.jonesrychtar.gispatialnet.HighlightEdges;
 import us.jonesrychtar.gispatialnet.MatrixConversion;
 import us.jonesrychtar.gispatialnet.Reader.*;
@@ -36,23 +39,28 @@ public class TEST {
        //run.printData();
 
        //functions
-       //run.testHE();
-       //run.testConversion();
-       //run.testUnknownShapeFile();
-       //run.testQAP();
+       //run.testHE(); //works
+       //run.testConversion(); //works
+       //run.testUnknownShapeFile(); //works
+       //run.testQAP(); //works
 
        //writers
-       //run.TESTShapefileWriter();
-       //run.TestXLSwriter();
-       //run.TestKMLwriter();
-       //run.TestCSVwriter();
-       //run.TestDLwriter();
-       //run.TestPajekWriter();
+       //run.TESTShapefileWriter(); //works
+       //run.TestXLSwriter(); //works
+       //run.TestKMLwriter(); //works
+       //run.TestCSVwriter(); //works
+       //run.TestDLwriter(); //works
+       //run.TestPajekWriter(); //works
 
 
        //readers
-       //run.TestSHPreader();
-       //run.TestExcelReader();
+       //run.TestSHPreader(); //works
+       //run.TestExcelReader(); //works
+       //run.testKMLreader();
+       //run.testPajekReader();
+       //run.testDLreader(); //works for full
+       //run.testCSVreader();
+
     }
     public TEST(){
         makeData();
@@ -247,5 +255,60 @@ public class TEST {
         }
 
        System.out.println(tempa);
+    }
+    //-----------------------------------------------------------------------------------------------------------
+    public void testKMLreader(){
+        KMLreader kr = null;
+        try {
+            kr = new KMLreader("out.kml");
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JAXBException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Matrix[] temp = new Matrix[]{MatrixFactory.emptyMatrix()};
+        try {
+            temp = kr.read();
+        } catch (Exception ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for( int m=0; m<temp.length;m++)
+            System.out.println(temp[m]);
+    }
+    public void testPajekReader(){
+        PajekReader pr = new PajekReader("Test.net");
+        Matrix[] temp = new Matrix[]{MatrixFactory.emptyMatrix()};
+            //temp = pr.Read(0, 10, 10);
+    }
+    public void testDLreader(){
+        //works for full
+        DLreader dlr = new DLreader("NC1.DAT");
+        Matrix temp = MatrixFactory.emptyMatrix();
+        try {
+            temp = dlr.Read(0, 39, 40);
+        } catch (Exception ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(int i=0; i<temp.getColumnCount(); i++)
+            System.out.print(temp.getColumnLabel(i)+" ");
+        System.out.println("\n"+temp);
+    }
+    public void testCSVreader(){
+        CSVFileReader cr = new CSVFileReader("test.csv");
+        Matrix temp = MatrixFactory.emptyMatrix();
+        try {
+            temp = cr.Read(0, 11, 2);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(temp);
     }
 }
