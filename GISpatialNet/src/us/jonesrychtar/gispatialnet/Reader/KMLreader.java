@@ -9,12 +9,11 @@
 
 package us.jonesrychtar.gispatialnet.Reader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import javax.xml.bind.JAXBContext;
+import java.io.IOException;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -23,6 +22,7 @@ import org.ujmp.core.MatrixFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
 /**
  *
  * @author cfbevan
@@ -31,31 +31,38 @@ import org.xml.sax.XMLReader;
  */
 public class KMLreader {
     
-    FileInputStream instream = null;
-    InputSource is=null;
+    private JAXBElement o;
+    private Unmarshaller unmarshaller;
     XMLReader xmlReader;
-    Collection collection;
+    InputSource is = null;
     
-     private Matrix xout,  yout,  adjout,  attbout;
 
-    public KMLreader(String Filename) throws ParserConfigurationException, SAXException, FileNotFoundException, JAXBException{
+    public KMLreader(String Filename) throws ParserConfigurationException, SAXException, FileNotFoundException, JAXBException, IOException{
+
+        FileInputStream instream = null;
+
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setNamespaceAware(true);
         xmlReader = spf.newSAXParser().getXMLReader();
 
+        xmlReader.setContentHandler(new KMLContentHandler());
+
         instream = new FileInputStream(Filename);
         is = new InputSource(instream);
-
-        JAXBContext jc = JAXBContext.newInstance("test.jaxb");
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        collection= (Collection)unmarshaller.unmarshal(new File(Filename));
-
-
     }
 
     public Matrix[] read() throws Exception{
-         xmlReader.parse(is);
          //TODO: parse xml
+         xmlReader.parse(is);
+         
+         //get nodes
+         
+         System.out.println(" ");
+         //get name
+
+         //get desc
+
+         //get coord
          //CollectionType.
         
         return new Matrix[]{MatrixFactory.emptyMatrix()};

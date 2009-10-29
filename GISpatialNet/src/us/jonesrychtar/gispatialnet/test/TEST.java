@@ -56,7 +56,7 @@ public class TEST {
        //readers
        //run.TestSHPreader(); //works
        //run.TestExcelReader(); //works
-       //run.testKMLreader();
+       run.testKMLreader();
        //run.testPajekReader();
        //run.testDLreader(); //works for full
        //run.testCSVreader();
@@ -260,12 +260,12 @@ public class TEST {
     public void testKMLreader(){
         KMLreader kr = null;
         try {
-            kr = new KMLreader("out.kml");
+            kr = new KMLreader("test.kml");
+        }catch (IOException ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
-            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JAXBException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
