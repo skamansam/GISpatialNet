@@ -19,13 +19,13 @@ import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.xml.sax.SAXException;
-import us.jonesrychtar.gispatialnet.HighlightEdges;
 import us.jonesrychtar.gispatialnet.MatrixConversion;
+import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges;
+import us.jonesrychtar.gispatialnet.Algorithm.QAP;
 import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.convertKnown;
 import us.jonesrychtar.gispatialnet.convertUnknown;
-import us.jonesrychtar.gispatialnet.qap;
 import us.jonesrychtar.gispatialnet.util;
 
 public class TEST {
@@ -129,7 +129,7 @@ public class TEST {
     public void testQAP(){
         //works
         try {
-              qap q = new qap(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
+              QAP q = new QAP(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
         } catch (CannotProceedException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {

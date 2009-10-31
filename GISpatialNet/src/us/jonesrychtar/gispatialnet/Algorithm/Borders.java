@@ -6,7 +6,7 @@
  * Requires: geotools,
  *
  */
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Algorithm;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
