@@ -19,7 +19,7 @@
  *
  */
 
-package us.jonesrychtar.gispatialnet;
+package us.jonesrychtar.gispatialnet.Algorithm;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +33,7 @@ import javax.naming.CannotProceedException;
  * @author cfbevan
  */
 @SuppressWarnings("all")
-public class qap {
+public class QAP {
 
 	//statics from rr.h
 	private static int MIN_MAT_SIZE = 5;          /* mimimum size for matrices */
@@ -105,7 +105,7 @@ public class qap {
      * @param argv arguments and filenames
      */
 
-	public qap(int argc, String argv[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{
+	public QAP(int argc, String argv[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{
 
 
 		tmem = 0;

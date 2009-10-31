@@ -8,6 +8,7 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import us.jonesrychtar.gispatialnet.GISpatialNet;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,6 +32,7 @@ public class cli extends userinterface {
     private static util u;
     private int statusLevel = 0;
     Scanner sc = new Scanner(System.in);
+    private GISpatialNet gsn = new GISpatialNet();
 
     public static void main(String[] args) {
         c = new cli();
