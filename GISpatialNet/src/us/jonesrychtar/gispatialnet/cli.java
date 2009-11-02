@@ -43,13 +43,14 @@ public class cli extends userinterface {
     }
 
     public void cli() {
+    	gsn.setDebugLevel(statusLevel);
     }
 
     //Menus----------------------------------------------------------------------------------
     public void Menu() {
         int option = getMenu(
                 "Main Menu:",
-                u.Status(statusLevel),
+                gsn.getStatus(),
                 new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Clear Data", "Exit"});
 
         switch (option) {
@@ -63,10 +64,10 @@ public class cli extends userinterface {
                 AnalyzeMenu();
                 break;
             case 4:
-                System.out.println(u.Status(3));
+                System.out.println(gsn.getStatus(3));
                 break;
             case 5:
-                u.ClearData();
+                gsn.ClearData();
                 break;
             case 6:
                 System.exit(0);
@@ -80,7 +81,7 @@ public class cli extends userinterface {
     private void LoadMenu1() {
         int option = getMenu(
                 "Load Menu:",
-                u.Status(statusLevel),
+                gsn.getStatus(statusLevel),
                 new String[]{"Delimited text file (.csv,.txt)",
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
@@ -88,14 +89,14 @@ public class cli extends userinterface {
             _LoadMenu2(option);
         } else if (option == 5) {
         } else if (option == 6) {
-            if (u.HasData(0) || u.HasData(1) || u.HasData(2) || u.HasData(3)) {
+            if (gsn.getData().hasX() || gsn.getData().hasY() || gsn.getData().hasAdj() || gsn.getData().hasAttb()) {
                 if (_overwrite()) {
                     System.out.println("Enter the name for the node shapefile (with .shp extension):");
                     String n = sc.next();
                     System.out.println("Enter the name for the edge shapefile (with .shp extension:");
                     String e = sc.next();
                     try {
-                        u.loadShapefile(n, e);
+                        gsn.getData().loadShapefile(n, e);
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
@@ -112,7 +113,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name for the edge shapefile (with .shp extension:");
                 String e = sc.next();
                 try {
-                    u.loadShapefile(n, e);
+                	gsn.getData().loadShapefile(n, e);
                 } catch (MalformedURLException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -130,32 +131,32 @@ public class cli extends userinterface {
     private void _LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
-                u.Status(statusLevel),
+                gsn.getStatus(statusLevel),
                 new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
                     "Node Coordinate/Location Data", "Attribute Data", "Exit"});
 
         boolean merge = false;
         switch (option) {
             case 1: {
-                if (u.HasData(0) || u.HasData(1) || u.HasData(3)) {
+                if (gsn.getData().hasX() || gsn.getData().hasY() || gsn.getData().hasAttb()) {
                     merge = _overwrite();
                 }
                 break;
             }
             case 2: {
-                if (u.HasData(2)) {
+                if (gsn.getData().hasAdj()) {
                     merge = _overwrite();
                 }
                 break;
             }
             case 3: {
-                if (u.HasData(0) || u.HasData(1)) {
+                if (gsn.getData().hasX() || gsn.getData().hasY()) {
                     merge = _overwrite();
                 }
                 break;
             }
             case 4: {
-                if (u.HasData(3)) {
+                if (gsn.getData().hasAttb()) {
                     merge = _overwrite();
                 }
                 break;
@@ -175,7 +176,7 @@ public class cli extends userinterface {
                 char sp = sc.next().charAt(0);
                 if (!merge) {
                     try {
-                        u.loadTxt(fn, option, format, rows, cols, sp);
+                    	gsn.getData().loadTxt(fn, option, format, rows, cols, sp);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -187,7 +188,7 @@ public class cli extends userinterface {
             case 2: { //dl ucinet (adj matrix only!)
                 if (!merge) {
                     try {
-                        u.loadDL(fn, option, format, rows, cols);
+                    	gsn.getData().loadDL(fn, option, format, rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -199,7 +200,7 @@ public class cli extends userinterface {
             case 3: { //pajek
                 if (!merge) {
                     try {
-                        u.loadPajek(fn, option, format, rows, cols);
+                    	gsn.getData().loadPajek(fn, option, format, rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -211,7 +212,7 @@ public class cli extends userinterface {
             case 4: { //excel
                 if (!merge) {
                     try {
-                        u.loadExcel(fn, option, format,rows, cols);
+                    	gsn.getData().loadExcel(fn, option, format,rows, cols);
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -232,7 +233,7 @@ public class cli extends userinterface {
     private void SaveMenu() {
         int option = getMenu(
                 "Save Data:",
-                u.Status(statusLevel),
+                gsn.getStatus(statusLevel),
                 new String[]{"Delimited text file (.csv,.txt)",
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
@@ -245,7 +246,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the Edge File:");
                 String efn = sc.next();
                 try {
-                    u.saveCSV(fnn, efn, sp);
+                	gsn.getData().saveCSV(fnn, efn, sp);
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -258,7 +259,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                    u.saveDL(fnn, type);
+                	gsn.getData().saveDL(fnn, type);
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -268,7 +269,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                    u.savePajek(fnn);
+                	gsn.getData().savePajek(fnn);
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -280,7 +281,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the Edge File:");
                 String efn = sc.next();
                 try {
-                    u.saveExcel(fnn, efn);
+                	gsn.getData().saveExcel(fnn, efn);
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 } catch (WriteException ex) {
@@ -292,7 +293,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                    u.saveGoogleEarth(fnn);
+                	gsn.getData().saveGoogleEarth(fnn);
                 } catch (KmlException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -301,7 +302,7 @@ public class cli extends userinterface {
                 break;
             }
             case 6: { //shapefile
-                if (!(u.HasData(0) && u.HasData(1))) {
+                if (!(gsn.getData().hasX() && gsn.getData().hasX())) {
                     int op = getMenu("Node data not found: ",
                             "What do you want to do?",
                             new String[]{"Create XY data", "Write only Edge file"});
@@ -319,7 +320,7 @@ public class cli extends userinterface {
                             System.out.println("Enter max width of network (usually 10xNumber of rows): ");
                             int wd = sc.nextInt();
                             try {
-                                u.saveShapefileUnknown(fnn, efn, alg, ht, wd);
+                            	gsn.getData().saveShapefileUnknown(fnn, efn, alg, ht, wd);
                             } catch (IllegalArgumentException ex) {
                                 System.out.println(ex.getMessage());
                             } catch (MalformedURLException ex) {
@@ -332,7 +333,7 @@ public class cli extends userinterface {
                         }
                         case 2: {
                             try {
-                                u.saveShapefile(fnn, efn);
+                            	gsn.getData().saveShapefile(fnn, efn);
                             } catch (IllegalArgumentException ex) {
                                 System.out.println(ex.getMessage());
                             } catch (MalformedURLException ex) {
@@ -351,7 +352,7 @@ public class cli extends userinterface {
                     System.out.println("Enter the name of the Edge File:");
                     String efn = sc.next();
                     try {
-                        u.saveShapefile(fnn, efn);
+                    	gsn.getData().saveShapefile(fnn, efn);
                     } catch (IllegalArgumentException ex) {
                         System.out.println(ex.getMessage());
                     } catch (MalformedURLException ex) {
@@ -376,7 +377,7 @@ public class cli extends userinterface {
     private void AnalyzeMenu() {
         int option = getMenu(
                 "Analyze Data:",
-                u.Status(statusLevel),
+                gsn.getStatus(statusLevel),
                 new String[]{"QAP", "Sample Network Bias", "Borders",
                     "Highlight Edges", "Matrix Conversion"});
         switch (option) {
@@ -485,7 +486,7 @@ public class cli extends userinterface {
                         "",
                         new String[]{"Original Borders Algorithm"});
                 try {
-                    u.Border(filename, op);
+                	gsn.getData().Border(filename, op);
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (MalformedURLException ex) {
@@ -508,7 +509,7 @@ public class cli extends userinterface {
                             "Less than median length", "More than median length", "Top 10%"
                         });
                 try {
-                    u.Highlight(op - 1, filename, nfilename);
+                	gsn.getData().Highlight(op - 1, filename, nfilename);
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (MalformedURLException ex) {
@@ -530,24 +531,24 @@ public class cli extends userinterface {
                         double xm = sc.nextDouble();
                         System.out.println("input amount to move on y direction: ");
                         double ym = sc.nextDouble();
-                        u.translate(xm, ym);
+                        gsn.getData().translate(xm, ym);
                         break;
                     }
                     case 2: {
                         int axis = getMenu("Select Axis:", "", new String[]{"X axis", "Y axis"}) - 1;
-                        u.reflect(axis);
+                        gsn.getData().reflect(axis);
                         break;
                     }
                     case 3: {
                         System.out.println("Enter number of degrees: ");
                         double deg = sc.nextDouble();
-                        u.rotate(deg);
+                        gsn.getData().rotate(deg);
                         break;
                     }
                     case 4: {
                         System.out.println("Enter scale factor: ");
                         double fac = sc.nextDouble();
-                        u.scale(fac);
+                        gsn.getData().scale(fac);
                         break;
                     }
                 }

@@ -29,11 +29,7 @@ import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.exceptions.MatrixException;
 
 import us.jonesrychtar.socialnetwork.CoordinateGraph.*;
-import us.jonesrychtar.socialnetwork.MetricFunction.*;
-import us.jonesrychtar.socialnetwork.Network.*;
-import us.jonesrychtar.socialnetwork.Reader.*;
 import us.jonesrychtar.socialnetwork.SpatialGraph.*;
-import us.jonesrychtar.socialnetwork.Writer.*;
 
 import com.mindprod.csv.CSVReader;
 import us.jonesrychtar.socialnetwork.SpatialGraph.Poisson;
@@ -68,10 +64,6 @@ public class SpatialNetworkBias {
 
     private CoordinateGraphBase theGraph;
     private SpatialGraphBase theSpatialGraph;
-    private MetricFunctionBase theFunction;
-    private NetworkBase theNetwork;
-    private ReaderBase theReader;
-    private WriterBase theWriter;
 
 	public SpatialNetworkBias() {
 		//coordinateFormat = 0;
@@ -98,10 +90,6 @@ public class SpatialNetworkBias {
         rand = new Random();
         theGraph=new CoordinateGraphBase();
         theSpatialGraph = new SpatialGraphBase();
-        theFunction = new MetricFunctionBase();
-        theNetwork = new NetworkBase();
-        theReader = new ReaderBase();
-        theWriter = new WriterBase();
 	}
 	
 	   /*public static void main(String[] args) {
