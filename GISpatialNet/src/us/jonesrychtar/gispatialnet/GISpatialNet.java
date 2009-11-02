@@ -3,38 +3,15 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import java.awt.Dimension;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Vector;
 
-import jxl.write.WriteException;
-
-import org.boehn.kmlframework.kml.KmlException;
-import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
-import org.ujmp.core.calculation.Calculation;
-
-import us.jonesrychtar.gispatialnet.*;
-
-import us.jonesrychtar.gispatialnet.Reader.CSVFileReader;
-import us.jonesrychtar.gispatialnet.Reader.DLreader;
-import us.jonesrychtar.gispatialnet.Reader.ExcelReader;
-import us.jonesrychtar.gispatialnet.Reader.KMLreader;
-import us.jonesrychtar.gispatialnet.Reader.PajekReader;
-import us.jonesrychtar.gispatialnet.Reader.ShapeFileReader;
-import us.jonesrychtar.gispatialnet.Writer.CSVwriter;
-import us.jonesrychtar.gispatialnet.Writer.DLwriter;
-import us.jonesrychtar.gispatialnet.Writer.ExcelWriter;
-import us.jonesrychtar.gispatialnet.Writer.KMLwriter;
-import us.jonesrychtar.gispatialnet.Writer.PajekWriter;
 
 /**
  * @author sam
- * This class holds all the relavent functions for GISpatialNet, including
+ * This class holds all the relevant functions for GISpatialNet, including
  * all the matrices. Most of this was taken from the util class from CVS
  * revision 37. 
  */
@@ -107,7 +84,7 @@ public class GISpatialNet {
     	return theData;
     }
 
-    public boolean LoadFile(String filename){
+    public void LoadFile(String filename) throws MalformedURLException, IOException{
     	theData.LoadFile(filename);
     }
     /**
@@ -121,6 +98,19 @@ public class GISpatialNet {
      */
     public String getStatus(){
     	return theData.toString();
+    }
+
+    /**
+     * Temporarily sets the Detail level the given 
+     * level and returns getStatus()
+     * @return Status information see {@link getStatus()}
+     */
+    public String getStatus(int level){
+    	int curLvl=this.debugLevel;		//store current level
+    	this.setDebugLevel(level);		//set the new level
+    	String out=this.getStatus();	//getStatus()
+    	theData.setDetailLevel(curLvl);	//restore the level
+    	return out;
     }
     
     /**
@@ -137,6 +127,12 @@ public class GISpatialNet {
     public int getDebugLevel(){
     	return debugLevel;
     }
+    
+    
+    /**
+     * "Router" function. Calls ClearData() on the current DataSet.
+     */
+    public void ClearData(){theData.ClearData();}
     
 	/**
 	 * @param args
