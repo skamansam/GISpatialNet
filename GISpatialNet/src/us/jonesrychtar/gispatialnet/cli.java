@@ -133,7 +133,7 @@ public class cli extends userinterface {
                 "Load File Menu:",
                 gsn.getStatus(statusLevel),
                 new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
-                    "Node Coordinate/Location Data", "Attribute Data", "Exit"});
+                    "Node Coordinate/Location Data", "Attribute Data", "Main Menu"});
 
         boolean merge = false;
         switch (option) {
@@ -159,6 +159,10 @@ public class cli extends userinterface {
                 if (gsn.getData().hasAttb()) {
                     merge = _overwrite();
                 }
+                break;
+            }
+            case 5: {
+                Menu();
                 break;
             }
         }
@@ -379,7 +383,7 @@ public class cli extends userinterface {
                 "Analyze Data:",
                 gsn.getStatus(statusLevel),
                 new String[]{"QAP", "Sample Network Bias", "Borders",
-                    "Highlight Edges", "Matrix Conversion"});
+                    "Highlight Edges", "Matrix Conversion", "Back"});
         switch (option) {
             case 1: { //QAP
                 int o = getMenu("Choose Options: ",

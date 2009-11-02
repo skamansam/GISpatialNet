@@ -13,8 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.ujmp.core.Matrix;
@@ -31,10 +29,9 @@ import org.xml.sax.XMLReader;
  */
 public class KMLreader {
     
-    private JAXBElement o;
-    private Unmarshaller unmarshaller;
     XMLReader xmlReader;
     InputSource is = null;
+    KMLContentHandler data = new KMLContentHandler();
     
 
     public KMLreader(String Filename) throws ParserConfigurationException, SAXException, FileNotFoundException, JAXBException, IOException{
@@ -45,26 +42,15 @@ public class KMLreader {
         spf.setNamespaceAware(true);
         xmlReader = spf.newSAXParser().getXMLReader();
 
-        xmlReader.setContentHandler(new KMLContentHandler());
+        xmlReader.setContentHandler(data);
 
         instream = new FileInputStream(Filename);
         is = new InputSource(instream);
     }
 
     public Matrix[] read() throws Exception{
-         //TODO: parse xml
          xmlReader.parse(is);
          
-         //get nodes
-         
-         System.out.println(" ");
-         //get name
-
-         //get desc
-
-         //get coord
-         //CollectionType.
-        
-        return new Matrix[]{MatrixFactory.emptyMatrix()};
+         return new Matrix[]{data.getX(), data.getY(), data.getAdj(), data.getAttb()};
     }
 }
