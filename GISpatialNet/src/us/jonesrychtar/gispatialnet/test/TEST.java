@@ -21,6 +21,7 @@ import org.ujmp.core.MatrixFactory;
 import org.xml.sax.SAXException;
 import us.jonesrychtar.gispatialnet.MatrixConversion;
 import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges;
+import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdgesByVal;
 import us.jonesrychtar.gispatialnet.Algorithm.QAP;
 import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.gispatialnet.Writer.*;
@@ -43,6 +44,7 @@ public class TEST {
        //run.testConversion(); //works
        //run.testUnknownShapeFile(); //works
        //run.testQAP(); //works
+       run.testHighlightByVal();
 
        //writers
        //run.TESTShapefileWriter(); //works
@@ -56,9 +58,9 @@ public class TEST {
        //readers
        //run.TestSHPreader(); //works
        //run.TestExcelReader(); //works
-       run.testKMLreader();
+       //run.testKMLreader(); //works so far
        //run.testPajekReader();
-       //run.testDLreader(); //works for full
+       //run.testDLreader(); //works for full, rest untested
        //run.testCSVreader();
 
     }
@@ -138,6 +140,16 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Error ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void testHighlightByVal(){
+        //a = td.RandomMatrix(10, 10, 0, 3);
+        try{
+            HighlightEdgesByVal hebv = new HighlightEdgesByVal("out",x,y,a);
+            hebv.write();
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
     }
     //test writers----------------------------------------------------------------------------------------

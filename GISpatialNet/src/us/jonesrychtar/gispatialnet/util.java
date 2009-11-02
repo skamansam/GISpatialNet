@@ -8,16 +8,10 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import java.awt.Dimension;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
-import java.util.Vector;
 import javax.naming.CannotProceedException;
 import javax.naming.OperationNotSupportedException;
-import jxl.write.WriteException;
-import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
@@ -26,7 +20,6 @@ import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.Algorithm.Borders;
 import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges;
 import us.jonesrychtar.gispatialnet.Algorithm.QAP;
-import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
 /**
@@ -118,13 +111,13 @@ public class util {
      * @param xmove amount to move in x direction
      * @param ymove amount to move in y direction
      */
-    public void translate(double xmove, double ymove,Matrix x,Matrix y, Matrix adj)throws IllegalStateException{
-        if(!x.isEmpty() && !y.isEmpty()){
+    public void translate(double xmove, double ymove,DataSet theData)throws IllegalStateException{
+        if(theData.hasXY()){
             MatrixConversion mc = new MatrixConversion();
-            Matrix temp = combine(x,y);
+            Matrix temp = theData.getXY();
             temp = mc.Translation(temp, xmove, ymove);
-            x = temp.selectColumns(Calculation.Ret.NEW, 0);
-            y = temp.selectColumns(Calculation.Ret.NEW, 1);
+            theData.setX(temp.selectColumns(Calculation.Ret.NEW, 0));
+            theData.setY(temp.selectColumns(Calculation.Ret.NEW, 1));
         }
         else throw new IllegalStateException("no XY data loaded");
     }
@@ -143,33 +136,19 @@ public class util {
             theData.setY(temp.selectColumns(Calculation.Ret.NEW, 1));
         } else throw new IllegalStateException("no XY data loaded");
     }
-    /**
-     * Reflects the xy data over an axis
-     * @param Axis Axis to reflect over (X=0, Y=1)
-     * @throws java.lang.IllegalStateException
-     */
-    public Matrix reflect(Matrix x,Matrix y, int Axis)throws IllegalStateException{
-        //x=0 y=1
-        if(!x.isEmpty() && !y.isEmpty()){
-            MatrixConversion mc = new MatrixConversion();
-            Matrix temp = combine(x,y);
-            temp = mc.Reflection(temp, Axis);
-            return combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
-        } else throw new IllegalStateException("no XY data loaded");
-    }
+   
     /**
      * Rotates the xy data about the origin
      * @param Degrees Degrees to rotate
      * @throws java.lang.IllegalStateException
      */
-    public Matrix rotate(double Degrees,Matrix x,Matrix y, Matrix adj)throws IllegalStateException{
-        if(!x.isEmpty() && !y.isEmpty()){
+    public void rotate(double Degrees,DataSet theData)throws IllegalStateException{
+        if(theData.hasXY()){
 	        MatrixConversion mc = new MatrixConversion();
-	        Matrix temp = combine(x,y);
+	        Matrix temp = theData.getXY();
 	        temp = mc.RotateClockwise(temp, Degrees);
-            return combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
+            theData.setX(temp.selectColumns(Calculation.Ret.NEW, 0));
+            theData.setY(temp.selectColumns(Calculation.Ret.NEW, 1));
         } else throw new IllegalStateException("no XY data loaded");
     }
 
@@ -180,13 +159,13 @@ public class util {
      * @return combined XY Matrix. use SplitXYAttb() to split into respective coords.
      * @throws IllegalStateException
      */
-    public Matrix scale(double factor,Matrix x,Matrix y)throws IllegalStateException{
-        if(!x.isEmpty() && !y.isEmpty()){
+    public void scale(double factor,DataSet theData)throws IllegalStateException{
+        if(theData.hasXY()){
             MatrixConversion mc = new MatrixConversion();
-            Matrix temp = combine(x,y);
+            Matrix temp = theData.getXY();
             temp = mc.Scale(temp, factor);
-            return combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
+            theData.setX(temp.selectColumns(Calculation.Ret.NEW, 0));
+            theData.setY(temp.selectColumns(Calculation.Ret.NEW, 1));
         } else throw new IllegalStateException("no XY data loaded");
     }
 
