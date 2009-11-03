@@ -104,7 +104,7 @@ public class util {
     	return sg;
     }
 
-    //TODO: Make the translation functions more atomic; for only one matrix
+    
     //Matrix conversion functions-------------------------------------------------------------------------
     /**
      * Translates the stored xy to a new xy
@@ -156,7 +156,6 @@ public class util {
      * @param factor Factor to scale by
      * @param x the X-Coords
      * @param y the Y-Coords
-     * @return combined XY Matrix. use SplitXYAttb() to split into respective coords.
      * @throws IllegalStateException
      */
     public void scale(double factor,DataSet theData)throws IllegalStateException{
