@@ -44,15 +44,15 @@ public class TEST {
        //run.testConversion(); //works
        //run.testUnknownShapeFile(); //works
        //run.testQAP(); //works
-       run.testHighlightByVal();
+       //run.testHighlightByVal();
 
        //writers
-       //run.TESTShapefileWriter(); //works
-       //run.TestXLSwriter(); //works
-       //run.TestKMLwriter(); //works
-       //run.TestCSVwriter(); //works
-       //run.TestDLwriter(); //works
-       //run.TestPajekWriter(); //works
+       run.TESTShapefileWriter(); //works
+       run.TestXLSwriter(); //works
+       run.TestKMLwriter(); //works
+       run.TestCSVwriter(); //works
+       run.TestDLwriter(); //works
+       run.TestPajekWriter(); //works
 
 
        //readers
@@ -60,7 +60,7 @@ public class TEST {
        //run.TestExcelReader(); //works
        //run.testKMLreader(); //works so far
        //run.testPajekReader();
-       //run.testDLreader(); //works for full, rest untested
+       //run.testDLreader();
        //run.testCSVreader();
 
     }
@@ -208,6 +208,7 @@ public class TEST {
     }
     public void TestDLwriter(){
         //works
+
         Matrix temp = u.combine(x,y);
         //System.out.println("Temp Labels:  "+temp.getColumnLabel(0)+"  "+temp.getColumnLabel(1));
         DLwriter dlw = new DLwriter(temp, "test");
@@ -250,7 +251,7 @@ public class TEST {
         ExcelReader er = new ExcelReader("nodes.xls");
         Matrix temp = MatrixFactory.emptyMatrix();
         try {
-            temp = er.read(0, 10, 3);
+            temp = er.read(0, 10, 2);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -297,11 +298,13 @@ public class TEST {
             //temp = pr.Read(0, 10, 10);
     }
     public void testDLreader(){
-        //works for full
-        DLreader dlr = new DLreader("NC1.DAT");
+        //works
+        DLreader dlr = new DLreader("test.dat");
         Matrix temp = MatrixFactory.emptyMatrix();
         try {
-            temp = dlr.Read(0, 39, 40);
+            //temp = dlr.Read(DLreader.FULL_MATRIX, 5, 5);
+            //temp = dlr.Read(DLreader.LOWER_MATRIX, 5, 5);
+            temp = dlr.Read(DLreader.UPPER_MATRIX, 5, 5);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }

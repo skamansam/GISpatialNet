@@ -84,21 +84,15 @@ public class DLreader extends TextFileReader {
                 }
             }
             for (int i = 0; i < rows; i++) {
-                if (header.rembed) {
-                    output.setAsString(sc.next(), i, 0);
-                    for (int j = 1; j <= col; j++) {
-                        if ((!header.rembed && (header.isDiagAbsent && i == j)) ||
-                                (header.rembed && (header.isDiagAbsent && i == j + 1))) {
-                            output.setAsString("0", i, j);
-                        } else {
-                            output.setAsString(sc.next(), i, j);
-                        }
-                    }
-                } else {
-                    for (int j = 0; j < col; j++) {
+                if (header.rembed)
+                    sc.next();//do nothing with it
+                for (int j = 0; j < col; j++) {
+                    if (header.isDiagAbsent && i == j) {
+                        output.setAsString("1", i, j);
+                    } else {
                         output.setAsString(sc.next(), i, j);
                     }
-                }
+                } 
             }
         } //type 1 = lower matrix
         else if (type == 1) {
@@ -107,13 +101,20 @@ public class DLreader extends TextFileReader {
                     output.setColumnLabel(c, sc.next());
                 }
             }
-            if (header.rembed) {
-            }
             for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < (col - i); j++) {
-                    output.setAsString(sc.next(), i, j);
+                if (header.rembed) {
+                //get header and do nothing
+                sc.next();
+                }
+                for (int j = 0; j <= i; j++) {
+                    if (header.isDiagAbsent && i == j) {
+                        output.setAsString("1", i, j);
+                    } else {
+                        output.setAsString(sc.next(), i, j);
+                    }
                 }
             }
+            output = ReaderUtil.LowerToFull(output);
         } //type 2 = upper matrix
         else if (type == 2) {
             if (header.cembed) {
@@ -122,10 +123,19 @@ public class DLreader extends TextFileReader {
                 }
             }
             for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < (col - (col - (i + 1))); j++) {
-                    output.setAsString(sc.next(), i, j);
+                if (header.rembed) {
+                //get header and do nothing
+                sc.next();
+                }
+                for (int j = i; j < (col); j++) {
+                    if (header.isDiagAbsent && i == j) {
+                        output.setAsString("1", i, j);
+                    } else {
+                        output.setAsString(sc.next(), i, j);
+                    }
                 }
             }
+            output = ReaderUtil.UpperToFull(output);
         } else {
             System.err.println("Invalid format");
         }
@@ -195,7 +205,8 @@ public class DLreader extends TextFileReader {
                 header.rORc = 1;
             }
             //row labels embeded
-            if (word.equals("lables") && sc.next().equals("embedded")){
+            String temp = sc.next();
+            if (word.equals("labels") && temp.equals("embedded")){
                 header.rembed =true;
                 return true;
             }
@@ -209,7 +220,8 @@ public class DLreader extends TextFileReader {
                 header.rORc = 2;
             }
             //col labels embeded
-            if (word.equals("lables") && sc.next().equals("embedded")){
+             String temp = sc.next();
+            if (word.equals("labels") && temp.equals("embedded")){
                 header.cembed =true;
                 return true;
             }
@@ -223,9 +235,12 @@ public class DLreader extends TextFileReader {
             return true;
         }
         //check for diagonal: absent
-        else if((in.equals("diagonal:") || in.equals("diagonal")) && sc.next().equals("absent")){
-            header.isDiagAbsent=true;
-            return true;
+        else if((in.equals("diagonal:") || in.equals("diagonal"))){
+            String temp = sc.next();
+            if(temp.equals("absent")){
+                header.isDiagAbsent=true;
+                return true;
+            }
         }
 
         //unsupported headers (throw exception)
