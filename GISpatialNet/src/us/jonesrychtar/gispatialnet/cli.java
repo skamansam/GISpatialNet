@@ -174,6 +174,9 @@ public class cli extends userinterface {
         System.out.println("Enter the number of columns: ");
         int cols = sc.nextInt();
 
+        //fix stuff
+        format--;
+        option --;
         switch (what) {
             case 1: { //txt/csv
                 System.out.print("What is the field seperator? ");

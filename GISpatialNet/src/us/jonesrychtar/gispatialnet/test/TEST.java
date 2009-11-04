@@ -47,18 +47,18 @@ public class TEST {
        //run.testHighlightByVal();
 
        //writers
-       run.TESTShapefileWriter(); //works
-       run.TestXLSwriter(); //works
-       run.TestKMLwriter(); //works
-       run.TestCSVwriter(); //works
-       run.TestDLwriter(); //works
-       run.TestPajekWriter(); //works
+       //run.TESTShapefileWriter(); //works
+       //run.TestXLSwriter(); //works
+       //run.TestKMLwriter(); //works
+       //run.TestCSVwriter(); //works
+       //run.TestDLwriter(); //works
+       //run.TestPajekWriter(); //works
 
 
        //readers
        //run.TestSHPreader(); //works
        //run.TestExcelReader(); //works
-       //run.testKMLreader(); //works so far
+       run.testKMLreader(); //works so far
        //run.testPajekReader();
        //run.testDLreader();
        //run.testCSVreader();
@@ -273,7 +273,7 @@ public class TEST {
     public void testKMLreader(){
         KMLreader kr = null;
         try {
-            kr = new KMLreader("test.kml");
+            kr = new KMLreader("doc.kml");
         }catch (IOException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
