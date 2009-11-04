@@ -56,7 +56,7 @@ public class DataSet {
     private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj). Always stored as FULL MATRIX
     private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
 
-    private List<String> loadedFiles = null;
+    private Vector<String> loadedFiles = new Vector<String>();
 
     private int Detail=2;
 

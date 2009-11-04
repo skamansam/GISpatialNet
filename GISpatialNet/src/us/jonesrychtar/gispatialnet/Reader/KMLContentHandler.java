@@ -83,8 +83,25 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
         else if (localName.equals("name") ||
                 localName.equals("description") ||
-                localName.equals("scale")){
+                localName.equals("scale") ||
+                localName.equals("text") ||
+                localName.equals("displayName") ||
+                localName.equals("href") ||
+                localName.equals("linkDescription") ||
+                localName.equals("linkName" ) ||
+                localName.equals("message")  ||
+                localName.equals("near") ||
+                localName.equals("phoneNumber") ||
+                localName.equals("value") ||
+                localName.equals("viewFormat") ){
             attb = true;
+        }
+        else if(localName.equals("color")){
+            attbtemp.add(attributes.getValue(0));
+        }
+        else if(localName.equals("hotSpot")){
+            xout.add(Double.parseDouble(attributes.getValue(0)));
+            yout.add(Double.parseDouble(attributes.getValue(1)));
         }
     }
 
