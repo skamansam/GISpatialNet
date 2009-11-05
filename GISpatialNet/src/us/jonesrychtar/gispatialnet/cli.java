@@ -51,7 +51,7 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Main Menu:",
                 gsn.getStatus(),
-                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Clear Data", "Exit"});
+                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Clear Data", "About GISpatialNet", "Exit"});
 
         switch (option) {
             case 1:
@@ -70,6 +70,9 @@ public class cli extends userinterface {
                 gsn.ClearData();
                 break;
             case 6:
+                printAbout();
+                break;
+            case 7:
                 System.exit(0);
                 break;
             default:
@@ -78,6 +81,21 @@ public class cli extends userinterface {
         }
     }
 
+    private void printAbout(){
+    	System.out.print(
+    			"GISpatialNet is the brain child of Dr. Eric Jones and Jan Rychtar. " +
+    			"It was programmed by " +
+    			"Robert Gove, Charles Bevan, and Samuel Tyler. Collaborators include " +
+    			"Martin Smith and Christopher Nicholson.\n\n" +
+    			"You can find more information about GISPatialNet at its homepage, " +
+    			"http://sourceforge.net/apps/trac/spatialnet/\n\n" +
+    			"This software is governed under the GNU Greater Public Liscence, Version " +
+    			"2 (GPLv2). If you have not obtained the LGPL with this software, " +
+    			"you can obtain it from http://www.gnu.org/licenses/gpl.html. GISpatialNet uses software governed under the GPL," +
+    			"LGPL, Apache License, New BSD License");
+    	
+    }
+    
     private void LoadMenu1() {
         int option = getMenu(
                 "Load Menu:",

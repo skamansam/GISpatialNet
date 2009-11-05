@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Class-Path: libs/geoapi-2.2.0.jar libs/gt-api-2.5.7.jar libs/gt-data-2
+ .5.7.jar libs/gt-db2-2.5.7.jar libs/gt-main-2.5.7.jar libs/gt-metadat
+ a-2.5.7.jar libs/gt-shapefile-2.5.7.jar libs/gt-shapefile-renderer-2.
+ 5.7.jar libs/jts-1.9.jar libs/ujmp-complete-0.2.2.jar libs/csv.jar li
+ bs/csvalign.jar libs/csvdump.jar libs/csvpack.jar libs/csvtab2comma.j
+ ar libs/org.boehn.kmlframework_20090718.jar libs/ujmp-complete-0.2.3.
+ jar libs/jxl.jar
+Created-By: 1.6.0_16 (Sun Microsystems Inc.)
+Main-Class: us.jonesrychtar.gispatialnet.cli
+
