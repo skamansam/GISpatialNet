@@ -11,7 +11,9 @@ package us.jonesrychtar.gispatialnet.Reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import java.util.Vector;
 import org.ujmp.core.Matrix;
+import us.jonesrychtar.gispatialnet.DataSet;
 
 /*
  *
@@ -37,6 +39,6 @@ public abstract class TextFileReader {
         return new File(filename);
     }
     
-    public abstract Matrix Read(int type, int rows, int col) throws Exception;
+    public abstract Matrix[] Read(int type, int rows, int col) throws Exception;
 
 }

@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
@@ -23,6 +24,7 @@ import us.jonesrychtar.gispatialnet.MatrixConversion;
 import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges;
 import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdgesByVal;
 import us.jonesrychtar.gispatialnet.Algorithm.QAP;
+import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.gispatialnet.Writer.*;
 import us.jonesrychtar.gispatialnet.convertKnown;
@@ -249,25 +251,24 @@ public class TEST {
     public void TestExcelReader(){
         //works
         ExcelReader er = new ExcelReader("nodes.xls");
-        Matrix temp = MatrixFactory.emptyMatrix();
+        Vector<Matrix> temp = new Vector<Matrix>();
         try {
             temp = er.read(0, 10, 2);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
-        u.stripNumCol(temp);
+        u.stripNumCol(temp.elementAt(0));
 
-       System.out.println(temp);
+       System.out.println(temp.elementAt(0));
 
-       Matrix tempa = MatrixFactory.emptyMatrix();
+      Vector<Matrix> tempa = new Vector<Matrix>();
        ExcelReader era = new ExcelReader("edges.xls");
         try {
             tempa = era.read(1, 10, 10);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-       System.out.println(tempa);
+       System.out.println(tempa.elementAt(0));
     }
     //-----------------------------------------------------------------------------------------------------------
     public void testKMLreader(){
@@ -300,21 +301,21 @@ public class TEST {
     public void testDLreader(){
         //works
         DLreader dlr = new DLreader("test.dat");
-        Matrix temp = MatrixFactory.emptyMatrix();
+        Vector<DataSet> temp = null;
         try {
             //temp = dlr.Read(DLreader.FULL_MATRIX, 5, 5);
             //temp = dlr.Read(DLreader.LOWER_MATRIX, 5, 5);
-            temp = dlr.Read(DLreader.UPPER_MATRIX, 5, 5);
+            temp = dlr.Read(TextFileReader.UPPER_MATRIX, 5, 5);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for(int i=0; i<temp.getColumnCount(); i++)
-            System.out.print(temp.getColumnLabel(i)+" ");
+        //for(int i=0; i<temp.getColumnCount(); i++)
+        //    System.out.print(temp.getColumnLabel(i)+" ");
         System.out.println("\n"+temp);
     }
     public void testCSVreader(){
         CSVFileReader cr = new CSVFileReader("test.csv");
-        Matrix temp = MatrixFactory.emptyMatrix();
+        Vector<Matrix> temp = null;
         try {
             temp = cr.Read(0, 11, 2);
         } catch (FileNotFoundException ex) {

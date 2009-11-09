@@ -8,10 +8,12 @@
  */
 package us.jonesrychtar.gispatialnet.Reader;
 
+import java.io.File;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import java.util.Scanner;
 import java.util.Vector;
+import us.jonesrychtar.gispatialnet.DataSet;
 
 /**
  *
@@ -19,9 +21,12 @@ import java.util.Vector;
  * @date September 17, 2009
  * @version 0.0.1
  */
-public class DLreader extends TextFileReader {
+public class DLreader{
+
+    protected File file;
 
     private class DLHeaders {
+
         public int rORc = 0; //temp used in analyzing label lists
         //covers nr, nc, and n
         public int nr,  nc;
@@ -54,102 +59,110 @@ public class DLreader extends TextFileReader {
     private ReaderUtil ru = new ReaderUtil();
 
     public DLreader(String file) {
-        this.setFile(this.openFile(file));
+        this.file = new File(file);
     }
 
-    @Override
-    public Matrix Read(int type, int rows, int col) throws Exception {
+    //TODO: test multiple read
+    public Vector<DataSet> Read(int type, int rows, int col) throws Exception {
         Scanner sc;
         header.nc = col;
         header.nr = rows;
+        Vector<DataSet> ds = new Vector<DataSet>();
         //make empty matrix
         Matrix output = MatrixFactory.zeros(header.nr, header.nc);
-        sc = new Scanner(this.getFile());
+        sc = new Scanner(file);
         //read headers
         String word = sc.next().toLowerCase();
         while (!(word.equals("data:")) && !header.ended) {
             //analyze header
             _analyzeHeader(word, sc);
-            if(!header.ended)
+            if (!header.ended) {
                 word = sc.next().toLowerCase();
+            }
         }
         //read matrix
+        for (; header.nm > 0; header.nm--) {
+            //type 0 = full matrix
+            if (type == 0) {
+                //if col labels embedded, read labels
+                if (header.cembed) {
+                    for (int c = 0; c < header.nc; c++) {
+                        output.setColumnLabel(c, sc.next());
+                    }
+                }
+                for (int i = 0; i < rows; i++) {
+                    if (header.rembed) {
+                        sc.next();//do nothing with it
+                    }
+                    for (int j = 0; j < col; j++) {
+                        if (header.isDiagAbsent && i == j) {
+                            output.setAsString("1", i, j);
+                        } else {
+                            output.setAsString(sc.next(), i, j);
+                        }
+                    }
+                }
+            } //type 1 = lower matrix
+            else if (type == 1) {
+                if (header.cembed) {
+                    for (int c = 0; c < header.nc; c++) {
+                        output.setColumnLabel(c, sc.next());
+                    }
+                }
+                for (int i = 0; i < rows; i++) {
+                    if (header.rembed) {
+                        //get header and do nothing
+                        sc.next();
+                    }
+                    for (int j = 0; j <= i; j++) {
+                        if (header.isDiagAbsent && i == j) {
+                            output.setAsString("1", i, j);
+                        } else {
+                            output.setAsString(sc.next(), i, j);
+                        }
+                    }
+                }
+                output = ReaderUtil.LowerToFull(output);
+            } //type 2 = upper matrix
+            else if (type == 2) {
+                if (header.cembed) {
+                    for (int c = 0; c < header.nc; c++) {
+                        output.setColumnLabel(c, sc.next());
+                    }
+                }
+                for (int i = 0; i < rows; i++) {
+                    if (header.rembed) {
+                        //get header and do nothing
+                        sc.next();
+                    }
+                    for (int j = i; j < (col); j++) {
+                        if (header.isDiagAbsent && i == j) {
+                            output.setAsString("1", i, j);
+                        } else {
+                            output.setAsString(sc.next(), i, j);
+                        }
+                    }
+                }
+                output = ReaderUtil.UpperToFull(output);
+            } else {
+                System.err.println("Invalid format");
+            }
 
-        //type 0 = full matrix
-        if (type == 0) {
-            //if col labels embedded, read labels
-            if (header.cembed) {
-                for (int c = 0; c < header.nc; c++) {
-                    output.setColumnLabel(c, sc.next());
+            if (header.isDiagAbsent) {
+                ru.addDiag(output);
+            }
+
+            //add labels if needed
+            if (header.clables.size() > 0) {
+                for (int c = 0; c < header.clables.size(); c++) {
+                    output.setColumnLabel(c, header.clables.elementAt(c));
                 }
             }
-            for (int i = 0; i < rows; i++) {
-                if (header.rembed)
-                    sc.next();//do nothing with it
-                for (int j = 0; j < col; j++) {
-                    if (header.isDiagAbsent && i == j) {
-                        output.setAsString("1", i, j);
-                    } else {
-                        output.setAsString(sc.next(), i, j);
-                    }
-                } 
-            }
-        } //type 1 = lower matrix
-        else if (type == 1) {
-            if (header.cembed) {
-                for (int c = 0; c < header.nc; c++) {
-                    output.setColumnLabel(c, sc.next());
-                }
-            }
-            for (int i = 0; i < rows; i++) {
-                if (header.rembed) {
-                //get header and do nothing
-                sc.next();
-                }
-                for (int j = 0; j <= i; j++) {
-                    if (header.isDiagAbsent && i == j) {
-                        output.setAsString("1", i, j);
-                    } else {
-                        output.setAsString(sc.next(), i, j);
-                    }
-                }
-            }
-            output = ReaderUtil.LowerToFull(output);
-        } //type 2 = upper matrix
-        else if (type == 2) {
-            if (header.cembed) {
-                for (int c = 0; c < header.nc; c++) {
-                    output.setColumnLabel(c, sc.next());
-                }
-            }
-            for (int i = 0; i < rows; i++) {
-                if (header.rembed) {
-                //get header and do nothing
-                sc.next();
-                }
-                for (int j = i; j < (col); j++) {
-                    if (header.isDiagAbsent && i == j) {
-                        output.setAsString("1", i, j);
-                    } else {
-                        output.setAsString(sc.next(), i, j);
-                    }
-                }
-            }
-            output = ReaderUtil.UpperToFull(output);
-        } else {
-            System.err.println("Invalid format");
+            DataSet dstemp = new DataSet();
+            dstemp.setAdj(output);
+            ds.add(dstemp);
         }
-
-        if(header.isDiagAbsent){
-            ru.addDiag(output);
-        }
-
-        //add labels if needed
-        if(header.clables.size()>0)
-            for(int c=0; c<header.clables.size(); c++){
-                output.setColumnLabel(c, header.clables.elementAt(c));
-            }
-        return output;
+        return ds;
     }
 
     private boolean _analyzeHeader(String in, Scanner sc) throws Exception {
@@ -184,14 +197,11 @@ public class DLreader extends TextFileReader {
             String form = sc.next().toLowerCase();
             if (form.equals("fullmatrix")) {
                 header.format = 0;
-            }
-            else if (form.equals("lowerhalf")) {
+            } else if (form.equals("lowerhalf")) {
                 header.format = 1;
-            }
-            else if (form.equals("upperhalf")) {
+            } else if (form.equals("upperhalf")) {
                 header.format = 2;
-            }
-            else if (form.equals("blockmatrix")){
+            } else if (form.equals("blockmatrix")) {
                 //unsupported
                 throw new Exception("blockmatrix not supported");
             }
@@ -206,12 +216,11 @@ public class DLreader extends TextFileReader {
             }
             //row labels embeded
             String temp = sc.next();
-            if (word.equals("labels") && temp.equals("embedded")){
-                header.rembed =true;
+            if (word.equals("labels") && temp.equals("embedded")) {
+                header.rembed = true;
                 return true;
             }
-        }
-        //check for col
+        } //check for col
         else if (in.equals("col") || in.equals("column")) {
             String word = sc.next().toLowerCase();
             //col labes:
@@ -220,53 +229,50 @@ public class DLreader extends TextFileReader {
                 header.rORc = 2;
             }
             //col labels embeded
-             String temp = sc.next();
-            if (word.equals("labels") && temp.equals("embedded")){
-                header.cembed =true;
+            String temp = sc.next();
+            if (word.equals("labels") && temp.equals("embedded")) {
+                header.cembed = true;
                 return true;
             }
-        }
-        //nm (number of matricies
-        else if(in.equals("nm") || in.equals("nm=")){
-            if(in.equals("nm")){
+        } //nm (number of matricies
+        else if (in.equals("nm") || in.equals("nm=")) {
+            if (in.equals("nm")) {
                 sc.next();
             }
             header.nm = sc.nextInt();
             return true;
-        }
-        //check for diagonal: absent
-        else if((in.equals("diagonal:") || in.equals("diagonal"))){
+        } //check for diagonal: absent
+        else if ((in.equals("diagonal:") || in.equals("diagonal"))) {
             String temp = sc.next();
-            if(temp.equals("absent")){
-                header.isDiagAbsent=true;
+            if (temp.equals("absent")) {
+                header.isDiagAbsent = true;
                 return true;
             }
-        }
-
-        //unsupported headers (throw exception)
+        } //unsupported headers (throw exception)
         //check for matrix labels
-        else if(in.equals("matrix") && sc.next().equals("labels:")){
+        else if (in.equals("matrix") && sc.next().equals("labels:")) {
             throw new Exception("\"matrix labels:\" not supported");
-        }
-        //check for datafile
-        else if (in.equals("datafile")){
+        } //check for datafile
+        else if (in.equals("datafile")) {
             throw new Exception("\"datafile\" not supported");
         }
 
         //end unsupported headers
-        
+
         //check for labels
         if (in.equals("labels:")) {
             String word = sc.next();
             while (!(_analyzeHeader(word, sc)) && !(word.toLowerCase().equals("data:"))) {
-                if(header.rORc==1)
+                if (header.rORc == 1) {
                     header.labels.add(word);
-                else if(header.rORc==2)
+                } else if (header.rORc == 2) {
                     header.clables.add(word);
+                }
                 word = sc.next();
             }
-            if(word.toLowerCase().equals("data:"))
+            if (word.toLowerCase().equals("data:")) {
                 header.ended = true;
+            }
             return true;
         }
         return false;
