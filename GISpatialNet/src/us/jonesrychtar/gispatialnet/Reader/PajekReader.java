@@ -11,6 +11,8 @@ package us.jonesrychtar.gispatialnet.Reader;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import java.util.Scanner;
+import java.util.Vector;
+import us.jonesrychtar.gispatialnet.DataSet;
 
 /**
  *
@@ -28,8 +30,8 @@ public class PajekReader extends TextFileReader {
     }
 
     @Override
-    //TODO: This should return 2 matricies, one with XY coordinates, one with Adj matrix for arcs
-    public Matrix Read(int type, int rows, int col) throws Exception{
+    //TODO: This will now return dataset vector
+    public Vector<DataSet> Read(int type, int rows, int col) throws Exception{
         
     	Scanner theFile = new Scanner(this.file);
     	//Matrix theMatrix=MatrixFactory.emptyMatrix();

@@ -8,7 +8,6 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import us.jonesrychtar.gispatialnet.GISpatialNet;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,6 +18,7 @@ import javax.naming.CannotProceedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
+import us.jonesrychtar.gispatialnet.Reader.Reader;
 
 /**
  *
@@ -81,6 +81,7 @@ public class cli extends userinterface {
         }
     }
 
+   // Added to GISpatialNet.java
     private void printAbout(){
     	System.out.print(
     			"GISpatialNet is the brain child of Dr. Eric Jones and Jan Rychtar. " +
@@ -114,7 +115,8 @@ public class cli extends userinterface {
                     System.out.println("Enter the name for the edge shapefile (with .shp extension:");
                     String e = sc.next();
                     try {
-                        gsn.getData().loadShapefile(n, e);
+                        //TODO: rewrite from here to add multiple data set functionality
+                        Reader.loadShapefile(n, e);
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
@@ -590,7 +592,7 @@ public class cli extends userinterface {
     //End menus ---------------------------------------------------------------------------
     //helper menus
 
-    private boolean _overwrite() {
+    private boolean _overwrite() { //TODO: merge should now be its own function. When loading a dataset with a dataset already present, simply create a new one. Merge will operate on two datasets tahat are already loaded.
         int t = getMenu(
                 "Data already exists. Do you wish to overwrite or merge data?",
                 "Merging not supported yet.",

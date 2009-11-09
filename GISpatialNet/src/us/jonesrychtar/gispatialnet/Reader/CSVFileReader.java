@@ -17,6 +17,8 @@ import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.exceptions.MatrixException;
 
 import com.mindprod.csv.CSVReader;
+import java.util.Vector;
+import us.jonesrychtar.gispatialnet.DataSet;
 
 /**
  * @author Samuel C. Tyler
@@ -40,7 +42,8 @@ public class CSVFileReader extends TextFileReader{
     }
 
 	@Override
-	public Matrix Read(int type, int rows, int cols) 
+    //TODO: New Output type needs coding
+	public Vector<Matrix> Read(int type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 		matrixReader = new CSVReader(new FileReader(this.getFile()),

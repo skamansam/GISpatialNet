@@ -6,7 +6,7 @@ package us.jonesrychtar.gispatialnet;
 
 import org.ujmp.core.Matrix;
 
-
+//TODO: Merge will now operate on two DataSets and return one DataSet.
 public class DataMerger {
 
     Matrix xyAttb1, xyAttb2;
