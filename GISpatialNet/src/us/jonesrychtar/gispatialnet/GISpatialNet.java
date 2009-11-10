@@ -20,8 +20,8 @@ import us.jonesrychtar.gispatialnet.Reader.Reader;
 public class GISpatialNet {
 
 	//DataSet theData=new DataSet();
-    //TODO: rewrite to allow for multiple data sets
-    Vector<DataSet> theData = new Vector<DataSet>();
+    
+    private Vector<DataSet> theData = new Vector<DataSet>();
 	int debugLevel=0;
     
 	/**
@@ -71,21 +71,27 @@ public class GISpatialNet {
      * @param X
      * @param Y
      */
-    public void setXY(Matrix X, Matrix Y){
-    	theData.setX(MatrixFactory.emptyMatrix());
-    	theData.setY(MatrixFactory.emptyMatrix());    	
+    public void setXY(int Matrix, Matrix X, Matrix Y){
+    	theData.elementAt(Matrix).setX(X);
+    	theData.elementAt(Matrix).setY(Y);
     }
     
-    public void addXY(Matrix X, Matrix Y){
-    	theData.addX(X);
-    	theData.addY(Y);    	
+    public void addXY(int Matrix, Matrix X, Matrix Y){
+    	theData.elementAt(Matrix).addX(X);
+    	theData.elementAt(Matrix).addY(Y);
     }
     
     /**
      * @return
      */
-    public DataSet getData(){
-    	return theData;
+    public DataSet getData(int Matrix){
+    	return theData.elementAt(Matrix);
+    }
+    public int NumberOfDataSets(){
+        return theData.size();
+    }
+    public Vector<DataSet> getDataSets(){
+        return theData;
     }
 
     public void LoadFile(String filename) throws MalformedURLException, IOException{
@@ -100,8 +106,8 @@ public class GISpatialNet {
     /**
      * @return
      */
-    public String getStatus(){
-    	return theData.toString();
+    public String toString(int Matrix){
+    	return theData.elementAt(Matrix).toString();
     }
 
     /**
@@ -111,18 +117,21 @@ public class GISpatialNet {
      */
     public String getStatus(int level){
     	int curLvl=this.debugLevel;		//store current level
-    	this.setDebugLevel(level);		//set the new level
-    	String out=this.getStatus();	//getStatus()
-    	theData.setDetailLevel(curLvl);	//restore the level
+        String out="";
+        for(int i=0; i<this.NumberOfDataSets(); i++){
+            this.setDebugLevel(i, level);		//set the new level
+            out+=this.toString(i)+"\n";	//getStatus()
+            theData.elementAt(i).setDetailLevel(curLvl);	//restore the level
+        }
     	return out;
     }
     
     /**
      * @param i
      */
-    public void setDebugLevel(int i){
+    public void setDebugLevel(int Matrix, int i){
     	debugLevel=i;
-    	theData.setDetailLevel(i);
+    	theData.elementAt(i).setDetailLevel(i);
     }
 
     /**

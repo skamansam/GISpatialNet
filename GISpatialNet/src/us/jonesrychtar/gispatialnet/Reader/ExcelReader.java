@@ -30,7 +30,7 @@ public class ExcelReader {
         in = new File(filename);
     }
 
-    //TODO: this will now return a dataset vector
+    //TODO: test multiple read
     public Vector<Matrix> read(int MatrixFormat, int rows, int c) throws Exception {
 
         Workbook w1 = Workbook.getWorkbook(in);

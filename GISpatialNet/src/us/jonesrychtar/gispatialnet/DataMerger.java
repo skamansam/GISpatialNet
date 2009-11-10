@@ -1,5 +1,6 @@
 /*
  * This class will merge sets of data into one set of data
+ * Unlike Algorithm.SimpleMerge, This class will handle attributes as well.
  */
 
 package us.jonesrychtar.gispatialnet;
