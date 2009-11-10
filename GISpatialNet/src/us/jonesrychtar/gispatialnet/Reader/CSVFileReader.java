@@ -25,7 +25,7 @@ import us.jonesrychtar.gispatialnet.DataSet;
  *
  */
 public class CSVFileReader extends TextFileReader{
-	private Matrix theMatrix,pubMatrix;
+	private Vector<DataSet> theData,pubMatrix;
 	private boolean includeEgo=false;
 	CSVReader matrixReader;
 
@@ -40,10 +40,11 @@ public class CSVFileReader extends TextFileReader{
     public CSVFileReader(String filename){
         this.setFile(new File(filename));
     }
-
+    public Vector<DataSet> getMatrices(){return theMatrices;}
+    
 	@Override
     //TODO: New Output type needs coding
-	public Vector<Matrix> Read(int type, int rows, int cols)
+	public Vector<DataSet> Read(int type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 		matrixReader = new CSVReader(new FileReader(this.getFile()),
@@ -51,26 +52,20 @@ public class CSVFileReader extends TextFileReader{
 		
 		switch(type){
 		case TextFileReader.FULL_MATRIX:
-			if(readFullMatrix(matrixReader,rows,cols)){
-				return theMatrix;
-			}
+			readFullMatrix(matrixReader,rows,cols);
 			break;
 		case TextFileReader.LOWER_MATRIX:
-			if(readUpperMatrix(matrixReader,rows,cols)){
-				return theMatrix;
-			}
+			readUpperMatrix(matrixReader,rows,cols);
 			break;
 		case TextFileReader.UPPER_MATRIX:
-			if(readUpperMatrix(matrixReader,rows,cols)){
-				return theMatrix;
-			}
+			readUpperMatrix(matrixReader,rows,cols);
 			break;
 		default:	
 		
 		}
 		
 			
-		return null;
+		return theData;
 	}
 
 	/**
@@ -96,16 +91,19 @@ public class CSVFileReader extends TextFileReader{
 	 * @param cols
 	 * @return
 	 */
-	public boolean readFullMatrix(CSVReader reader,int rows, int cols) {
+	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) {
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
 			System.out.println("Error reading the network data for the next network.");
-			return false;
+			return theData;
 		}
 		
+		//initialize the next matrix!
+		theData.add(new DataSet());
+		
 		//if we are using an ego, add one to each row,col count
-		theMatrix = MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0));
+		theData.add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
 
 		//read each row
 		for (int i = 0; i < rows; i++) {
@@ -114,7 +112,7 @@ public class CSVFileReader extends TextFileReader{
 				//read the fields
 				for (int j = 0; j < cols; j++) {
 					float value = reader.getFloat();
-					theMatrix.setAsDouble(value, i, j);
+					theMatrices.elementAt(0).setAsDouble(value, i, j);
 				}
 			} catch (MatrixException e) {
 				System.out.println("Error: Internal data writing error on line " + i + " of current network data.");
@@ -126,7 +124,7 @@ public class CSVFileReader extends TextFileReader{
 		}
 		
 		//Success!
-		return true;
+		return theMatrices;
 	}
 
 	/**
@@ -135,8 +133,8 @@ public class CSVFileReader extends TextFileReader{
 	 * @param cols
 	 * @return
 	 */
-	public boolean readUpperMatrix(CSVReader reader, int rows, int cols) {
-		return false;
+	public Vector<DataSet> readUpperMatrix(CSVReader reader, int rows, int cols) {
+		return theMatrices;
 /*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
@@ -203,8 +201,8 @@ public class CSVFileReader extends TextFileReader{
 	 * @param cols
 	 * @return
 	 */
-	public boolean readLowerMatrix(CSVReader reader, int rows, int cols) {
-		return false;
+	public Vector<DataSet> readLowerMatrix(CSVReader reader, int rows, int cols) {
+		return theMatrices;
 /*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
