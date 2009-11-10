@@ -12,13 +12,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
 import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
+import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
+import us.jonesrychtar.gispatialnet.Writer.Writer;
 
 /**
  *
@@ -43,15 +46,16 @@ public class cli extends userinterface {
     }
 
     public void cli() {
-    	gsn.setDebugLevel(statusLevel);
+        for(int i=0; i<gsn.NumberOfDataSets(); i++)
+            gsn.setDebugLevel(i, statusLevel);
     }
 
     //Menus----------------------------------------------------------------------------------
     public void Menu() {
         int option = getMenu(
                 "Main Menu:",
-                gsn.getStatus(),
-                new String[]{"Load data", "Save Data", "Analyze Data", "Print Full Status", "Clear Data", "About GISpatialNet", "Exit"});
+                gsn.getStatus(statusLevel),
+                new String[]{"Load data", "Save Data", "Analyze Data","Merge Data", "Print Full Status", "Clear Data", "About GISpatialNet", "Exit"});
 
         switch (option) {
             case 1:
@@ -63,16 +67,17 @@ public class cli extends userinterface {
             case 3:
                 AnalyzeMenu();
                 break;
-            case 4:
+            case 4: break;
+            case 5:
                 System.out.println(gsn.getStatus(3));
                 break;
-            case 5:
+            case 6:
                 gsn.ClearData();
                 break;
-            case 6:
+            case 7:
                 printAbout();
                 break;
-            case 7:
+            case 8:
                 System.exit(0);
                 break;
             default:
@@ -101,53 +106,80 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Load Menu:",
                 gsn.getStatus(statusLevel),
-                new String[]{"Delimited text file (.csv,.txt)",
-                    "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
+                new String[]{"Delimited text file (.csv,.txt)", "Excel file (.xls)",
+                    "DL/ucinet (.txt,.dat)", "Pajek (.net)", 
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
-        if (option <= 4 && option > 0) {
-            _LoadMenu2(option);
-        } else if (option == 5) {
-        } else if (option == 6) {
-            if (gsn.getData().hasX() || gsn.getData().hasY() || gsn.getData().hasAdj() || gsn.getData().hasAttb()) {
-                if (_overwrite()) {
+        switch(option){
+            case 1: _LoadMenu2(option); break;//csv
+            case 2: _LoadMenu2(option); break; //excel
+            case 3: { //dl
+                System.out.println("What is the filename: ");
+                String fn = sc.next();
+                int format = _MatrixType();
+                System.out.println("Enter the number of rows: ");
+                int rows = sc.nextInt();
+                System.out.println("Enter the number of columns: ");
+                int cols = sc.nextInt();
+                Vector<DataSet> vds;
+                try {
+                    vds = Reader.loadDL(fn, format, rows, cols);
+                    for(int i=0; i<vds.size(); i++)
+                        gsn.getDataSets().add(vds.elementAt(i));
+                } catch (Exception ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }            
+            case 4:{ //pajek
+                System.out.println("What is the filename: ");
+                String fn = sc.next();
+                int format = _MatrixType();
+                System.out.println("Enter the number of rows: ");
+                int rows = sc.nextInt();
+                System.out.println("Enter the number of columns: ");
+                int cols = sc.nextInt();
+                Vector<DataSet> vds;
+                try {
+                    vds = Reader.loadPajek(fn, format, rows, cols);
+                    for(int i=0; i<vds.size(); i++)
+                        gsn.getDataSets().add(vds.elementAt(i));
+                } catch (Exception ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case 5:{ //google earth
+                System.out.println("What is the filename: ");
+                String fn = sc.next();
+                
+                DataSet ds;
+            try {
+                ds = Reader.loadGoogleEarth(fn);
+                gsn.getDataSets().add(ds);
+                } catch (Exception ex) {
+                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            }
+            case 6:{ //shapefile
                     System.out.println("Enter the name for the node shapefile (with .shp extension):");
                     String n = sc.next();
                     System.out.println("Enter the name for the edge shapefile (with .shp extension:");
                     String e = sc.next();
                     try {
-                        //TODO: rewrite from here to add multiple data set functionality
-                        Reader.loadShapefile(n, e);
+                        DataSet ds = Reader.loadShapefile(n, e);
+                        gsn.getDataSets().add(ds);
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
                         System.out.println("File not found.");
                         ex.getMessage();
                     }
-                } else {
-                    //Unsupported
-                    System.out.println("Function unsupported");
-                }
-            } else {
-                System.out.println("Enter the name for the node shapefile (with .shp extension):");
-                String n = sc.next();
-                System.out.println("Enter the name for the edge shapefile (with .shp extension:");
-                String e = sc.next();
-                try {
-                	gsn.getData().loadShapefile(n, e);
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    System.out.println("File not found.");
-                    System.out.println(ex.getMessage());
-                }
+                break;
             }
-        } else {
-            Menu();
-        }
-
+            case 7: break;
+        }    
     }
-    // what: 1=txt/csv 2=dl/ucinet 3=pajek 4=excel
-
     private void _LoadMenu2(int what) {
         int option = getMenu(
                 "Load File Menu:",
@@ -155,37 +187,6 @@ public class cli extends userinterface {
                 new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
                     "Node Coordinate/Location Data", "Attribute Data", "Main Menu"});
 
-        boolean merge = false;
-        switch (option) {
-            case 1: {
-                if (gsn.getData().hasX() || gsn.getData().hasY() || gsn.getData().hasAttb()) {
-                    merge = _overwrite();
-                }
-                break;
-            }
-            case 2: {
-                if (gsn.getData().hasAdj()) {
-                    merge = _overwrite();
-                }
-                break;
-            }
-            case 3: {
-                if (gsn.getData().hasX() || gsn.getData().hasY()) {
-                    merge = _overwrite();
-                }
-                break;
-            }
-            case 4: {
-                if (gsn.getData().hasAttb()) {
-                    merge = _overwrite();
-                }
-                break;
-            }
-            case 5: {
-                Menu();
-                break;
-            }
-        }
         System.out.println("What is the filename: ");
         String fn = sc.next();
         int format = _MatrixType();
@@ -201,54 +202,26 @@ public class cli extends userinterface {
             case 1: { //txt/csv
                 System.out.print("What is the field seperator? ");
                 char sp = sc.next().charAt(0);
-                if (!merge) {
                     try {
-                    	gsn.getData().loadTxt(fn, option, format, rows, cols, sp);
+                    	Vector<DataSet> vds= Reader.loadTxt(fn, option, format, rows, cols, sp);
+                        for(int i=0; i<vds.size(); i++)
+                            gsn.getDataSets().add(vds.elementAt(i));
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {
-                    System.out.println("Merging not supported yet.");
-                }
                 break;
-            }
-            case 2: { //dl ucinet (adj matrix only!)
-                if (!merge) {
+            } 
+            case 2: { //excel
                     try {
-                    	gsn.getData().loadDL(fn, option, format, rows, cols);
+                    	Vector<DataSet> vds = Reader.loadExcel(fn, option, format,rows, cols);
+                        for(int i=0; i<vds.size(); i++)
+                            gsn.getDataSets().add(vds.elementAt(i));
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {
-                    System.out.println("Merging not supported yet.");
-                }
                 break;
             }
-            case 3: { //pajek
-                if (!merge) {
-                    try {
-                    	gsn.getData().loadPajek(fn, option, format, rows, cols);
-                    } catch (Exception ex) {
-                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else {
-                    System.out.println("Merging not supported yet.");
-                }
-                break;
-            }
-            case 4: { //excel
-                if (!merge) {
-                    try {
-                    	gsn.getData().loadExcel(fn, option, format,rows, cols);
-                    } catch (Exception ex) {
-                        Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else {
-                    System.out.println("Merging not supported yet.");
-                }
-                break;
-            }
-            case 5:
+            case 3:
                 LoadMenu1();
                 break;
             default:
@@ -264,6 +237,7 @@ public class cli extends userinterface {
                 new String[]{"Delimited text file (.csv,.txt)",
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
+        int matrix = this._MatrixChoice();
         switch (option) {
             case 1: { //txt,csv
                 System.out.println("Enter field seperator: ");
@@ -273,7 +247,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the Edge File:");
                 String efn = sc.next();
                 try {
-                	gsn.getData().saveCSV(fnn, efn, sp);
+                	Writer.saveCSV(fnn, efn, sp, gsn.getData(matrix));
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -286,7 +260,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                	gsn.getData().saveDL(fnn, type);
+                	Writer.saveDL(fnn, type, gsn.getData(matrix));
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -296,7 +270,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                	gsn.getData().savePajek(fnn);
+                	Writer.savePajek(fnn, gsn.getData(matrix));
                 } catch (FileNotFoundException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -308,7 +282,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the Edge File:");
                 String efn = sc.next();
                 try {
-                	gsn.getData().saveExcel(fnn, efn);
+                	Writer.saveExcel(fnn, efn, gsn.getData(matrix));
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 } catch (WriteException ex) {
@@ -320,7 +294,7 @@ public class cli extends userinterface {
                 System.out.println("Enter the name of the File: ");
                 String fnn = sc.next();
                 try {
-                	gsn.getData().saveGoogleEarth(fnn);
+                	Writer.saveGoogleEarth(fnn,gsn.getData(matrix));
                 } catch (KmlException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -329,7 +303,7 @@ public class cli extends userinterface {
                 break;
             }
             case 6: { //shapefile
-                if (!(gsn.getData().hasX() && gsn.getData().hasX())) {
+                if (!(gsn.getData(matrix).hasX() && gsn.getData(matrix).hasX())) {
                     int op = getMenu("Node data not found: ",
                             "What do you want to do?",
                             new String[]{"Create XY data", "Write only Edge file"});
@@ -347,7 +321,7 @@ public class cli extends userinterface {
                             System.out.println("Enter max width of network (usually 10xNumber of rows): ");
                             int wd = sc.nextInt();
                             try {
-                            	gsn.getData().saveShapefileUnknown(fnn, efn, alg, ht, wd);
+                            	Writer.saveShapefileUnknown(fnn, efn, alg, ht, wd, gsn.getData(matrix));
                             } catch (IllegalArgumentException ex) {
                                 System.out.println(ex.getMessage());
                             } catch (MalformedURLException ex) {
@@ -360,7 +334,7 @@ public class cli extends userinterface {
                         }
                         case 2: {
                             try {
-                            	gsn.getData().saveShapefile(fnn, efn);
+                            	Writer.saveShapefile(fnn, efn, gsn.getData(matrix));
                             } catch (IllegalArgumentException ex) {
                                 System.out.println(ex.getMessage());
                             } catch (MalformedURLException ex) {
@@ -379,7 +353,7 @@ public class cli extends userinterface {
                     System.out.println("Enter the name of the Edge File:");
                     String efn = sc.next();
                     try {
-                    	gsn.getData().saveShapefile(fnn, efn);
+                    	Writer.saveShapefile(fnn, efn, gsn.getData(matrix));
                     } catch (IllegalArgumentException ex) {
                         System.out.println(ex.getMessage());
                     } catch (MalformedURLException ex) {
@@ -490,7 +464,7 @@ public class cli extends userinterface {
                 }
 
                 try {
-                    u.QAP(args);
+                    Algorithm.QAP(args);
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -503,17 +477,19 @@ public class cli extends userinterface {
                 break;
             }
             case 2: { //SNB
+                int matrix = this._MatrixChoice();
                 System.out.println("Function not supported yet.");
                 break;
             }
             case 3: { //Borders
-                System.out.println("Input file to analyze: ");
+                System.out.println("Output file name: ");
                 String filename = sc.next();
                 int op = getMenu("Select Algorithm",
                         "",
                         new String[]{"Original Borders Algorithm"});
+                int matrix = this._MatrixChoice();
                 try {
-                	gsn.getData().Border(filename, op);
+                	Algorithm.Border(filename, op, gsn.getData(matrix).getX(), gsn.getData(matrix).getY(), gsn.getData(matrix).getAdj());
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (MalformedURLException ex) {
@@ -535,8 +511,9 @@ public class cli extends userinterface {
                         new String[]{"Less than average length",
                             "Less than median length", "More than median length", "Top 10%"
                         });
+                int matrix = this._MatrixChoice();
                 try {
-                	gsn.getData().Highlight(op - 1, filename, nfilename);
+                	Algorithm.Highlight(op - 1, filename, nfilename, gsn.getData(matrix).getX(), gsn.getData(matrix).getY(), gsn.getData(matrix).getAdj());
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (MalformedURLException ex) {
@@ -552,30 +529,31 @@ public class cli extends userinterface {
                 int op = getMenu("Select Conversion",
                         "",
                         new String[]{"Translate", "Reflect", "Rotate", "Scale"});
+                int matrix = this._MatrixChoice();
                 switch (op) {
                     case 1: { //translate
                         System.out.println("Input amount to move on x direction: ");
                         double xm = sc.nextDouble();
                         System.out.println("input amount to move on y direction: ");
                         double ym = sc.nextDouble();
-                        gsn.getData().translate(xm, ym);
+                        gsn.getData(matrix).translate(xm, ym);
                         break;
                     }
                     case 2: {
                         int axis = getMenu("Select Axis:", "", new String[]{"X axis", "Y axis"}) - 1;
-                        gsn.getData().reflect(axis);
+                        gsn.getData(matrix).reflect(axis);
                         break;
                     }
                     case 3: {
                         System.out.println("Enter number of degrees: ");
                         double deg = sc.nextDouble();
-                        gsn.getData().rotate(deg);
+                        gsn.getData(matrix).rotate(deg);
                         break;
                     }
                     case 4: {
                         System.out.println("Enter scale factor: ");
                         double fac = sc.nextDouble();
-                        gsn.getData().scale(fac);
+                        gsn.getData(matrix).scale(fac);
                         break;
                     }
                 }
@@ -592,19 +570,15 @@ public class cli extends userinterface {
     //End menus ---------------------------------------------------------------------------
     //helper menus
 
-    private boolean _overwrite() { //TODO: merge should now be its own function. When loading a dataset with a dataset already present, simply create a new one. Merge will operate on two datasets tahat are already loaded.
-        int t = getMenu(
-                "Data already exists. Do you wish to overwrite or merge data?",
-                "Merging not supported yet.",
-                new String[]{"Overwirte", "Merge"});
-        switch (t) {
-            case 1:
-                return true;
-            case 2:
-                return false;
-            default:
-                return true;
+    private int _MatrixChoice(){
+        int out;
+        System.out.println("Enter the number of the Data Set to use["+0+"-"+gsn.NumberOfDataSets()+"]: ");
+        out = sc.nextInt();
+        while(out<0 || out>gsn.NumberOfDataSets()){
+            System.out.println("Invalid input. Enter the number of the Data Set to use["+0+"-"+gsn.NumberOfDataSets()+"]: ");
+            out = sc.nextInt();
         }
+        return out;
     }
 
     private int _MatrixType() {

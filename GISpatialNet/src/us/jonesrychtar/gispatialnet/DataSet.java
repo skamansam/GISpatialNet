@@ -3,23 +3,14 @@
  */
 package us.jonesrychtar.gispatialnet;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Vector;
 
-import javax.naming.CannotProceedException;
 
 
-import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
 
-import us.jonesrychtar.gispatialnet.Algorithm.Borders;
-import us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges;
-import us.jonesrychtar.gispatialnet.Algorithm.QAP;
-import us.jonesrychtar.gispatialnet.Writer.ShapefileNodeWriter;
-import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
 /**
  * @author sam,charles
