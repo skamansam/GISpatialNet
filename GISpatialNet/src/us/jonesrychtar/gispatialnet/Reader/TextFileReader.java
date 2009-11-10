@@ -39,6 +39,6 @@ public abstract class TextFileReader {
         return new File(filename);
     }
     
-    public abstract Matrix[] Read(int type, int rows, int col) throws Exception;
+    public abstract Vector<DataSet> Read(int type, int rows, int col) throws Exception;
 
 }
