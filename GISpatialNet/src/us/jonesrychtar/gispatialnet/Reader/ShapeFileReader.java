@@ -62,7 +62,7 @@ public class ShapeFileReader {
             FeatureSource source = store.getFeatureSource(names[0]);
             featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
             int featureCount = featureCollection.size();
-            FeatureType type = featureCollection.getSchema(); //gets schema of db
+            //FeatureType type = featureCollection.getSchema(); //gets schema of db
             FeatureIterator fi = featureCollection.features();
             //set up matrix
             x = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
