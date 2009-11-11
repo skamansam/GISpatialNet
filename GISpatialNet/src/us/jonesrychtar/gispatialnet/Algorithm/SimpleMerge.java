@@ -7,12 +7,13 @@ package us.jonesrychtar.gispatialnet.Algorithm;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.util;
 
 /**
  *
  * @author cfbevan
  */
-//TODO: Right now this does not check for douplicate data
+
 public class SimpleMerge {
     DataSet A,B;
 
@@ -40,27 +41,65 @@ public class SimpleMerge {
         Matrix X= MatrixFactory.zeros(A.getX().getRowCount()+B.getX().getRowCount(),1);
         Matrix Y = MatrixFactory.zeros(A.getY().getRowCount()+B.getY().getRowCount(),1);
         Matrix Adj = MatrixFactory.zeros(A.getAdj().getRowCount()+B.getAdj().getRowCount(), A.getAdj().getColumnCount() + B.getAdj().getColumnCount());
-       
+       boolean douplicate = false;
         //copy xy data
         for(int i=0; i<A.getXY().getRowCount(); i++){
             X.setAsDouble(A.getXY().getAsDouble(i,0), i,0);
             Y.setAsDouble(A.getXY().getAsDouble(i,1), i,0);
         }
         for(int i=(int) A.getXY().getRowCount(); (i-A.getXY().getRowCount()) < B.getXY().getRowCount(); i++){
-            X.setAsDouble(B.getXY().getAsDouble(i-A.getXY().getRowCount(),0), i,0);
-            Y.setAsDouble(B.getXY().getAsDouble(i-A.getXY().getRowCount(),1), i,0);
+            double newX = B.getXY().getAsDouble(i-A.getXY().getRowCount(),0);
+            double newY = B.getXY().getAsDouble(i-A.getXY().getRowCount(),1);
+            if(!(_has(util.combine(X, Y), newX, newY))){
+                X.setAsDouble(newX, i,0);
+                Y.setAsDouble(newY, i,0);
+            }
+            else
+                douplicate = true;
         }
         //copy adj data
-        Matrix adjA = A.getAdj();
-        Matrix adjB = B.getAdj();
-        Matrix zeroA = MatrixFactory.zeros(A.getAdj().getRowCount(), B.getAdj().getColumnCount());
-        Matrix zeroB = MatrixFactory.zeros(B.getAdj().getRowCount(), A.getAdj().getRowCount());
+       if(!douplicate){ //no douplicates, make quick generation
+            Matrix adjA = A.getAdj();
+            Matrix adjB = B.getAdj();
+            Matrix zeroA = MatrixFactory.zeros(A.getAdj().getRowCount(), B.getAdj().getColumnCount());
+            Matrix zeroB = MatrixFactory.zeros(B.getAdj().getRowCount(), A.getAdj().getRowCount());
 
-        Matrix AdjTemp1 = adjA.appendHorizontally(zeroA);
-        Matrix AdjTemp2 = adjB.appendHorizontally(zeroB);
+            Matrix AdjTemp1 = adjA.appendHorizontally(zeroA);
+            Matrix AdjTemp2 = adjB.appendHorizontally(zeroB);
 
-        Adj = AdjTemp1.appendVertically(AdjTemp2);
-        
+            Adj = AdjTemp1.appendVertically(AdjTemp2);
+       }
+       else{ //perform long hand generation
+            Matrix adjTemp = MatrixFactory.zeros(X.getRowCount(), X.getRowCount());
+            for(int row=0; row<adjTemp.getRowCount(); row++)
+                for(int col=0; col<adjTemp.getColumnCount(); col++){
+                    int indexArow = _getIndex(A.getXY(), X.getAsDouble(row,0), Y.getAsDouble(row,0));
+                    int indexBrow = _getIndex(B.getXY(), X.getAsDouble(row,0), Y.getAsDouble(row,0));
+                    int indexAcol = _getIndex(A.getXY(), X.getAsDouble(col,0), Y.getAsDouble(col,0));
+                    int indexBcol = _getIndex(B.getXY(), X.getAsDouble(col,0), Y.getAsDouble(col,0));
+                    if(indexArow != -1 && indexAcol !=-1){
+                        adjTemp.setAsDouble(A.getAdj().getAsDouble(indexArow,indexAcol), row,col);
+                    }
+                    else{
+                        adjTemp.setAsDouble(B.getAdj().getAsDouble(indexBrow,indexBcol), row,col);
+                    }
+                }
+            Adj = adjTemp;
+       }
+        X = X.reshape(Adj.getRowCount(),1);
+        Y = Y.reshape(Adj.getRowCount(),1);
         return new DataSet(X,Y,Adj,MatrixFactory.emptyMatrix());
+    }
+    private boolean _has(Matrix in, double checkX, double checkY){
+        for(int row=0; row<in.getRowCount(); row++)
+            if(checkX == in.getAsDouble(row,0) && checkY == in.getAsDouble(row,1))
+                return true;
+        return false;
+    }
+    private int _getIndex(Matrix in, double checkX, double checkY){
+        for(int row=0; row<in.getRowCount(); row++)
+            if(checkX == in.getAsDouble(row,0) && checkY == in.getAsDouble(row,1))
+                return row;
+        return -1;
     }
 }

@@ -180,13 +180,13 @@ public class cli extends userinterface {
             case 7: break;
         }    
     }
-    private void _LoadMenu2(int what) {
+    //TODO: add options for data type (polar, xy, etc...)
+    private void _LoadMenu2(int what) { 
         int option = getMenu(
                 "Load File Menu:",
                 gsn.getStatus(statusLevel),
                 new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
                     "Node Coordinate/Location Data", "Attribute Data", "Main Menu"});
-
         System.out.println("What is the filename: ");
         String fn = sc.next();
         int format = _MatrixType();
@@ -194,7 +194,12 @@ public class cli extends userinterface {
         int rows = sc.nextInt();
         System.out.println("Enter the number of columns: ");
         int cols = sc.nextInt();
-
+        int dataType =-1;
+        if(option == 1 || option ==3)
+            dataType = getMenu(
+                "Data Format:",
+                "What format is the data int?",
+                new String[]{"XY decimal","Polar"});
         //fix stuff
         format--;
         option --;
@@ -204,8 +209,12 @@ public class cli extends userinterface {
                 char sp = sc.next().charAt(0);
                     try {
                     	Vector<DataSet> vds= Reader.loadTxt(fn, option, format, rows, cols, sp);
-                        for(int i=0; i<vds.size(); i++)
+
+                        for(int i=0; i<vds.size(); i++){
+                            if(dataType==2)
+                                vds.elementAt(i).PolarToXY();
                             gsn.getDataSets().add(vds.elementAt(i));
+                        }
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -214,8 +223,11 @@ public class cli extends userinterface {
             case 2: { //excel
                     try {
                     	Vector<DataSet> vds = Reader.loadExcel(fn, option, format,rows, cols);
-                        for(int i=0; i<vds.size(); i++)
+                        for(int i=0; i<vds.size(); i++){
+                            if(dataType==2)
+                                vds.elementAt(i).PolarToXY();
                             gsn.getDataSets().add(vds.elementAt(i));
+                        }
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -509,7 +521,7 @@ public class cli extends userinterface {
                 int op = getMenu("Select Highlighting Algorithm",
                         "",
                         new String[]{"Less than average length",
-                            "Less than median length", "More than median length", "Top 10%"
+                            "Less than median length", "More than median length", "Top 10%", "By value"
                         });
                 int matrix = this._MatrixChoice();
                 try {

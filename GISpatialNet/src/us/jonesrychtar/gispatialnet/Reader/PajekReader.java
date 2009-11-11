@@ -30,7 +30,7 @@ public class PajekReader extends TextFileReader {
     }
 
     @Override
-    //TODO: This will now return dataset vector
+    //TODO: This will now return dataset vector or DataSet depending on if it can read multiple data sets.
     public Vector<DataSet> Read(int type, int rows, int col) throws Exception{
         
     	Scanner theFile = new Scanner(this.file);
