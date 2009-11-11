@@ -38,7 +38,7 @@ public class DataSet {
 	 * 
 	 */
 	public DataSet() {
-		// TODO Auto-generated constructor stub
+		//creates dataset with empty data
 	}
 
     public DataSet(Matrix x, Matrix y, Matrix adj){
@@ -384,7 +384,23 @@ public class DataSet {
     	ret.append(ds2);
     	return ret;
     }
-    
+    //converts a stored polar coordinates to stored xy coordinates
+    public void PolarToXY(){
+        double preX =0, preY=0, nextX, nextY;
+        for(int row=0; row<x.getRowCount(); row++){
+            double tempX = y.getAsDouble(row,0) * Math.cos(x.getAsDouble(row,0));
+            double tempY = y.getAsDouble(row,0) * Math.sin(x.getAsDouble(row,0));
+
+            nextX = preX + tempX;
+            nextY = preY + tempY;
+
+            x.setAsDouble(nextX, row, 0);
+            y.setAsDouble(nextY, row, 0);
+
+            preX = nextX;
+            preY = nextY;
+        }
+    }
     /**
      * Translates the stored xy to a new xy
      * @param xmove amount to move in x direction
@@ -400,19 +416,20 @@ public class DataSet {
         }
         else throw new IllegalStateException("no XY data loaded");
     }
+   
     /**
      * Reflects the xy data over an axis
      * @param Axis Axis to reflect over (X=0, Y=1)
      * @throws java.lang.IllegalStateException
      */
-    public Matrix reflect(int Axis)throws IllegalStateException{
+    public void reflect(int Axis)throws IllegalStateException{
         //x=0 y=1
         if(!x.isEmpty() && !y.isEmpty()){
             MatrixConversion mc = new MatrixConversion();
             Matrix temp = util.combine(x,y);
             temp = mc.Reflection(temp, Axis);
-            return util.combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
         } else throw new IllegalStateException("no XY data loaded");
     }
     /**
@@ -420,13 +437,13 @@ public class DataSet {
      * @param Degrees Degrees to rotate
      * @throws java.lang.IllegalStateException
      */
-    public Matrix rotate(double Degrees)throws IllegalStateException{
+    public void rotate(double Degrees)throws IllegalStateException{
         if(!x.isEmpty() && !y.isEmpty()){
 	        MatrixConversion mc = new MatrixConversion();
 	        Matrix temp = util.combine(x,y);
 	        temp = mc.RotateClockwise(temp, Degrees);
-            return util.combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
         } else throw new IllegalStateException("no XY data loaded");
     }
 
@@ -437,13 +454,13 @@ public class DataSet {
      * @return combined XY Matrix. use SplitXYAttb() to split into respective coords.
      * @throws IllegalStateException
      */
-    public Matrix scale(double factor)throws IllegalStateException{
+    public void scale(double factor)throws IllegalStateException{
         if(!x.isEmpty() && !y.isEmpty()){
             MatrixConversion mc = new MatrixConversion();
             Matrix temp = util.combine(x,y);
             temp = mc.Scale(temp, factor);
-            return util.combine(temp.selectColumns(Calculation.Ret.NEW, 0),
-            		temp.selectColumns(Calculation.Ret.NEW, 1));
+            x = temp.selectColumns(Calculation.Ret.NEW, 0);
+            y = temp.selectColumns(Calculation.Ret.NEW, 1);
         } else throw new IllegalStateException("no XY data loaded");
     }
 }
