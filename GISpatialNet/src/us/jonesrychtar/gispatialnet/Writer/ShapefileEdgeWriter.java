@@ -35,6 +35,10 @@ public class ShapefileEdgeWriter {
      * @param xin Vector matrix containing X coordinate data
      * @param yin Vector matrix containing Y coordinate data
      * @param adjin Matrix containing edge values between nodes
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws SchemaException
      */
     public ShapefileEdgeWriter(String filename, Matrix xin, Matrix yin, Matrix adjin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException {
 
@@ -49,6 +53,7 @@ public class ShapefileEdgeWriter {
 
     /**
      * Write data to edge shapefile
+     * @throws IOException
      */
     public void write() throws IOException {
         GeometryFactory gfact = new GeometryFactory();

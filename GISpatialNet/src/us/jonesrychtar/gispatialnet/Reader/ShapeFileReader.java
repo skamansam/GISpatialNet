@@ -3,7 +3,7 @@
  *
  * For research by Eric Jones and Jan Rychtar.
  *
- * Requires: ujmp
+ * Requires: ujmp, geotools
  *
  */
 package us.jonesrychtar.gispatialnet.Reader;
@@ -39,6 +39,11 @@ public class ShapeFileReader {
     private ShapefileDataStore store = null;
     private FeatureCollection featureCollection = null;
 
+    /**
+     * constructor
+     * @param filenameNodes name of node filename
+     * @param filenameEdges name of edge filename
+     */
     public ShapeFileReader(String filenameNodes, String filenameEdges) {
         fileEdge = new File(filenameEdges);
         file = new File(filenameNodes);
@@ -46,7 +51,8 @@ public class ShapeFileReader {
     /**
      * Reads shapefile
      * @return Matrix[] 0=x 1=y 2=adj 3=attb
-     * @throws java.lang.Exception
+     * @throws MalformedURLException
+     * @throws IOException
      */
     public Matrix[] Read() throws MalformedURLException, IOException  {
         Matrix x = MatrixFactory.emptyMatrix();

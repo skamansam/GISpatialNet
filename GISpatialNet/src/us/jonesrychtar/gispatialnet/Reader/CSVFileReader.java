@@ -37,12 +37,30 @@ public class CSVFileReader extends TextFileReader{
     private boolean trimQuoted=true;
     private boolean allowMultiLineFields = false;
 
+    /**
+     *
+     * @param filename
+     */
     public CSVFileReader(String filename){
         this.setFile(new File(filename));
     }
+    /**
+     *
+     * @return
+     */
     public Vector<DataSet> getMatrices(){return theMatrices;}
     
-	@Override
+    /**
+     *
+     * @param type
+     * @param rows
+     * @param cols
+     * @return
+     * @throws java.io.FileNotFoundException
+     * @throws java.lang.IllegalArgumentException
+     * @throws java.io.IOException
+     */
+    @Override
     //TODO: New Output type needs coding
 	public Vector<DataSet> Read(int type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {

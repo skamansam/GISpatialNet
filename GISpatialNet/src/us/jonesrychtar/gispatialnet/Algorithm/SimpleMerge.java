@@ -17,26 +17,51 @@ import us.jonesrychtar.gispatialnet.util;
 public class SimpleMerge {
     DataSet A,B;
 
+    /**
+     *Constructor
+     * @param A 1st Data set to use
+     * @param B 2nd Data set to use
+     */
     public SimpleMerge(DataSet A, DataSet B){
         this.A = A;
         this.B = B;
     }
+    /**
+     *
+     * @param A Set the 1st Data set to use
+     */
     public void setA(DataSet A) {
         this.A = A;
     }
 
+    /**
+     *
+     * @param B set the 2nd data set to use
+     */
     public void setB(DataSet B) {
         this.B = B;
     }
 
+    /**
+     *
+     * @return 1st data set being used
+     */
     public DataSet getA() {
         return A;
     }
 
+    /**
+     *
+     * @return 2nd data set being used
+     */
     public DataSet getB() {
         return B;
     }
 
+    /**
+     *
+     * @return data set A and data set B merged into one data set
+     */
     public DataSet Merge(){
         Matrix X= MatrixFactory.zeros(A.getX().getRowCount()+B.getX().getRowCount(),1);
         Matrix Y = MatrixFactory.zeros(A.getY().getRowCount()+B.getY().getRowCount(),1);
@@ -90,12 +115,26 @@ public class SimpleMerge {
         Y = Y.reshape(Adj.getRowCount(),1);
         return new DataSet(X,Y,Adj,MatrixFactory.emptyMatrix());
     }
+    /**
+     * Tests if the coordinate checkX,checkY is in matrix in
+     * @param in XY matrix to check against
+     * @param checkX x coordinate to find
+     * @param checkY y coordinate to find
+     * @return true if checkX,checkY is in matrix in (must be in same row)
+     */
     private boolean _has(Matrix in, double checkX, double checkY){
         for(int row=0; row<in.getRowCount(); row++)
             if(checkX == in.getAsDouble(row,0) && checkY == in.getAsDouble(row,1))
                 return true;
         return false;
     }
+    /**
+     * Finds the index of checkX, checkY in matrix in
+     * @param in Matrix to check against
+     * @param checkX x coordinate to find
+     * @param checkY y coordinate to find
+     * @return index of row checkX, checkY in matrix in (-1 if not found)
+     */
     private int _getIndex(Matrix in, double checkX, double checkY){
         for(int row=0; row<in.getRowCount(); row++)
             if(checkX == in.getAsDouble(row,0) && checkY == in.getAsDouble(row,1))

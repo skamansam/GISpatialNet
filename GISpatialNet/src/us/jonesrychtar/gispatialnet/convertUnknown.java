@@ -33,13 +33,17 @@ public class convertUnknown {
     convertKnown ck; //handles the writing of shapefile
 
     /**
-     *
-     * @param filenameE
-     * @param filenameN
-     * @param adjin
-     * @param attbin
-     * @param alg
-     * @param args
+     * Constructor
+     * @param filenameE name of edge shapefile
+     * @param filenameN name of node shapefile
+     * @param adjin adjacency matrix to use
+     * @param attbin attribute matrix to use
+     * @param alg algorithm to use to create xy data
+     * @param args extra arguments to algorithms
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws SchemaException
      */
     public convertUnknown(String filenameE, String filenameN, Matrix adjin, Matrix attbin, int alg, Dimension args) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         //set adj
@@ -55,6 +59,14 @@ public class convertUnknown {
     }
 
 
+    /**
+     * Constructor
+     * @param filenameE name of edge shapefile
+     * @param filenameN name of node shapefile
+     * @param adjin adjacency matrix to use
+     * @param alg algorithm to use to create xy data
+     * @param args args extra arguments to algorithms
+     */
     public convertUnknown(String filenameE, String filenameN, Matrix adjin, int alg, Dimension args){
         //set adj
         adj = adjin;
@@ -138,7 +150,7 @@ public class convertUnknown {
         }
     }
     /**
-     *
+     * Get the number of edges attached to node
      * @param vertex node in graph
      * @return number of edges connected to node
      */

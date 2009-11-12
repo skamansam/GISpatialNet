@@ -61,6 +61,10 @@ public class HighlightEdges {
 
     /**
      * Writes data to edge shapefile
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws SchemaException
      */
     public void write() throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
@@ -174,6 +178,14 @@ public class HighlightEdges {
 
     }
 
+    /**
+     * Gets the distance between two points
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return double distance between (x1,y1) and (x2,y2)
+     */
     private double _Distance(double x1, double y1, double x2, double y2){
         return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
     }

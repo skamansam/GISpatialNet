@@ -1,12 +1,22 @@
 /*
- * This class will merge sets of data into one set of data
- * Unlike Algorithm.SimpleMerge, This class will handle attributes as well.
+ * This does not work yet!!!
+ * For research by Eric Jones and Jan Rychtar.
+ *
+ * Requires: ujmp
  */
 
 package us.jonesrychtar.gispatialnet;
 
 import org.ujmp.core.Matrix;
-
+/**
+ *
+ * @author cfbevan
+ * This does not work yet
+ */
+/**
+ *
+ * @author cfbevan
+ */
 public class DataMerger {
 
     Matrix xyAttb1, xyAttb2;
@@ -15,10 +25,10 @@ public class DataMerger {
 
     /**
      * Merge two sets of data into one
-     * @param data1 Matrix containing columns X,Y, Attributes
-     * @param adjacency1 Adjacency matrix
-     * @param data2 Matrix containing columns X,Y, Attributes
-     * @param adjacency2 Adjacency matrix
+     * @param A 
+     * @param A 1st data set to use
+     * @param B 
+     * @param B 2nd data set to use
      */
     public DataMerger(DataSet A, DataSet B){
         xyAttb1 = util.combine(A.getXY(),A.getAttb());

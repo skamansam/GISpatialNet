@@ -46,6 +46,8 @@ public class ExcelWriter {
 
     /**
      * Write matrix to .xls file
+     * @throws IOException 
+     * @throws WriteException
      */
     public void WriteFile() throws IOException, WriteException {
         //setup workbook

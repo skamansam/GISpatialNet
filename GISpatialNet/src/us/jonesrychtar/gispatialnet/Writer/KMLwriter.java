@@ -22,6 +22,10 @@ import org.ujmp.core.Matrix;
  * @date September 17, 2009
  * @version 0.0.1
  */
+/**
+ *
+ * @author cfbevan
+ */
 public class KMLwriter {
 
     private Kml kml;
@@ -44,6 +48,8 @@ public class KMLwriter {
 
     /**
      * Write data to file
+     * @throws KmlException
+     * @throws IOException
      */
     public void WriteFile() throws KmlException, IOException {
             //point data

@@ -31,12 +31,20 @@ import us.jonesrychtar.gispatialnet.convertKnown;
 import us.jonesrychtar.gispatialnet.convertUnknown;
 import us.jonesrychtar.gispatialnet.util;
 
+/**
+ *
+ * @author cfbevan
+ */
 public class TEST {
 
     Matrix x,y,a, attb;
     static TestData td = new TestData();
     static util u = new util();
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
        TEST run = new TEST();
        //run.printData();
@@ -66,6 +74,9 @@ public class TEST {
        //run.testCSVreader();
 
     }
+    /**
+     *
+     */
     public TEST(){
         makeData();
     }
@@ -76,6 +87,9 @@ public class TEST {
         a = td.RandomMatrix(10,10,0,1);
     }
 
+    /**
+     *
+     */
     public void printData(){
         System.out.println("  "+x.getColumnLabel(0)+"  "+y.getColumnLabel(0));
         System.out.println(u.combine(x, y));
@@ -83,6 +97,9 @@ public class TEST {
     }
 
     //test functions--------------------------------------------------------------------------------------
+    /**
+     *
+     */
     public void testHE() {
         try {
             ShapefileNodeWriter sfnw = new ShapefileNodeWriter("OutNH", x, y);
@@ -110,6 +127,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void testConversion(){
         //Works
         Matrix xy = x.appendHorizontally(y);
@@ -125,11 +145,17 @@ public class TEST {
 
         System.out.println(xy);
     }
+    /**
+     *
+     */
     public void testUnknownShapeFile(){
         //works
         //Dimension needs to have large numbers (about 10xNumber of rows)
         convertUnknown cu = new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
     }
+    /**
+     *
+     */
     public void testQAP(){
         //works
         try {
@@ -144,6 +170,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void testHighlightByVal(){
         //a = td.RandomMatrix(10, 10, 0, 3);
         try{
@@ -155,6 +184,9 @@ public class TEST {
         }
     }
     //test writers----------------------------------------------------------------------------------------
+    /**
+     *
+     */
     public void TESTShapefileWriter(){
         try {
             //Works
@@ -170,6 +202,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void TestXLSwriter(){
         //Works!
             ExcelWriter ew = new ExcelWriter(u.combine(x,y),"nodes.xls");
@@ -183,6 +218,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void TestKMLwriter(){
         //works
         //must have "long, lat, name, desc" ONLY!
@@ -198,6 +236,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void TestCSVwriter(){
         //works
         CSVwriter csvw = new CSVwriter(u.combine(x, y),"test");
@@ -208,6 +249,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void TestDLwriter(){
         //works
 
@@ -220,6 +264,9 @@ public class TEST {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /**
+     *
+     */
     public void TestPajekWriter(){
         //works
         PajekWriter pw = new PajekWriter(u.addNumberCol(u.combine(x,y)),a,"Test");
@@ -232,6 +279,9 @@ public class TEST {
 
 
     //test readers----------------------------------------------------------------------------------------
+    /**
+     *
+     */
     public void TestSHPreader(){
         //Works
        try{
@@ -248,6 +298,9 @@ public class TEST {
        }
     }
 
+    /**
+     *
+     */
     public void TestExcelReader(){
         //works
         ExcelReader er = new ExcelReader("nodes.xls");
@@ -271,6 +324,9 @@ public class TEST {
        System.out.println(tempa.elementAt(0));
     }
     //-----------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
     public void testKMLreader(){
         KMLreader kr = null;
         try {
@@ -293,11 +349,17 @@ public class TEST {
         for( int m=0; m<temp.length;m++)
             System.out.println(temp[m]);
     }
+    /**
+     *
+     */
     public void testPajekReader(){
         PajekReader pr = new PajekReader("Test.net");
         Matrix[] temp = new Matrix[]{MatrixFactory.emptyMatrix()};
             //temp = pr.Read(0, 10, 10);
     }
+    /**
+     *
+     */
     public void testDLreader(){
         //works
         DLreader dlr = new DLreader("test.dat");
@@ -313,6 +375,9 @@ public class TEST {
         //    System.out.print(temp.getColumnLabel(i)+" ");
         System.out.println("\n"+temp);
     }
+    /**
+     *
+     */
     public void testCSVreader(){
         CSVFileReader cr = new CSVFileReader("test.csv");
         Vector<Matrix> temp = null;

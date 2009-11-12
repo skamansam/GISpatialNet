@@ -34,6 +34,10 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.simple.SimpleFeature;
 
+/**
+ *
+ * @author cfbevan
+ */
 public class ShapefileWriter {
 
     private File file;
@@ -50,6 +54,10 @@ public class ShapefileWriter {
     /**
      * @param filename the name of the output shapefile
      * @param scheme the format of the database (list of field names and field Types) ex:"geom:Point,name:String"
+     * @throws IllegalArgumentException
+     * @throws SchemaException
+     * @throws MalformedURLException
+     * @throws IOException
      * */
     public ShapefileWriter(String filename, String scheme) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException {
         if (filename.length() > 8) {
@@ -80,6 +88,7 @@ public class ShapefileWriter {
     /**
      * @param input an array of objects, objects must be in same order as defined scheme.
      * ex: scheme="geom:Point,name:String" then input will be [Point,String]
+     * @throws IOException
      * */
     public void addData(Object[] input) throws IOException {
         //get object that holds temp data

@@ -36,6 +36,10 @@ public class ShapefileNodeWriter {
      * @param xin Vector matrix of x coordinate values
      * @param yin Vector matrix of y coordinate values
      * @param attbin Matrix containing attribute data for nodes
+     * @throws IllegalArgumentException
+     * @throws SchemaException
+     * @throws IOException
+     * @throws MalformedURLException
      */
     public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin, Matrix attbin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
@@ -51,6 +55,10 @@ public class ShapefileNodeWriter {
      * @param filename Name of output file
      * @param xin Vector matrix of x coordinate values
      * @param yin Vector matrix of y coordinate values
+     * @throws IllegalArgumentException
+     * @throws IOException
+     * @throws SchemaException
+     * @throws MalformedURLException
      */
     public ShapefileNodeWriter(String filename, Matrix xin, Matrix yin) throws IllegalArgumentException, IOException, MalformedURLException, SchemaException{
 
@@ -62,6 +70,7 @@ public class ShapefileNodeWriter {
 
     /**
      * Writes node data to shapefile
+     * @throws IOException
      */
     public void write() throws IOException{
         GeometryFactory gfact = new GeometryFactory();

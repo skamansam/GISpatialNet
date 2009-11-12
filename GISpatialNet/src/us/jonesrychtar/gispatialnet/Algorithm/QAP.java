@@ -103,6 +103,10 @@ public class QAP {
      *
      * @param argc number of arguments
      * @param argv arguments and filenames
+     * @throws IllegalArgumentException
+     * @throws IOException
+     * @throws Error
+     * @throws CannotProceedException
      */
 
 	public QAP(int argc, String argv[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{

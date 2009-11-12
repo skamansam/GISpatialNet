@@ -23,6 +23,9 @@ import us.jonesrychtar.gispatialnet.DataSet;
  */
 public class DLreader{
 
+    /**
+     * File object that is being read
+     */
     protected File file;
 
     private class DLHeaders {
@@ -58,11 +61,23 @@ public class DLreader{
     private DLHeaders header = new DLHeaders();
     private ReaderUtil ru = new ReaderUtil();
 
+    /**
+     * Constructor
+     * @param file filename of file to read
+     */
     public DLreader(String file) {
         this.file = new File(file);
     }
 
     //TODO: test multiple read
+    /**
+     * Reads data from file into vector of datasets
+     * @param type format of matrix [FULL, LOWER, UPPER] from TextFileReader
+     * @param rows number of rows per set of data
+     * @param col number of columns per set of data
+     * @return vector of datasets containing data from file
+     * @throws java.lang.Exception
+     */
     public Vector<DataSet> Read(int type, int rows, int col) throws Exception {
         Scanner sc;
         header.nc = col;

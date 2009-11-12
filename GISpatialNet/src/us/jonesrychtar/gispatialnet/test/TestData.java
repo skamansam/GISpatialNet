@@ -14,9 +14,23 @@ import org.ujmp.core.MatrixFactory;
  */
 public class TestData {
 
+    /**
+     *
+     * @param rows
+     * @param cols
+     * @return
+     */
     public Matrix ZeroMatrix(int rows, int cols){
         return MatrixFactory.zeros(rows,cols);
     }
+    /**
+     *
+     * @param rows
+     * @param cols
+     * @param min
+     * @param max
+     * @return
+     */
     public Matrix RandomMatrix(int rows, int cols,int min, int max){
 
         max ++;

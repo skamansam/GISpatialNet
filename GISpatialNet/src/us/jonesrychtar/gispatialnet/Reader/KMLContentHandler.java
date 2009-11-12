@@ -1,6 +1,9 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file looks for tags in kml file
+ *
+ * For research by Eric Jones and Jan Rychtar.
+ *
+ * Requires: ujmp
  */
 
 package us.jonesrychtar.gispatialnet.Reader;
@@ -27,6 +30,10 @@ public class KMLContentHandler extends XMLFilterImpl {
     int Row = 0;
 
 
+    /**
+     *
+     * @return read x data
+     */
     public Matrix getX(){
         Matrix out = MatrixFactory.zeros(xout.size(), 1);
         for(int row = 0; row<xout.size(); row++){
@@ -34,6 +41,10 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
         return out;
     }
+    /**
+     *
+     * @return read y data
+     */
     public Matrix getY(){
         Matrix out = MatrixFactory.zeros(yout.size(), 1);
         for(int row = 0; row<yout.size(); row++){
@@ -41,6 +52,10 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
         return out;
     }
+    /**
+     *
+     * @return read adj data
+     */
     public Matrix getAdj(){
         Matrix out = MatrixFactory.zeros(adjout.size(), adjout.elementAt(0).size());
         for(int row=0; row<adjout.size(); row++){
@@ -50,6 +65,10 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
         return out;
     }
+    /**
+     *
+     * @return read attb data
+     */
     public Matrix getAttb(){
         Matrix out = MatrixFactory.zeros(attbout.size(), attbout.elementAt(0).size());
         for(int row=0; row<attbout.size(); row++){
@@ -60,6 +79,8 @@ public class KMLContentHandler extends XMLFilterImpl {
         return out;
     }
     
+
+    @Override
     public void characters(char[] ch, int start, int length) {
         String gotString = new String(ch, start, length);
         if (point) {
@@ -76,6 +97,8 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
     }
 
+
+    @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes attributes) {
 
         if (localName.equals("Point")) {
@@ -105,6 +128,8 @@ public class KMLContentHandler extends XMLFilterImpl {
         }
     }
 
+
+    @Override
     public void endElement(String namespaceURI,String localName,String qName){
         if (localName.equals("Placemark")){
             adjout.add(adjtemp);

@@ -25,10 +25,22 @@ public class PajekReader extends TextFileReader {
     //arcs and edges are the same thing
 	Matrix vertXY, vertY, vertZ, attr, vertices, arcs;
 
+    /**
+     *
+     * @param filename
+     */
     public PajekReader(String filename){
         this.setFile(this.openFile(filename));
     }
 
+    /**
+     *
+     * @param type
+     * @param rows
+     * @param col
+     * @return
+     * @throws java.lang.Exception
+     */
     @Override
     //TODO: This will now return dataset vector or DataSet depending on if it can read multiple data sets.
     public Vector<DataSet> Read(int type, int rows, int col) throws Exception{
