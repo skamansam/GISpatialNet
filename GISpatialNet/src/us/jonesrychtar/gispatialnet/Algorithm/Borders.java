@@ -3,7 +3,7 @@
  *
  * For research by Eric Jones and Jan Rychtar.
  *
- * Requires: geotools,
+ * Requires: geotools, ujmp
  *
  */
 package us.jonesrychtar.gispatialnet.Algorithm;
@@ -60,6 +60,10 @@ public class Borders {
     }
     /**
      * writes data to edgeshapefile
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws SchemaException
      */
     public void Write() throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         //prepare Adj matricies

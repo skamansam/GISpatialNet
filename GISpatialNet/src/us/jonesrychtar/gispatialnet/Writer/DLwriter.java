@@ -22,9 +22,14 @@ import org.ujmp.core.Matrix;
 public class DLwriter extends TextFileWriter {
 
     //public constants for file type
+    /**
+     * Signifies .dat extension
+     */
     public final static int DAT = 0;
+    /**
+     * Signifies .txt extension
+     */
     public final static int TXT = 1;
-    //public final static int XXH = 2; //actually "##h"
 
     //file format data
     private String ext = ".dat";

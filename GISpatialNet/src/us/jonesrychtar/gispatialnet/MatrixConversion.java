@@ -1,5 +1,9 @@
 /*
  * This class is used to transform a matrix of x,y coordinates
+ *
+ * For research by Eric Jones and Jan Rychtar.
+ *
+ * Requires: ujmp
  */
 
 package us.jonesrychtar.gispatialnet;
@@ -13,11 +17,17 @@ import java.lang.Math.*;
  */
 
 public class MatrixConversion {
+    /**
+     * Signifies xaxis when using reflect
+     */
     public static final int XAXIS = 0;
+    /**
+     * Signifies yaxis when using reflect
+     */
     public static final int YAXIS = 1;
 
     /**
-     *
+     * 
      * @param in Matrix containig x,y coordinates
      * @param moveX How far to move on x direction
      * @param moveY How fart to move on y direction

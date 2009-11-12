@@ -34,6 +34,15 @@ public class KMLreader {
     KMLContentHandler data = new KMLContentHandler();
     
 
+    /**
+     * Constructor
+     * @param Filename name of file to read
+     * @throws javax.xml.parsers.ParserConfigurationException
+     * @throws org.xml.sax.SAXException
+     * @throws java.io.FileNotFoundException
+     * @throws javax.xml.bind.JAXBException
+     * @throws java.io.IOException
+     */
     public KMLreader(String Filename) throws ParserConfigurationException, SAXException, FileNotFoundException, JAXBException, IOException{
 
         FileInputStream instream = null;
@@ -48,6 +57,11 @@ public class KMLreader {
         is = new InputSource(instream);
     }
 
+    /**
+     *
+     * @return Matrix[] of read data
+     * @throws java.lang.Exception
+     */
     public Matrix[] read() throws Exception{
          xmlReader.parse(is);
          

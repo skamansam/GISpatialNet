@@ -1,5 +1,8 @@
 /**
- * 
+ * Container class for matricies that make up data
+ * For research by Eric Jones and Jan Rychtar.
+ *
+ * Requires: UJMP
  */
 package us.jonesrychtar.gispatialnet;
 
@@ -41,18 +44,40 @@ public class DataSet {
 		//creates dataset with empty data
 	}
 
+    /**
+     * Creates dataset with given data
+     * @param x x coordinate data (vector matrix)
+     * @param y y coordinate data (vector matrix)
+     * @param adj Adjacency matrix containing edge data coresponding to x,y coordinate data
+     */
     public DataSet(Matrix x, Matrix y, Matrix adj){
         this.x=x;
         this.y=y;
         this.adj=adj;
     }
+    /**
+     * Creates data set with given data
+     * @param x x coordinate data (vector matrix)
+     * @param y y coordinate data (vector matrix)
+     */
     public DataSet(Matrix x, Matrix y){
         this.x=x;
         this.y=y;
     }
+    /**
+     * Creates data set with given data
+     * @param adj Adjacency matrix containing edge data
+     */
     public DataSet(Matrix adj){
         this.adj=adj;
     }
+    /**
+     * Creates data set with given data
+     * @param x x coordinate data (vector matrix)
+     * @param y y coordinate data (vector matrix)
+     * @param adj Adjacency matrix containing edge data coresponding to x,y coordinate data
+     * @param attb Attribute data that coresponds to each x,y node
+     */
     public DataSet(Matrix x, Matrix y, Matrix adj, Matrix attb){
         this.x=x;
         this.y=y;
@@ -62,7 +87,9 @@ public class DataSet {
 
 	/**
 	 * Copy Constructor. Copies all the values of one DataSet into the new one.
-	 */
+     *
+     * @param ds DataSet to copy
+     */
 	public DataSet(DataSet ds) {
 		x=ds.getX().copy();
 		y=ds.getY().copy();
@@ -75,7 +102,9 @@ public class DataSet {
 	
 	/**
 	 * This method generates random values for the x and y matrices.
-	 * @param nodeCount the number of nodes to generate.
+     * @param nodeCount the number of nodes to generate.
+     * @param lowerBound lowest random number to generate
+     * @param upperBound highest random number to generate
 	 */
 	public void generateRandom(int nodeCount,double lowerBound, double upperBound){
 		for (int i=0;i<nodeCount;i++){
@@ -92,11 +121,31 @@ public class DataSet {
 	 * @param x the x to set
 	 */
 	public void setX(Matrix x) {this.x = x;}
-	public void addX(Matrix x) {this.x=util.combine(this.x, x);}
-	public boolean hasX(){return !x.isEmpty();}
-	public boolean hasY(){return !y.isEmpty();}
-	public boolean hasAdj(){return !adj.isEmpty();}
-	public boolean hasAttb(){return !attb.isEmpty();}
+    /**
+     * Appends data to x using util.combine
+     * @param x Matrix to add to x
+     */
+    public void addX(Matrix x) {this.x=util.combine(this.x, x);}
+    /**
+     *
+     * @return true if X has data
+     */
+    public boolean hasX(){return !x.isEmpty();}
+    /**
+     *
+     * @return true if Y had data
+     */
+    public boolean hasY(){return !y.isEmpty();}
+    /**
+     *
+     * @return true if Adjacency Matrix has data
+     */
+    public boolean hasAdj(){return !adj.isEmpty();}
+    /**
+     *
+     * @return true if Attribute Matrix has data
+     */
+    public boolean hasAttb(){return !attb.isEmpty();}
 
 	/**
 	 * @return the y
@@ -107,18 +156,23 @@ public class DataSet {
 	 * @param y the y to set
 	 */
 	public void setY(Matrix y) {this.y = y;}
-	public void addY(Matrix y) {this.y=util.combine(this.y, y);}
+    /**
+     * Appends input to Y matrix using util.combine
+     * @param y data to add to Y
+     */
+    public void addY(Matrix y) {this.y=util.combine(this.y, y);}
 
 	/**
-	 * @return the y
+	 * @return the x,y matrix
 	 */
 	public Matrix getXY() {
 		return util.combine(x, y);
 	}
 
 	/**
-	 * @param y the y to set
-	 */
+     *
+     * @param xy Sets x and y matricies
+     */
 	public void setXY(Matrix xy) {
 		Matrix[] tmp=util.SplitXYAttb(xy);
 		this.x = tmp[0];
@@ -126,6 +180,7 @@ public class DataSet {
 	}
 
 	/**
+     * Sets x and y matricies
 	 * @param x
 	 * @param y
 	 */
@@ -135,6 +190,7 @@ public class DataSet {
 	}
 
 	/**
+     * Adds data to x and y matrix
 	 * @param x
 	 * @param y
 	 */
@@ -142,44 +198,81 @@ public class DataSet {
 		this.x = util.combine(this.x,x);
 		this.y = util.combine(this.y,y);
 	}
-	public boolean hasXY(){return (!x.isEmpty() && !y.isEmpty());}
+    /**
+     *
+     * @return true if x and y have data
+     */
+    public boolean hasXY(){return (!x.isEmpty() && !y.isEmpty());}
 
 	/**
 	 * @return the adj
 	 */
 	public Matrix getAdj() {return adj;}
-	public Matrix getAdjacencyMatrix() {return adj;}
+    /**
+     * same as getAdj()
+     * @return the adj
+     */
+    public Matrix getAdjacencyMatrix() {return adj;}
 
 	/**
 	 * @param adj the adj to set
 	 */
 	public void setAdj(Matrix adj) {this.adj = adj;}
-	public void setAdjacencyMatrix(Matrix adj) {this.adj = adj;}
+    /**
+     *
+     * @param adj
+     */
+    public void setAdjacencyMatrix(Matrix adj) {this.adj = adj;}
 	
 
 	/**
 	 * @return the attb
 	 */
 	public Matrix getAttb() {return attb;}
-	public Matrix getAttr() {return attb;}
-	public Matrix getAttributeMatrix() {return attb;}
+    /**
+     * Same as getAttb()
+     * @return attb
+     */
+    public Matrix getAttr() {return attb;}
+    /**
+     * Same as getAttb()
+     * @return attb
+     */
+    public Matrix getAttributeMatrix() {return attb;}
 
 	/**
 	 * @param attb the attb to set
 	 */
 	public void setAttb(Matrix attb) {this.attb = attb;}
-	public void setAttr(Matrix attb) {this.attb = attb;}
-	public void setAttributeMatrix(Matrix attb) {this.attb = attb;}
+    /**
+     * Same as setAttb(Matrix attb)
+     * @param attb
+     */
+    public void setAttr(Matrix attb) {this.attb = attb;}
+    /**
+     * Same as setAttb(Matrix attb)
+     * @param attb
+     */
+    public void setAttributeMatrix(Matrix attb) {this.attb = attb;}
 
     /**
-     * @param files file list to set
+     * Sets the list of loaded files
+     * @param fl
      */
     public void setFileList(Vector<String> fl){
         loadedFiles = fl;
     }
+    /**
+     * Add a file to the loaded files list
+     * @param file
+     */
     public void addFile(String file){
         loadedFiles.add(file);
     }
+    /**
+     *
+     * @return vector of all files loaded
+     */
     public Vector<String> GetLoadedFiles(){
         return loadedFiles;
     }
@@ -199,7 +292,11 @@ public class DataSet {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	@Override
+    /**
+     *
+     * @return Information about the data set in the form of a string
+     */
+    @Override
 	public String toString() {
 		String out=new String();
         if(!x.isEmpty()){
@@ -376,7 +473,8 @@ public class DataSet {
      * Calls append() to add two DataSets together. This method does 
      * not change either DataSet. If you want to add one DataSet to another, 
      * use append().
-     * @param ds the DataSet to Append to this
+     * @param ds1
+     * @param ds2
      * @return A new DataSet
      */
     public DataSet add(DataSet ds1,DataSet ds2){
@@ -384,7 +482,10 @@ public class DataSet {
     	ret.append(ds2);
     	return ret;
     }
-    //converts a stored polar coordinates to stored xy coordinates
+    
+    /**
+     * converts a stored polar coordinates to stored xy coordinates
+     */
     public void PolarToXY(){
         double preX =0, preY=0, nextX, nextY;
         for(int row=0; row<x.getRowCount(); row++){
@@ -405,6 +506,7 @@ public class DataSet {
      * Translates the stored xy to a new xy
      * @param xmove amount to move in x direction
      * @param ymove amount to move in y direction
+     * @throws IllegalStateException
      */
     public void translate(double xmove, double ymove)throws IllegalStateException{
         if(!x.isEmpty() && !y.isEmpty()){
@@ -449,9 +551,6 @@ public class DataSet {
 
     /**
      * @param factor Factor to scale by
-     * @param x the X-Coords
-     * @param y the Y-Coords
-     * @return combined XY Matrix. use SplitXYAttb() to split into respective coords.
      * @throws IllegalStateException
      */
     public void scale(double factor)throws IllegalStateException{

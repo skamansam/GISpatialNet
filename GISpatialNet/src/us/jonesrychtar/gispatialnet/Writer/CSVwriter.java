@@ -16,7 +16,7 @@ import org.ujmp.core.Matrix;
 
 /**
  *
- * @author Charles Bevan
+ * @author cfbevan
  * @date September 16, 2009
  * @version 0.0.1
  */
@@ -53,44 +53,84 @@ public class CSVwriter extends TextFileWriter {
     }
 
     //getters
+    /**
+     *
+     * @return quote leve
+     */
     public int getQuoteLevel() {
         return quoteLevel;
     }
     
+    /**
+     *
+     * @return comment character
+     */
     public char getComment() {
-    return comment;
+        return comment;
     }
 
+    /**
+     *
+     * @return quote character
+     */
     public char getQuote() {
-    return quote;
+        return quote;
     }
 
+    /**
+     *
+     * @return seperator character
+     */
     public char getSeperator() {
-    return seperator;
+        return seperator;
     }
 
+    /**
+     *
+     * @return true if trim quote is on
+     */
     public boolean isTrimQuote() {
-    return trimQuote;
+        return trimQuote;
     }
 
     
     //setters
+    /**
+     * Sets quote level
+     * @param quoteLevel
+     */
     public void setQuoteLevel(int quoteLevel) {
         this.quoteLevel = quoteLevel;
     }
     
+    /**
+     * sets comment character
+     * @param comment Character that signifies a comment
+     */
     public void setComment(char comment) {
         this.comment = comment;
     }
 
+    /**
+     * sets quote character
+     * @param quote Character that signifies a quote
+     */
     public void setQuote(char quote) {
         this.quote = quote;
     }
 
+    /**
+     * sets seperator character
+     * @param seperator character that seperates data
+     */
     public void setSeperator(char seperator) {
         this.seperator = seperator;
     }
 
+    /**
+     * set trim quote
+     * @param trimQuote
+     */
     public void setTrimQuote(boolean trimQuote) {
         this.trimQuote = trimQuote;
     }

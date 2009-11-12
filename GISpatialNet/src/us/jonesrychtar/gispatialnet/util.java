@@ -25,6 +25,8 @@ public class util {
      * Translates the stored xy to a new xy
      * @param xmove amount to move in x direction
      * @param ymove amount to move in y direction
+     * @param theData dataset to modify
+     * @throws IllegalStateException
      */
     public static void translate(double xmove, double ymove,DataSet theData)throws IllegalStateException{
         if(theData.hasXY()){
@@ -38,6 +40,7 @@ public class util {
     }
     /**
      * Reflects the xy data over an axis
+     * @param theData dataset to modify
      * @param Axis Axis to reflect over (X=0, Y=1)
      * @throws java.lang.IllegalStateException
      */
@@ -55,6 +58,7 @@ public class util {
     /**
      * Rotates the xy data about the origin
      * @param Degrees Degrees to rotate
+     * @param theData dataset to modify
      * @throws java.lang.IllegalStateException
      */
     public static void rotate(double Degrees,DataSet theData)throws IllegalStateException{
@@ -69,8 +73,7 @@ public class util {
 
     /**
      * @param factor Factor to scale by
-     * @param x the X-Coords
-     * @param y the Y-Coords
+     * @param theData dataset to modify
      * @throws IllegalStateException
      */
     public static void scale(double factor,DataSet theData)throws IllegalStateException{
@@ -139,7 +142,7 @@ public class util {
     }
 
     /**
-     * Removes number colu (used when reading XY or XYAttb)
+     * Removes number column (used when reading XY or XYAttb)
      * @param in Matrix to strip from
      * @return New MAtrix without first column
      */

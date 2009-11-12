@@ -12,9 +12,7 @@ import java.io.File;
 import java.util.Vector;
 import jxl.Workbook;
 import org.ujmp.core.Matrix;
-//import org.ujmp.core.objectmatrix;
 import org.ujmp.core.MatrixFactory;
-import us.jonesrychtar.gispatialnet.DataSet;
 
 /**
  *
@@ -26,11 +24,23 @@ public class ExcelReader {
 
     private File in;
 
+    /**
+     * constructor
+     * @param filename name of file to read
+     */
     public ExcelReader(String filename) {
         in = new File(filename);
     }
 
     //TODO: test multiple read
+    /**
+     *
+     * @param MatrixFormat format of stored matrix (As defined in TextFileReader)
+     * @param rows number of rows per dataset
+     * @param c number of columns per dataset
+     * @return vector of matrix containing read data
+     * @throws java.lang.Exception
+     */
     public Vector<Matrix> read(int MatrixFormat, int rows, int c) throws Exception {
 
         Workbook w1 = Workbook.getWorkbook(in);

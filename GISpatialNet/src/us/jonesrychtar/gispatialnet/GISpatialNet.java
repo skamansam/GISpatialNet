@@ -35,7 +35,11 @@ public class GISpatialNet {
     	theData.setAdj(MatrixFactory.emptyMatrix());
     }
     
-	public GISpatialNet(Matrix XY){
+    /**
+     *
+     * @param XY
+     */
+    public GISpatialNet(Matrix XY){
     	DataSet theData=new DataSet();
     	Matrix[] xy=util.SplitXYAttb(XY);
     	theData.setX(xy[0]);
@@ -43,7 +47,12 @@ public class GISpatialNet {
     	theData.setAttb(MatrixFactory.emptyMatrix());
     	theData.setAdj(MatrixFactory.emptyMatrix());
     }
-	public GISpatialNet(Matrix XY, Matrix adj){
+    /**
+     *
+     * @param XY
+     * @param adj
+     */
+    public GISpatialNet(Matrix XY, Matrix adj){
     	DataSet theData=new DataSet();
     	Matrix[] xy=util.SplitXYAttb(XY);
     	theData.setX(xy[0]);
@@ -51,7 +60,13 @@ public class GISpatialNet {
     	theData.setAttb(MatrixFactory.emptyMatrix());
     	theData.setAdj(adj);
     }
-	public GISpatialNet(Matrix XY, Matrix adj, Matrix attb){
+    /**
+     *
+     * @param XY
+     * @param adj
+     * @param attb
+     */
+    public GISpatialNet(Matrix XY, Matrix adj, Matrix attb){
     	DataSet theData=new DataSet();
     	Matrix[] xy=util.SplitXYAttb(XY);
     	theData.setX(xy[0]);
@@ -60,7 +75,14 @@ public class GISpatialNet {
     	theData.setAdj(adj);
     }
 	
-	public GISpatialNet(Matrix X, Matrix Y, Matrix adj, Matrix attb){
+    /**
+     *
+     * @param X
+     * @param Y
+     * @param adj
+     * @param attb
+     */
+    public GISpatialNet(Matrix X, Matrix Y, Matrix adj, Matrix attb){
     	DataSet theData=new DataSet();
     	theData.setX(X);
     	theData.setY(Y);
@@ -68,6 +90,7 @@ public class GISpatialNet {
     	theData.setAdj(adj);
     }
     /**
+     * @param Matrix
      * @param X
      * @param Y
      */
@@ -76,24 +99,62 @@ public class GISpatialNet {
     	theData.elementAt(Matrix).setY(Y);
     }
     
+    /**
+     *
+     * @param Matrix
+     * @param X
+     * @param Y
+     */
     public void addXY(int Matrix, Matrix X, Matrix Y){
     	theData.elementAt(Matrix).addX(X);
     	theData.elementAt(Matrix).addY(Y);
     }
     
     /**
+     * @param Matrix
      * @return
      */
     public DataSet getData(int Matrix){
     	return theData.elementAt(Matrix);
     }
+    /**
+     *
+     * @param where
+     * @param data
+     */
+    public void setData(int where, DataSet data){
+        theData.elementAt(where).setX(data.getX());
+        theData.elementAt(where).setY(data.getY());
+        theData.elementAt(where).setAdj(data.getAdj());
+        theData.elementAt(where).setAttb(data.getAttb());
+    }
+    /**
+     * 
+     * @return
+     */
     public int NumberOfDataSets(){
         return theData.size();
     }
+    /**
+     *
+     * @return
+     */
     public Vector<DataSet> getDataSets(){
         return theData;
     }
-
+    /**
+     *
+     * @param DataSet
+     */
+    public void Remove(int DataSet){
+        theData.removeElementAt(DataSet);
+    }
+    /**
+     *
+     * @param filename
+     * @throws java.net.MalformedURLException
+     * @throws java.io.IOException
+     */
     public void LoadFile(String filename) throws MalformedURLException, IOException{
     	Reader.LoadFile(filename);
     }
@@ -104,6 +165,7 @@ public class GISpatialNet {
     	System.out.print(theData);
     }
     /**
+     * @param Matrix
      * @return
      */
     public String toString(int Matrix){
@@ -113,6 +175,7 @@ public class GISpatialNet {
     /**
      * Temporarily sets the Detail level the given 
      * level and returns getStatus()
+     * @param level
      * @return Status information see {@link getStatus()}
      */
     public String getStatus(int level){
@@ -127,6 +190,7 @@ public class GISpatialNet {
     }
     
     /**
+     * @param Matrix
      * @param i
      */
     public void setDebugLevel(int Matrix, int i){
@@ -150,7 +214,25 @@ public class GISpatialNet {
             theData.elementAt(i).ClearData();
         }
     }
-    
+
+    /**
+     *
+     * @param Data
+     */
+    public void AddEgo(int Data){
+        Matrix Xz = MatrixFactory.zeros(1,1);
+        Matrix Yz = MatrixFactory.zeros(1,1);
+        Matrix a = MatrixFactory.zeros(1, theData.elementAt(Data).getAdj().getColumnCount());
+        Matrix attb = MatrixFactory.zeros(1, theData.elementAt(Data).getAttb().getColumnCount());
+
+        //set a to all 1s
+        for(int col=0; col< a.getColumnCount(); col++)
+            a.setAsDouble(1, 1,col);
+
+        //add data
+        DataSet ds = new DataSet(Xz,Yz,a,attb);
+        theData.elementAt(Data).append(ds);
+    }
 	/**
 	 * @param args
 	 */

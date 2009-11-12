@@ -34,7 +34,11 @@ public class convertKnown {
     * @param xin vector matrix of x coordinates
     * @param yin vector matrix of y coordinates
     * @param adjin matrix containing edge data
-    * @param attbin matrix containing attribute data
+     * @param attbin matrix containing attribute data
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws SchemaException
+     * @throws IOException
     */
     public convertKnown(String filenameE, String filenameN, Matrix xin, Matrix yin, Matrix adjin, Matrix attbin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 
@@ -51,7 +55,11 @@ public class convertKnown {
     * @param filenameN name of output node shapefile
     * @param xin vector matrix of x coordinates
     * @param yin vector matrix of y coordinates
-    * @param adjin matrix containing edge data
+     * @param adjin matrix containing edge data
+     * @throws IllegalArgumentException
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws SchemaException
     */
     public convertKnown(String filenameE, String filenameN,Matrix xin, Matrix yin, Matrix adjin) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
 

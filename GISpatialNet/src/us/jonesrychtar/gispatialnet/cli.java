@@ -20,6 +20,7 @@ import jxl.write.WriteException;
 import org.boehn.kmlframework.kml.KmlException;
 import org.geotools.feature.SchemaException;
 import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
+import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
 
@@ -32,30 +33,38 @@ import us.jonesrychtar.gispatialnet.Writer.Writer;
 public class cli extends userinterface {
 
     private static cli c;
-    private static util u;
     private int statusLevel = 0;
     Scanner sc = new Scanner(System.in);
     private GISpatialNet gsn = new GISpatialNet();
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         c = new cli();
-        u = new util();
         while (true) {
             c.Menu();
         }
     }
 
+    /**
+     *
+     */
     public void cli() {
         for(int i=0; i<gsn.NumberOfDataSets(); i++)
             gsn.setDebugLevel(i, statusLevel);
     }
 
     //Menus----------------------------------------------------------------------------------
+    /**
+     *
+     */
     public void Menu() {
         int option = getMenu(
                 "Main Menu:",
                 gsn.getStatus(statusLevel),
-                new String[]{"Load data", "Save Data", "Analyze Data","Merge Data", "Print Full Status", "Clear Data", "About GISpatialNet", "Exit"});
+                new String[]{"Load data", "Save Data", "Analyze Data","Merge Data", "Print Full Status", "Clear Data", "About GISpatialNet","Add Ego to Data", "Exit"});
 
         switch (option) {
             case 1:
@@ -67,7 +76,9 @@ public class cli extends userinterface {
             case 3:
                 AnalyzeMenu();
                 break;
-            case 4: break;
+            case 4:
+                MergeMenu();
+                break; 
             case 5:
                 System.out.println(gsn.getStatus(3));
                 break;
@@ -78,6 +89,9 @@ public class cli extends userinterface {
                 printAbout();
                 break;
             case 8:
+                addEgo();
+                break;
+            case 9:
                 System.exit(0);
                 break;
             default:
@@ -180,7 +194,7 @@ public class cli extends userinterface {
             case 7: break;
         }    
     }
-    //TODO: add options for data type (polar, xy, etc...)
+    
     private void _LoadMenu2(int what) { 
         int option = getMenu(
                 "Load File Menu:",
@@ -196,7 +210,7 @@ public class cli extends userinterface {
         int cols = sc.nextInt();
         int dataType =-1;
         if(option == 1 || option ==3)
-            dataType = getMenu(
+            dataType = getMenu( //graph coordinates may be XY or polar
                 "Data Format:",
                 "What format is the data int?",
                 new String[]{"XY decimal","Polar"});
@@ -235,9 +249,6 @@ public class cli extends userinterface {
             }
             case 3:
                 LoadMenu1();
-                break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
                 break;
         }
     }
@@ -379,10 +390,7 @@ public class cli extends userinterface {
                 break;
             }
             case 7:
-                Menu();
-                break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
+                //Menu();
                 break;
         }
     }
@@ -572,11 +580,56 @@ public class cli extends userinterface {
                 break;
             }
             case 6:
-                Menu();
+                //Menu();
                 break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
+        }
+    }
+    private void MergeMenu(){
+        int option = getMenu(
+                "Merge Menu:",
+                "",
+                new String[] {"Merge two data sets","Merge all data sets", "Back"});
+        switch(option){
+            case 1: {
+                int ds1 = _MatrixChoice();
+                int ds2 = _MatrixChoice();
+                SimpleMerge sdm = new SimpleMerge(gsn.getData(ds1), gsn.getData(ds2));
+                DataSet temp = sdm.Merge();
+                gsn.setData(ds1, temp);
+                gsn.Remove(ds2);
                 break;
+            }
+            case 2:{
+                DataSet temp;
+                for(int i=1; i<gsn.NumberOfDataSets(); i++){
+                    SimpleMerge sdm = new SimpleMerge(gsn.getData(0), gsn.getData(i));
+                    DataSet temp2 = sdm.Merge();
+                    gsn.setData(0, temp2);
+                    gsn.Remove(i);
+                }
+                break;
+            }
+            case 3: break;
+        }
+    }
+    private void addEgo(){
+        int option = getMenu(
+                "Add Ego to:",
+                "",
+                new String[] {"Single Data Set","All Data","Back"});
+        switch(option){
+            case 1:{
+                int m = _MatrixChoice();
+                gsn.AddEgo(m);
+                break;
+            }
+            case 2:{
+                for(int i=0; i<gsn.NumberOfDataSets(); i++){
+                    gsn.AddEgo(i);
+                }
+                break;
+            }
+            case 3: break;
         }
     }
     //End menus ---------------------------------------------------------------------------
@@ -600,6 +653,13 @@ public class cli extends userinterface {
     }
     //end helper menus
 
+    /**
+     *
+     * @param title
+     * @param info
+     * @param items
+     * @return
+     */
     public int getMenu(String title, String info, String[] items) {
         //return and err out if length of items is less than one.
         if (items.length < 1) {
