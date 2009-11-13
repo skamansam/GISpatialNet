@@ -48,7 +48,7 @@ public class CSVFileReader extends TextFileReader{
      *
      * @return
      */
-    public Vector<DataSet> getMatrices(){return theMatrices;}
+    public Vector<DataSet> getMatrices(){return theData;}
     
     /**
      *
@@ -110,18 +110,25 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 */
 	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) {
+		String[] theLine;
+		//TODO: pre-read the files and get all blank lines and store them into an 
+		//array of (blankline-lastblankline) to determine the matrix lengths. 
+		//The first matrix contains the headers
+		
 		try {
-			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
+			theLine = reader.getAllFieldsInLine();//this should be the header data
 		} catch (IOException e1) {
 			System.out.println("Error reading the network data for the next network.");
 			return theData;
 		}
-		
+		if (theLine.length() == 0){
+			
+		}
 		//initialize the next matrix!
 		theData.add(new DataSet());
 		
 		//if we are using an ego, add one to each row,col count
-		theData.add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
+		theData.get(0).add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
 
 		//read each row
 		for (int i = 0; i < rows; i++) {
@@ -145,6 +152,28 @@ public class CSVFileReader extends TextFileReader{
 		return theMatrices;
 	}
 
+	private Matrix getNextDataSet(CSVReader reader,String[] headers,int numRows){
+		Matrix theData=MatrixFactory.emptyMatrix();
+		
+		for (int row=0;row<numRows;row++){ // get the next row until a blank line is found
+			for(int col=0;col<headers.length;col++){ //get next element
+				try {
+					theData.setAsDouble(reader.getDouble(), row, col);
+				} catch (MatrixException e) {
+					System.err.println("Cannot add data to matrix while reading csv file "+this.file.getName());
+				} catch (NumberFormatException e) {
+					System.err.println("Number not formatted correctly at column "+i+", row "+curRow+" while reading csv file "+this.file.getName());
+				} catch (IOException e) {
+					System.err.println("Tried to read file "+this.file.getName()+" as CSV, but cannot.");
+				}
+			}
+		}
+		
+		
+		return theData;
+		
+	}
+	
 	/**
 	 * @param reader
 	 * @param rows
