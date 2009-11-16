@@ -115,17 +115,33 @@ public class CSVFileReader extends TextFileReader{
 		//array of (blankline-lastblankline) to determine the matrix lengths. 
 		//The first matrix contains the headers
 		
+		//read the header in the first matrix
 		try {
 			theLine = reader.getAllFieldsInLine();//this should be the header data
 		} catch (IOException e1) {
 			System.out.println("Error reading the network data for the next network.");
 			return theData;
 		}
-		if (theLine.length() == 0){
-			
+		boolean hasNext=true;
+		
+		while(hasNext){
+			DataSet d = new DataSet();
+			for (int row=0;row<rows;row++){
+				for(int col=0;col<cols;col++){
+					
+				}
+			}
+			theData.add(d);
 		}
-		//initialize the next matrix!
-		theData.add(new DataSet());
+			//initialize the next matrix!
+		
+		//set the headers to correspond to the csv headers
+		if (theLine.length != 0){
+			for(int i=0;i<theLine.length;i++){
+				Matrix xMat=theData.elementAt(theData.size()-1).getX();
+				xMat.setColumnLabel(i, theLine[i]);
+			}
+		}
 		
 		//if we are using an ego, add one to each row,col count
 		theData.get(0).add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));

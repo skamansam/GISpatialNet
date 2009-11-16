@@ -562,4 +562,19 @@ public class DataSet {
             y = temp.selectColumns(Calculation.Ret.NEW, 1);
         } else throw new IllegalStateException("no XY data loaded");
     }
+    
+    private void _setMatrixHeaders(Matrix m, String[] s){
+    	for (int i=0;i<s.length;i++){	//loop through the string
+    		if(i<m.getColumnCount()){	//make sure we can assign to valid columns
+    			m.setColumnLabel(i, s[i]);
+    		}else{
+    			return;					//don't worry about extra header information
+    		}
+    	}
+    	
+    }
+    
+    public void setCoordHeaders(String[] s){_setMatrixHeaders(x,s);_setMatrixHeaders(y,s);}
+    public void setAdjHeaders(String[] s){_setMatrixHeaders(adj,s);}
+    public void setAttbHeaders(String[] s){_setMatrixHeaders(attb,s);}
 }
