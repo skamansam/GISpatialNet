@@ -44,7 +44,7 @@ public class cli extends userinterface {
     public static void main(String[] args) {
         c = new cli();
         while (true) {
-            c.Menu();
+            c.mainMenu();
         }
     }
 
@@ -60,7 +60,7 @@ public class cli extends userinterface {
     /**
      *
      */
-    public void Menu() {
+    public void mainMenu() {
         int option = getMenu(
                 "Main Menu:",
                 gsn.getStatus(statusLevel),
@@ -68,7 +68,7 @@ public class cli extends userinterface {
 
         switch (option) {
             case 1:
-                LoadMenu1();
+                loadDataMenu();
                 break;
             case 2:
                 SaveMenu();
@@ -116,7 +116,7 @@ public class cli extends userinterface {
     	
     }
     
-    private void LoadMenu1() {
+    private void loadDataMenu() {
         int option = getMenu(
                 "Load Menu:",
                 gsn.getStatus(statusLevel),
@@ -124,8 +124,8 @@ public class cli extends userinterface {
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", 
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
         switch(option){
-            case 1: _LoadMenu2(option); break;//csv
-            case 2: _LoadMenu2(option); break; //excel
+            case 1: _loadDBMenu(option); break;//csv
+            case 2: _loadDBMenu(option); break; //excel
             case 3: { //dl
                 System.out.println("What is the filename: ");
                 String fn = sc.next();
@@ -195,7 +195,7 @@ public class cli extends userinterface {
         }    
     }
     
-    private void _LoadMenu2(int what) { 
+    private void _loadDBMenu(int what) { 
         int option = getMenu(
                 "Load File Menu:",
                 gsn.getStatus(statusLevel),
@@ -212,7 +212,7 @@ public class cli extends userinterface {
         if(option == 1 || option ==3)
             dataType = getMenu( //graph coordinates may be XY or polar
                 "Data Format:",
-                "What format is the data int?",
+                "What format is the data in?",
                 new String[]{"XY decimal","Polar"});
         //fix stuff
         format--;
@@ -248,11 +248,15 @@ public class cli extends userinterface {
                 break;
             }
             case 3:
-                LoadMenu1();
+                loadDataMenu();
                 break;
         }
     }
 
+    private void getCSVParams(){
+    	
+    }
+    
     private void SaveMenu() {
         int option = getMenu(
                 "Save Data:",
