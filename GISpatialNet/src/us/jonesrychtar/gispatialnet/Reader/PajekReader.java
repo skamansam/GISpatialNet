@@ -44,7 +44,8 @@ public class PajekReader extends TextFileReader {
     @Override
     //TODO: This will now return dataset vector or DataSet depending on if it can read multiple data sets.
     public Vector<DataSet> Read(int type, int rows, int col) throws Exception{
-        
+        Vector<DataSet> theData = new Vector<DataSet>();
+        theData.add(new DataSet());
     	Scanner theFile = new Scanner(this.file);
     	//Matrix theMatrix=MatrixFactory.emptyMatrix();
         Matrix theMatrix = MatrixFactory.zeros(rows,col);
@@ -59,15 +60,19 @@ public class PajekReader extends TextFileReader {
     				while(theFile.hasNextFloat())
     					vertXY.setAsFloat(theFile.nextFloat(), i,theCol++);    				
     			}
-    		}else if(theType.equalsIgnoreCase("*Arcs")){
-    			
-    		}//else if(theType.equalsIgnoreCase("*Edges")){
+    		}else if(theType.equalsIgnoreCase("*Arcs")){ //we are reading adjaceny
+    			while(theFile.hasNext() && theFile.next("\n*")!="\n*"){
+    				
+    			}
+    		}
+    		
+    		//else if(theType.equalsIgnoreCase("*Edges")){
     			
     		//}
     	}
     	
     	
-    	return theMatrix;
+    	return theData;
     }
 
 }

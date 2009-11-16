@@ -169,7 +169,7 @@ public class Reader {
     public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
-        Vector<Matrix> out = csvr.Read(MatrixType, rows, col);
+        Vector<Matrix> out = csvr.ReadAsMatrices(MatrixType, rows, col);
         Vector<DataSet> ds = new Vector<DataSet>();
         for(int m=0; m<out.size(); m++){
             DataSet dstemp = new DataSet();
