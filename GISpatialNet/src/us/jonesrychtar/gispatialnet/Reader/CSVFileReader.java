@@ -189,7 +189,12 @@ public class CSVFileReader extends TextFileReader{
 		return theData;
 		
 	}
+	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int col) {
+		
+		return null;
+	}
 	
+
 	/**
 	 * @param reader
 	 * @param rows
@@ -324,6 +329,5 @@ public class CSVFileReader extends TextFileReader{
 			return false;
 		}
 */	}
-	
 	
 }
