@@ -60,11 +60,7 @@ public class ShapefileWriter {
      * @throws IOException
      * */
     public ShapefileWriter(String filename, String scheme) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException {
-        if (filename.length() > 8) {
-            throw new IllegalArgumentException("Filename is too long.");
-        } else {
             createfile(filename, scheme);
-        }
     }
 
     /**
