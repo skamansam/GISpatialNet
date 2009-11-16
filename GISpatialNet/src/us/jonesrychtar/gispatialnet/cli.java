@@ -34,7 +34,7 @@ public class cli extends userinterface {
 
     private static cli c;
     private int statusLevel = 0;
-    Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
     private GISpatialNet gsn = new GISpatialNet();
 
     /**

@@ -3,6 +3,7 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import gnu.getopt.Getopt;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -237,35 +238,76 @@ public class GISpatialNet {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-        if(args.length < 1 || args[0].charAt(0) != '-'){
+        if((args.length !=2 && args.length!=3) || args[0].charAt(0) != '-'){
             PrintUsage();
             System.exit(0);
         }
         else{
-            char op = args[0].charAt(1);
-            switch(op){
-                case 'c': cli.main(args);
-                break;
-                case 'g': break;
-                case 's': break;
-                case 'h': PrintUsage(); break;
-                case 'v': System.out.println("0.0.01a PreAlpha Prototype \n"); break;
-                case 'l': PrintLicense(); break;
-                default: System.out.println("Invalid input."); PrintUsage(); break;
+            Getopt g = new Getopt("GISpatialNet", args, "cgsbeqhvlC:D:E:K:P:S:");
+            int op;
+            boolean inputTypeSet = false, outputTypeSet=false;
+            int in=-1,out=-1,action=-1;
+            String InDir=null, OutDir=null;
+            while((op=g.getopt())!=-1){
+                switch(op){
+                    case 'c': cli.main(args); break;
+                    case 'g': System.out.println("No gui yet."); break;
+                    case 's': action = op; break;
+                    case 'b': action = op; System.out.println("Borders not finished."); break;
+                    case 'e': action = op; break;
+                    case 'q': CommandLineHelper.qap(); break;
+                    case 'h': PrintUsage(); break;
+                    case 'v': System.out.println("0.0.01a PreAlpha Prototype \n"); break;
+                    case 'l': PrintLicense(); break;
+                    case 'C': 
+                    case 'D':
+                    case 'E':
+                    case 'K':
+                    case 'P':
+                    case 'S': 
+                        if(!inputTypeSet){
+                            in=op;
+                            InDir=g.getOptarg();
+                            inputTypeSet = true;
+                        }
+                        else{
+                            out=op;
+                            OutDir=g.getOptarg();
+                            outputTypeSet = true;
+                        }
+                        break;
+                    default: System.out.println("Invalid input."); PrintUsage(); break;
+                }
             }
+            if(!outputTypeSet){
+                OutDir = args[g.getOptind()];
+            }
+            CommandLineHelper.exec(action, in, op, InDir, OutDir);
         }
 	}
     private static void PrintUsage(){
         System.out.println(
-                "Useage: java -jar GISpatialNet.jar [option] <arguments> \n" +
-                "Options   Argumets           Operation\n" +
+                "Usage: java -jar GISpatialNet.jar [option] [input file type]=[input folder] [output folder] \n" +
+                "Usage: java -jar GISPatialNet.jar [input file type]=[input folder] [output file type]=[output folder]"+
+                "Options   Operation\n" +
                 "---------------------------------------------------------------------------------\n" +
-                "-c        no arguments       Starts command line interface.\n" +
-                "-g        no arguments       Starts graphical user interface. \n" +
-                "-s        file1 file2 ...    Performs spatial net bias on listed files.\n"+
-                "-v        no arguments       Prints version number.\n" +
-                "-l        no arguments       Prints license information. \n" +
-                "-h        no arguments       Prints help (this text).\n");
+                "-c        Starts command line interface. No files needed.\n" +
+                "-g        Starts graphical user interface. No files needed. \n" +
+                "-s        Performs spatial net bias on listed files.\n"+
+                "-b        Performs borders analysis on listed files.\n" +
+                "-e        Performs highlight edge analysis on listed files.\n" +
+                "-q        Starts qap program.\n" +
+                "-v        Prints version number.\n" +
+                "-l        Prints license information. \n" +
+                "-h        Prints help (this text).\n\n"+
+                "File Types\n"+
+                "----------------------------------------------------------------------------------\n" +
+                "-C        CSV files\n" +
+                "-D        DL/UCINET format\n" +
+                "-E        Excel 98 file format\n" +
+                "-K        KML (google earth) format\n" +
+                "-P        Pajek file format\n" +
+                "-S        GIS Shapefile format\n");
     }
     private static void PrintLicense(){
         System.out.print(
@@ -280,5 +322,4 @@ public class GISpatialNet {
     			"you can obtain it from http://www.gnu.org/licenses/gpl.html. GISpatialNet uses software governed under the GPL," +
     			"LGPL, Apache License, New BSD License\n");
     }
-
 }
