@@ -19,7 +19,6 @@ import org.ujmp.core.Matrix;
 /**
  *
  * @author cfbevan
- * @date Oct 8, 2009
  * @version 0.0.1
  */
 public class ShapefileNodeWriter {

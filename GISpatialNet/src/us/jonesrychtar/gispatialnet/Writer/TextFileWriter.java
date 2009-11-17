@@ -14,7 +14,6 @@ import org.ujmp.core.Matrix;
 /**
  *
  * @author Charles Bevan
- * @date September 16, 2009
  * @version 0.0.1
  */
 public abstract class TextFileWriter {

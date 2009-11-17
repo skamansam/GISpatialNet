@@ -17,7 +17,6 @@ import org.ujmp.core.Matrix;
 /**
  *
  * @author cfbevan
- * @date September 16, 2009
  * @version 0.0.1
  */
 public class CSVwriter extends TextFileWriter {

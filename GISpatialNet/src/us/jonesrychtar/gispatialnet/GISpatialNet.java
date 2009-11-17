@@ -26,7 +26,7 @@ public class GISpatialNet {
 	int debugLevel=0;
     
 	/**
-	 * 
+	 * Constructor
 	 */
 	public GISpatialNet(){
     	DataSet theData=new DataSet();
@@ -37,8 +37,8 @@ public class GISpatialNet {
     }
     
     /**
-     *
-     * @param XY
+     * Constructor
+     * @param XY initial X and Y matrix to use
      */
     public GISpatialNet(Matrix XY){
     	DataSet theData=new DataSet();
@@ -49,9 +49,9 @@ public class GISpatialNet {
     	theData.setAdj(MatrixFactory.emptyMatrix());
     }
     /**
-     *
-     * @param XY
-     * @param adj
+     * Constructor
+     * @param XY initial xy matrix to use
+     * @param adj initial Adjacency matrix to use
      */
     public GISpatialNet(Matrix XY, Matrix adj){
     	DataSet theData=new DataSet();
@@ -62,10 +62,10 @@ public class GISpatialNet {
     	theData.setAdj(adj);
     }
     /**
-     *
-     * @param XY
-     * @param adj
-     * @param attb
+     * Constructor
+     * @param XY initial XY matrix to use
+     * @param adj initial Adjacency matrix to use
+     * @param attb initial Attribute matrix to use
      */
     public GISpatialNet(Matrix XY, Matrix adj, Matrix attb){
     	DataSet theData=new DataSet();
@@ -77,11 +77,11 @@ public class GISpatialNet {
     }
 	
     /**
-     *
-     * @param X
-     * @param Y
-     * @param adj
-     * @param attb
+     * Constructor
+     * @param X Initial X matrix to use
+     * @param Y Initial Y matrix to use
+     * @param adj Initial Adjacency matrix to use
+     * @param attb Initial Attribute matrix to use
      */
     public GISpatialNet(Matrix X, Matrix Y, Matrix adj, Matrix attb){
     	DataSet theData=new DataSet();
@@ -91,9 +91,10 @@ public class GISpatialNet {
     	theData.setAdj(adj);
     }
     /**
-     * @param Matrix
-     * @param X
-     * @param Y
+     * Set the XY matrix being used
+     * @param Matrix Index of DataSet
+     * @param X X matrix to use
+     * @param Y Y matrix to use
      */
     public void setXY(int Matrix, Matrix X, Matrix Y){
     	theData.elementAt(Matrix).setX(X);
@@ -101,10 +102,10 @@ public class GISpatialNet {
     }
     
     /**
-     *
-     * @param Matrix
-     * @param X
-     * @param Y
+     * Append XY data to current XY data
+     * @param Matrix Index of DataSet to change
+     * @param X X data to append
+     * @param Y Y data to append
      */
     public void addXY(int Matrix, Matrix X, Matrix Y){
     	theData.elementAt(Matrix).addX(X);
@@ -112,16 +113,17 @@ public class GISpatialNet {
     }
     
     /**
-     * @param Matrix
-     * @return
+     * Get a dataset from data
+     * @param Matrix Index of dataset
+     * @return DataSet at indicated index from data
      */
     public DataSet getData(int Matrix){
     	return theData.elementAt(Matrix);
     }
     /**
-     *
-     * @param where
-     * @param data
+     * Set a dataset
+     * @param where Index of dataset to set
+     * @param data DataSet to copy into storage
      */
     public void setData(int where, DataSet data){
         theData.elementAt(where).setX(data.getX());
@@ -131,28 +133,28 @@ public class GISpatialNet {
     }
     /**
      * 
-     * @return
+     * @return Number of DataSets stored
      */
     public int NumberOfDataSets(){
         return theData.size();
     }
     /**
      *
-     * @return
+     * @return All DataSets in storage
      */
     public Vector<DataSet> getDataSets(){
         return theData;
     }
     /**
      *
-     * @param DataSet
+     * @param DataSet Index of dataset to remove from storage
      */
     public void Remove(int DataSet){
         theData.removeElementAt(DataSet);
     }
     /**
-     *
-     * @param filename
+     * Calls Reader.LoadFile(filename)
+     * @param filename filename to load
      * @throws java.net.MalformedURLException
      * @throws java.io.IOException
      */
@@ -160,14 +162,14 @@ public class GISpatialNet {
     	Reader.LoadFile(filename);
     }
     /**
-     * 
+     * Prints all loaded data
      */
     public void printStatus(){
     	System.out.print(theData);
     }
     /**
-     * @param Matrix
-     * @return
+     * @param Matrix Index of dataset to look at
+     * @return Status of indicated dataset
      */
     public String toString(int Matrix){
     	return theData.elementAt(Matrix).toString();
@@ -176,7 +178,7 @@ public class GISpatialNet {
     /**
      * Temporarily sets the Detail level the given 
      * level and returns getStatus()
-     * @param level
+     * @param level integer value indicating level of detail needed
      * @return Status information see {@link getStatus()}
      */
     public String getStatus(int level){
@@ -191,8 +193,9 @@ public class GISpatialNet {
     }
     
     /**
-     * @param Matrix
-     * @param i
+     * Sets detail level
+     * @param Matrix Index of dataset to set level on
+     * @param i Detail level to use
      */
     public void setDebugLevel(int Matrix, int i){
     	debugLevel=i;
@@ -200,7 +203,7 @@ public class GISpatialNet {
     }
 
     /**
-     * @return
+     * @return Detail level being used
      */
     public int getDebugLevel(){
     	return debugLevel;
@@ -217,8 +220,8 @@ public class GISpatialNet {
     }
 
     /**
-     *
-     * @param Data
+     * Adds an ego to a data set
+     * @param Data Index of data set to add ego to
      */
     public void AddEgo(int Data){
         Matrix Xz = MatrixFactory.zeros(1,1);
@@ -235,7 +238,7 @@ public class GISpatialNet {
         theData.elementAt(Data).append(ds);
     }
 	/**
-	 * @param args
+	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
         if((args.length !=2 && args.length!=3) || args[0].charAt(0) != '-'){
@@ -285,6 +288,9 @@ public class GISpatialNet {
             CommandLineHelper.exec(action, in, op, InDir, OutDir);
         }
 	}
+    /**
+     * Prints usage of command line functions
+     */
     private static void PrintUsage(){
         System.out.println(
                 "Usage: java -jar GISpatialNet.jar [option] [input file type]=[input folder] [output folder] \n" +
@@ -309,6 +315,9 @@ public class GISpatialNet {
                 "-P        Pajek file format\n" +
                 "-S        GIS Shapefile format\n");
     }
+    /**
+     * prints program License
+     */
     private static void PrintLicense(){
         System.out.print(
     			"GISpatialNet is the brain child of Dr. Eric Jones and Jan Rychtar. " +

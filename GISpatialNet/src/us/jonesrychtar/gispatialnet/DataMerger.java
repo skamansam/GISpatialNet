@@ -26,9 +26,7 @@ public class DataMerger {
     /**
      * Merge two sets of data into one
      * @param A 
-     * @param A 1st data set to use
      * @param B 
-     * @param B 2nd data set to use
      */
     public DataMerger(DataSet A, DataSet B){
         xyAttb1 = util.combine(A.getXY(),A.getAttb());

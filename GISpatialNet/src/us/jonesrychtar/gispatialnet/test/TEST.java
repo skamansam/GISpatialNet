@@ -381,15 +381,15 @@ public class TEST {
     public void testCSVreader(){
         CSVFileReader cr = new CSVFileReader("test.csv");
         Vector<Matrix> temp = null;
-        try {
-            temp = cr.Read(0, 11, 2);
+        /*try {
+        temp = cr.Read(0, 11, 2);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
         System.out.println(temp);
     }
 }

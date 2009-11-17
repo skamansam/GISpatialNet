@@ -15,7 +15,6 @@ import org.ujmp.core.calculation.Calculation;
 /**
  *
  * @author Sam Tyler, Charles Bevan
- * @date September 17, 2009
  * @version 0.0.1
  */
 public class util {
