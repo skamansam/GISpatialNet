@@ -65,7 +65,7 @@ public class Algorithm {
      *              1 less than median length
      *              2 more than median length
      *              3 top 10 percent
-     * @param nodeFilenamefilename of node shapefile output
+     * @param nodeFilename name of node file
      * @param y y data to use
      * @param x x data to use
      * @param adj adj data to use
@@ -91,7 +91,7 @@ public class Algorithm {
      * @param y 
      * @param adj
      * @param bias
-     * @return
+     * @return not supported yet
      */
     public static SpatialGraphBase SNB(Matrix x,Matrix y, Matrix adj, double bias){
     	SpatialGraphBase sg=new SpatialGraphBase(x,y,adj);

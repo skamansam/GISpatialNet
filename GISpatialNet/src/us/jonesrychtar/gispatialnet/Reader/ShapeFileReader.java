@@ -29,7 +29,6 @@ import org.ujmp.core.MatrixFactory;
 /**
  *
  * @author Charles Bevan
- * @date September 30, 2009
  * @version 0.0.1
  */
 public class ShapeFileReader {

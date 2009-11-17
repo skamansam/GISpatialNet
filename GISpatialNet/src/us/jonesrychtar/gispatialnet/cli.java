@@ -27,7 +27,6 @@ import us.jonesrychtar.gispatialnet.Writer.Writer;
 /**
  *
  * @author Sam Tyler, Charles Bevan
- * @date September 17, 2009
  * @version 0.0.1
  */
 public class cli extends userinterface {
@@ -658,11 +657,11 @@ public class cli extends userinterface {
     //end helper menus
 
     /**
-     *
-     * @param title
-     * @param info
-     * @param items
-     * @return
+     * Creates a formatted menu and validates user input for menu choice
+     * @param title Menu title to be printed at top of menu
+     * @param info Extra information to be printed below menu title
+     * @param items  String array of menu choices
+     * @return int representing menu item chosen
      */
     public int getMenu(String title, String info, String[] items) {
         //return and err out if length of items is less than one.

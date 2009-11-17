@@ -16,20 +16,20 @@ public class TestData {
 
     /**
      *
-     * @param rows
-     * @param cols
-     * @return
+     * @param rows number of rows
+     * @param cols number of columns
+     * @return A matrix of zeros
      */
     public Matrix ZeroMatrix(int rows, int cols){
         return MatrixFactory.zeros(rows,cols);
     }
     /**
      *
-     * @param rows
-     * @param cols
-     * @param min
-     * @param max
-     * @return
+     * @param rows number of rows
+     * @param cols number of columns
+     * @param min minimum random number
+     * @param max maximum random number
+     * @return Matrix of random values
      */
     public Matrix RandomMatrix(int rows, int cols,int min, int max){
 

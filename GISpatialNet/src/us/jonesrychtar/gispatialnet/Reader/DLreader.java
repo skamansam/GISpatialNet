@@ -18,7 +18,6 @@ import us.jonesrychtar.gispatialnet.DataSet;
 /**
  *
  * @author Sam Tyler, Charles Bevan
- * @date September 17, 2009
  * @version 0.0.1
  */
 public class DLreader{
@@ -69,7 +68,6 @@ public class DLreader{
         this.file = new File(file);
     }
 
-    //TODO: test multiple read
     /**
      * Reads data from file into vector of datasets
      * @param type format of matrix [FULL, LOWER, UPPER] from TextFileReader

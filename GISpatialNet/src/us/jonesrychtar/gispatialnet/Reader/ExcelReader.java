@@ -17,7 +17,6 @@ import org.ujmp.core.MatrixFactory;
 /**
  *
  * @author Charles Bevan
- * @date September 28, 2009
  * @version 0.0.1
  */
 public class ExcelReader {
@@ -32,7 +31,6 @@ public class ExcelReader {
         in = new File(filename);
     }
 
-    //TODO: test multiple read
     /**
      *
      * @param MatrixFormat format of stored matrix (As defined in TextFileReader)

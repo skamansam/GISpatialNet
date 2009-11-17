@@ -22,7 +22,6 @@ import org.ujmp.core.MatrixFactory;
 /**
  *
  * @author cfbevan
- * @date October 5, 2009
  * @version 0.0.1
  */
 public class convertUnknown {

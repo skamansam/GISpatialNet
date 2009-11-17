@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
 import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
+import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.DLwriter;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
@@ -23,6 +24,9 @@ import us.jonesrychtar.gispatialnet.Writer.Writer;
  */
 public class CommandLineHelper {
 
+    /**
+     *
+     */
     public static void qap() { //copied from cli
         Scanner sc = new Scanner(System.in);
         int o = new cli().getMenu("Choose Options: ",
@@ -117,6 +121,14 @@ public class CommandLineHelper {
         }
     }
 
+    /**
+     * Executes proper actions based on command line options
+     * @param act Algorithm to use (if set)
+     * @param i input file type
+     * @param o output file type
+     * @param id input directory
+     * @param od output directory
+     */
     public static void exec(int act, int i, int o, String id, String od) {
         Scanner sc = new Scanner(System.in);
         GISpatialNet gsn = new GISpatialNet();
@@ -150,14 +162,14 @@ public class CommandLineHelper {
         for (int j = 0; j < inFiles.length; j++) {
             int Matrix=0;
             //get matrix type from filename
-            String typeCode = inFiles[j].substring(inFiles[j].length()-6, inFiles[j].length());
+            String typeCode = inFiles[j].substring(inFiles[j].length()-7, inFiles[j].length());
             if(typeCode.equals("xya")){
                 Matrix = 0;
             } else if(typeCode.equals("adj")){
                 Matrix = 3;
-            } else{
-                //eror
-                System.out.println("file: "+inFiles[j]+ "does not have a proper extension (_xya or _adj)");
+            } else if(!(typeCode.equals("sfN")||typeCode.equals("sfE"))){
+                //error
+                System.out.println("file: "+inFiles[j]+ "does not have a proper extension (_xya or _adj or _sfN or _sfE)");
                 System.exit(1);
             }
 
@@ -177,14 +189,17 @@ public class CommandLineHelper {
                     case 'P':
                         Reader.loadPajek(inFiles[j], Matrix, row, col);
                     case 'S':
-                        //Reader.loadShapefile(inFiles[j], inFiles[j]);
+                        //shapefiles will have form 1_sfE.shp and 1_sfN.shp, must be in order in list to work
+                        Reader.loadShapefile(inFiles[j+1], inFiles[j]);
+                        j++;
+                        break;
                 }
             }catch(Exception e){
                 e.printStackTrace();
             }
         }
         //Merge datasets according to filename
-        mergeByFilename();
+        mergeByFilename(gsn);
 
         if (act != -1) { //perform action and save to od
             double bias = 0.0;
@@ -282,7 +297,23 @@ public class CommandLineHelper {
         }
 
     }
-    public static void mergeByFilename(){
-        //TODO: This should merge all datasets that have the same file name assigned to them
+    /**
+     * Merges all datasets with same name
+     * @param gsn GISpatialNet object containing all datasets to merge
+     */
+    public static void mergeByFilename(GISpatialNet gsn){
+        for (int i = 0; i < gsn.NumberOfDataSets() - 1; i++) {
+            for (int j = i + 1; j < gsn.NumberOfDataSets(); j++) {
+                String filename1 = gsn.getDataSets().elementAt(i).GetLoadedFiles().elementAt(0);
+                String filename2 = gsn.getDataSets().elementAt(j).GetLoadedFiles().elementAt(0);
+                String f1 = filename1.substring(0, filename1.length() - 8);
+                String f2 = filename2.substring(0, filename2.length() - 8);
+                if (f1.equals(f2)) {
+                    DataSet newI = new SimpleMerge(gsn.getDataSets().elementAt(i), gsn.getDataSets().elementAt(j)).Merge();
+                    gsn.setData(i, newI);
+                    gsn.Remove(j);
+                }
+            }
+        }
     }
 }
