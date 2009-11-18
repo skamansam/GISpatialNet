@@ -130,6 +130,7 @@ public class GISpatialNet {
         theData.elementAt(where).setY(data.getY());
         theData.elementAt(where).setAdj(data.getAdj());
         theData.elementAt(where).setAttb(data.getAttb());
+        theData.elementAt(where).setFileList(data.GetLoadedFiles());
     }
     /**
      * 
@@ -186,7 +187,7 @@ public class GISpatialNet {
         String out="";
         for(int i=0; i<this.NumberOfDataSets(); i++){
             this.setDebugLevel(i, level);		//set the new level
-            out+=this.toString(i)+"\n";	//getStatus()
+            out+="Data Set "+(i+1)+" :\n"+this.toString(i)+"\n";	//getStatus()
             theData.elementAt(i).setDetailLevel(curLvl);	//restore the level
         }
     	return out;
@@ -199,7 +200,7 @@ public class GISpatialNet {
      */
     public void setDebugLevel(int Matrix, int i){
     	debugLevel=i;
-    	theData.elementAt(i).setDetailLevel(i);
+    	theData.elementAt(Matrix).setDetailLevel(i);
     }
 
     /**
@@ -227,21 +228,34 @@ public class GISpatialNet {
         Matrix Xz = MatrixFactory.zeros(1,1);
         Matrix Yz = MatrixFactory.zeros(1,1);
         Matrix a = MatrixFactory.zeros(1, theData.elementAt(Data).getAdj().getColumnCount());
+        Matrix a2 = MatrixFactory.zeros(theData.elementAt(Data).getAdj().getColumnCount(),1);
         Matrix attb = MatrixFactory.zeros(1, theData.elementAt(Data).getAttb().getColumnCount());
 
         //set a to all 1s
-        for(int col=0; col< a.getColumnCount(); col++)
-            a.setAsDouble(1, 1,col);
+        for(int col=0; col< a.getColumnCount(); col++){
+            a.setAsDouble(1, 0, col);
+        }
+        for(int row=0; row <a2.getRowCount(); row++){
+            a2.setAsDouble(1,row,0);
+        }
 
         //add data
-        DataSet ds = new DataSet(Xz,Yz,a,attb);
-        theData.elementAt(Data).append(ds);
+        if(theData.get(Data).hasX())
+            theData.get(Data).setX(theData.elementAt(Data).getX().appendVertically(Xz));
+        if(theData.get(Data).hasY())
+            theData.get(Data).setY(theData.elementAt(Data).getY().appendVertically(Yz));
+        if(theData.get(Data).hasAttb())
+            theData.get(Data).setAttb(theData.elementAt(Data).getAttb().appendVertically(attb));
+        if(theData.get(Data).hasAdj()){
+            theData.get(Data).setAdj(theData.elementAt(Data).getAdj().appendVertically(a));
+            theData.get(Data).setAdj(theData.elementAt(Data).getAdj().appendHorizontally(a2));
+        }
     }
 	/**
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-        if((args.length !=2 && args.length!=3) || args[0].charAt(0) != '-'){
+        if((args.length !=2 && args.length!=3 && args.length!=1) || args[0].charAt(0) != '-'){
             PrintUsage();
             System.exit(0);
         }
@@ -293,8 +307,9 @@ public class GISpatialNet {
      */
     private static void PrintUsage(){
         System.out.println(
+                "Usage: java -jar GISpatialNet.jar [option]\n" +
                 "Usage: java -jar GISpatialNet.jar [option] [input file type]=[input folder] [output folder] \n" +
-                "Usage: java -jar GISPatialNet.jar [input file type]=[input folder] [output file type]=[output folder]"+
+                "Usage: java -jar GISPatialNet.jar [input file type]=[input folder] [output file type]=[output folder]\n"+
                 "Options   Operation\n" +
                 "---------------------------------------------------------------------------------\n" +
                 "-c        Starts command line interface. No files needed.\n" +

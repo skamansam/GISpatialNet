@@ -135,7 +135,7 @@ public class cli extends userinterface {
                 int cols = sc.nextInt();
                 Vector<DataSet> vds;
                 try {
-                    vds = Reader.loadDL(fn, format, rows, cols);
+                    vds = Reader.loadDL(fn, --format, rows, cols);
                     for(int i=0; i<vds.size(); i++)
                         gsn.getDataSets().add(vds.elementAt(i));
                 } catch (Exception ex) {
@@ -604,11 +604,11 @@ public class cli extends userinterface {
             }
             case 2:{
                 DataSet temp;
-                for(int i=1; i<gsn.NumberOfDataSets(); i++){
-                    SimpleMerge sdm = new SimpleMerge(gsn.getData(0), gsn.getData(i));
+                while(gsn.NumberOfDataSets() > 1){
+                    SimpleMerge sdm = new SimpleMerge(gsn.getData(0), gsn.getData(1));
                     DataSet temp2 = sdm.Merge();
                     gsn.setData(0, temp2);
-                    gsn.Remove(i);
+                    gsn.Remove(1);
                 }
                 break;
             }
@@ -623,7 +623,7 @@ public class cli extends userinterface {
         switch(option){
             case 1:{
                 int m = _MatrixChoice();
-                gsn.AddEgo(m);
+                gsn.AddEgo(--m);
                 break;
             }
             case 2:{
@@ -640,12 +640,13 @@ public class cli extends userinterface {
 
     private int _MatrixChoice(){
         int out;
-        System.out.println("Enter the number of the Data Set to use["+0+"-"+gsn.NumberOfDataSets()+"]: ");
+        System.out.println("Enter the number of the Data Set to use["+1+"-"+gsn.NumberOfDataSets()+"]: ");
         out = sc.nextInt();
-        while(out<0 || out>gsn.NumberOfDataSets()){
+        while(out<1 || out>gsn.NumberOfDataSets()){
             System.out.println("Invalid input. Enter the number of the Data Set to use["+0+"-"+gsn.NumberOfDataSets()+"]: ");
             out = sc.nextInt();
         }
+        out --;
         return out;
     }
 

@@ -47,7 +47,7 @@ public class ExcelReader {
         //cols characters
         char cols[] = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         //read all col, rows of sheet s
-        for (int s = 1; s < w1.getNumberOfSheets(); s++) {
+        for (int s = 1; s <= w1.getNumberOfSheets(); s++) {
             Matrix temp = MatrixFactory.zeros(rows, c);
             boolean quit = false;
             switch (MatrixFormat) {
