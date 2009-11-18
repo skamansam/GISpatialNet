@@ -4,6 +4,7 @@
 
 package us.jonesrychtar.gispatialnet.Algorithm;
 
+import java.util.Vector;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.DataSet;
@@ -86,11 +87,11 @@ public class SimpleMerge {
        if(!douplicate){ //no douplicates, make quick generation
             Matrix adjA = A.getAdj();
             Matrix adjB = B.getAdj();
-            Matrix zeroA = MatrixFactory.zeros(A.getAdj().getRowCount(), B.getAdj().getColumnCount());
-            Matrix zeroB = MatrixFactory.zeros(B.getAdj().getRowCount(), A.getAdj().getRowCount());
+            Matrix zeroA = MatrixFactory.zeros(adjA.getRowCount(),adjB.getColumnCount());
+            Matrix zeroB = MatrixFactory.zeros(adjB.getRowCount(), adjA.getColumnCount());
 
             Matrix AdjTemp1 = adjA.appendHorizontally(zeroA);
-            Matrix AdjTemp2 = adjB.appendHorizontally(zeroB);
+            Matrix AdjTemp2 = zeroB.appendHorizontally(adjB);
 
             Adj = AdjTemp1.appendVertically(AdjTemp2);
        }
@@ -113,7 +114,18 @@ public class SimpleMerge {
        }
         X = X.reshape(Adj.getRowCount(),1);
         Y = Y.reshape(Adj.getRowCount(),1);
-        return new DataSet(X,Y,Adj,MatrixFactory.emptyMatrix());
+        DataSet ret = new DataSet(X,Y,Adj,MatrixFactory.emptyMatrix());
+
+        //copy loaded files from each
+        Vector<String> fl = new Vector<String>();
+        for(int i=0; i<A.GetLoadedFiles().size(); i++){
+            fl.add(A.GetLoadedFiles().elementAt(i));
+        }
+        for(int i=0; i<B.GetLoadedFiles().size(); i++){
+            fl.add(B.GetLoadedFiles().elementAt(i));
+        }
+        ret.setFileList(fl);
+        return ret;
     }
     /**
      * Tests if the coordinate checkX,checkY is in matrix in

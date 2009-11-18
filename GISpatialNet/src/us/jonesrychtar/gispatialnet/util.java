@@ -123,7 +123,10 @@ public class util {
         //copy all rows of col 1 to out[1]
         out[1] = in.selectColumns(Calculation.Ret.NEW, 1);
         //copy rest to out[2]
-        out[2] = in.selectColumns(Calculation.Ret.NEW, 2, in.getColumnCount()-1);
+        if(in.getColumnCount()>2)
+            out[2] = in.selectColumns(Calculation.Ret.NEW, 2, in.getColumnCount()-1);
+        else
+            out[2] = MatrixFactory.emptyMatrix();
         return out;
     }
     /**

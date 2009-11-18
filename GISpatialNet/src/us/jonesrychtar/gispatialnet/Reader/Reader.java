@@ -21,12 +21,28 @@ import us.jonesrychtar.gispatialnet.util;
  */
 public class Reader {
     /**
+     * loads file with default options
 	 * @param filename
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static void LoadFile(String filename) throws MalformedURLException, IOException{
-		//TODO: stub
+	public static void LoadFile(String filename) {
+		String ext = filename.substring(filename.length()-3);
+        if(ext.equals("csv")){
+            //csv reader
+        } else if(ext.equals("dat")){
+            //dl/ucinet reader
+        } else if(ext.equals("xls")){
+            //excel reader
+        } else if(ext.equals("kml")){
+            //google earth reader
+        } else if(ext.equals("net")){
+            //pajek reader
+        } else if(ext.equals("shp")){
+            //shapefile reader
+        } else if(ext.equals("txt")){
+            //ambiguious can be csv or dl/ucinet
+        }
 	}
 
     /**

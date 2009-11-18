@@ -95,6 +95,7 @@ public class DLreader{
         }
         //read matrix
         for (; header.nm > 0; header.nm--) {
+            output = MatrixFactory.zeros(header.nr, header.nc);
             //type 0 = full matrix
             if (type == 0) {
                 //if col labels embedded, read labels

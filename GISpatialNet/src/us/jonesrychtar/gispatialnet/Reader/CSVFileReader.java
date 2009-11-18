@@ -144,7 +144,7 @@ public class CSVFileReader extends TextFileReader{
 		}
 		
 		//if we are using an ego, add one to each row,col count
-		theData.get(0).add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
+		//theData.get(0).add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
 
 		//read each row
 		for (int i = 0; i < rows; i++) {
@@ -153,7 +153,7 @@ public class CSVFileReader extends TextFileReader{
 				//read the fields
 				for (int j = 0; j < cols; j++) {
 					float value = reader.getFloat();
-					theMatrices.elementAt(0).setAsDouble(value, i, j);
+					//theMatrices.elementAt(0).setAsDouble(value, i, j);
 				}
 			} catch (MatrixException e) {
 				System.out.println("Error: Internal data writing error on line " + i + " of current network data.");
@@ -165,7 +165,7 @@ public class CSVFileReader extends TextFileReader{
 		}
 		
 		//Success!
-		return theMatrices;
+		return new Vector<DataSet>();//theMatrices;
 	}
 
 	private Matrix getNextDataSet(CSVReader reader,String[] headers,int numRows){
@@ -178,7 +178,7 @@ public class CSVFileReader extends TextFileReader{
 				} catch (MatrixException e) {
 					System.err.println("Cannot add data to matrix while reading csv file "+this.file.getName());
 				} catch (NumberFormatException e) {
-					System.err.println("Number not formatted correctly at column "+i+", row "+curRow+" while reading csv file "+this.file.getName());
+					//System.err.println("Number not formatted correctly at column "+i+", row "+curRow+" while reading csv file "+this.file.getName());
 				} catch (IOException e) {
 					System.err.println("Tried to read file "+this.file.getName()+" as CSV, but cannot.");
 				}
@@ -202,7 +202,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 */
 	public Vector<DataSet> readUpperMatrix(CSVReader reader, int rows, int cols) {
-		return theMatrices;
+		return new Vector<DataSet>();//theMatrices;
 /*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
@@ -270,7 +270,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 */
 	public Vector<DataSet> readLowerMatrix(CSVReader reader, int rows, int cols) {
-		return theMatrices;
+		return new Vector<DataSet>();//theMatrices;
 /*		String exitCondition = "";
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)

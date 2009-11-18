@@ -57,18 +57,18 @@ public class TEST {
        //run.testHighlightByVal();
 
        //writers
-       //run.TESTShapefileWriter(); //works
-       //run.TestXLSwriter(); //works
-       //run.TestKMLwriter(); //works
-       //run.TestCSVwriter(); //works
-       //run.TestDLwriter(); //works
-       //run.TestPajekWriter(); //works
+       run.TESTShapefileWriter(); //works
+       run.TestXLSwriter(); //works
+       run.TestKMLwriter(); //works
+       run.TestCSVwriter(); //works
+       run.TestDLwriter(); //works
+       run.TestPajekWriter(); //works
 
 
        //readers
        //run.TestSHPreader(); //works
        //run.TestExcelReader(); //works
-       run.testKMLreader(); //works so far
+       //run.testKMLreader(); //works so far
        //run.testPajekReader();
        //run.testDLreader();
        //run.testCSVreader();

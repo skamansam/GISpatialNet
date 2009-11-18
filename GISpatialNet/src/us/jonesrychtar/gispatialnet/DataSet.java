@@ -299,6 +299,12 @@ public class DataSet {
     @Override
 	public String toString() {
 		String out=new String();
+        if(!loadedFiles.isEmpty()){
+            out+="Files: "+loadedFiles.elementAt(0);
+            for(int i = 1; i<loadedFiles.size(); i++)
+                out+=", "+loadedFiles.elementAt(i);
+            out+="\n";
+        }
         if(!x.isEmpty()){
             out+="X: ["+x.getRowCount()+","+x.getColumnCount()+"] \n";
             if(Detail>=1){
