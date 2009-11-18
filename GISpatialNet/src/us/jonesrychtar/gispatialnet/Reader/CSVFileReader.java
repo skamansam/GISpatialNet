@@ -209,7 +209,6 @@ public class CSVFileReader extends TextFileReader{
 			}
 		}
 		
-		
 		return theMatrix;
 	}
 	/**
@@ -218,15 +217,10 @@ public class CSVFileReader extends TextFileReader{
 	 * @param cols
 	 * @return
 	 */
-<<<<<<< .mine
+
 	/*	public Vector<DataSet> readUpperMatrix(CSVReader reader, int rows, int cols) {
 		return new Vector<DataSet>();
 		String exitCondition = "";
-=======
-	public Vector<DataSet> readUpperMatrix(CSVReader reader, int rows, int cols) {
-		return new Vector<DataSet>();//theMatrices;
-/*		String exitCondition = "";
->>>>>>> .r59
 		try {
 			reader.skipToNextLine(); //skip over the header row (or skip to next graph if previously reading)
 		} catch (IOException e1) {
