@@ -198,8 +198,8 @@ public class cli extends userinterface {
         int option = getMenu(
                 "Load File Menu:",
                 gsn.getStatus(statusLevel),
-                new String[]{"Node data (nodes with attributes)", "Graph/Network/Edge Data",
-                    "Node Coordinate/Location Data", "Attribute Data", "Main Menu"});
+                new String[]{"Node data (nodes with attributes)", "Adjacency data",
+                    "Noda data only", "Attribute data", "Main Menu"});
         System.out.println("What is the filename: ");
         String fn = sc.next();
         int format = _MatrixType();

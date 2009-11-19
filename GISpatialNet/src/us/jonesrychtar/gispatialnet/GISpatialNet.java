@@ -154,6 +154,13 @@ public class GISpatialNet {
         theData.removeElementAt(DataSet);
     }
     /**
+     * Adds a data set to list
+     * @param ds Data to add
+     */
+    public void add(DataSet ds){
+        theData.add(ds);
+    }
+    /**
      * Calls Reader.LoadFile(filename)
      * @param filename filename to load
      * @throws java.net.MalformedURLException
@@ -255,7 +262,7 @@ public class GISpatialNet {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-        if((args.length !=2 && args.length!=3 && args.length!=1) || args[0].charAt(0) != '-'){
+        if((args.length < 1  || args.length > 5) || args[0].charAt(0) != '-'){
             PrintUsage();
             System.exit(0);
         }
@@ -299,7 +306,7 @@ public class GISpatialNet {
             if(!outputTypeSet){
                 OutDir = args[g.getOptind()];
             }
-            CommandLineHelper.exec(action, in, op, InDir, OutDir);
+            CommandLineHelper.exec(action, in, out, InDir, OutDir);
         }
 	}
     /**
