@@ -64,6 +64,25 @@ public class SimpleMerge {
      * @return data set A and data set B merged into one data set
      */
     public DataSet Merge(){
+        //check to see if this is a merge of xy in one ds and adj in another
+        if(((A.hasAdj() && !A.hasXY()) && (B.hasXY() && !B.hasAdj())) ||
+                ((B.hasAdj() && !B.hasXY()) && ((A.hasXY()&&!A.hasAdj())))){
+            DataSet ret;
+            if(A.hasXY())
+                ret = new DataSet(A.getX(),A.getY(),B.getAdj(),MatrixFactory.emptyMatrix());
+            else
+                ret = new DataSet(B.getX(),B.getY(),A.getAdj(),MatrixFactory.emptyMatrix());
+            //copy loaded files from each
+            Vector<String> fl = new Vector<String>();
+            for (int i = 0; i < A.GetLoadedFiles().size(); i++) {
+                fl.add(A.GetLoadedFiles().elementAt(i));
+            }
+            for (int i = 0; i < B.GetLoadedFiles().size(); i++) {
+                fl.add(B.GetLoadedFiles().elementAt(i));
+            }
+            ret.setFileList(fl);
+            return ret;
+        }
         Matrix X= MatrixFactory.zeros(A.getX().getRowCount()+B.getX().getRowCount(),1);
         Matrix Y = MatrixFactory.zeros(A.getY().getRowCount()+B.getY().getRowCount(),1);
         Matrix Adj = MatrixFactory.zeros(A.getAdj().getRowCount()+B.getAdj().getRowCount(), A.getAdj().getColumnCount() + B.getAdj().getColumnCount());

@@ -68,8 +68,13 @@ public class ExcelReader {
                             //if this is col header
                             if (i == 1) {
                                 temp.setColumnLabel(i - 1, content);
-                            } else {
-                                temp.setAsDouble(new Double(content), i - 1, j);
+
+                            } else if(j==0) //row header
+                            {
+                                temp.setRowLabel(i-1, content);
+                            }
+                            else{
+                                temp.setAsDouble(new Double(content), i - 1, j-1);
                             }
                         }
                     }
@@ -91,6 +96,9 @@ public class ExcelReader {
                             //if this is col header
                             if (i == 1) {
                                 temp.setColumnLabel(i - 1, content);
+                            } else if(j==0) //row header
+                            {
+                                temp.setRowLabel(i-1, content);
                             } else {
                                 temp.setAsDouble(new Double(content), i - 1, j);
                             }
@@ -115,6 +123,9 @@ public class ExcelReader {
                             //if this is col header
                             if (i == 1) {
                                 temp.setColumnLabel(i - 1, content);
+                            } else if(j==0) //row header
+                            {
+                                temp.setRowLabel(i-1, content);
                             } else {
                                 temp.setAsDouble(new Double(content), i - 1, j);
                             }

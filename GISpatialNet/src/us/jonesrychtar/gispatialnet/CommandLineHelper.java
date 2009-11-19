@@ -9,6 +9,7 @@ package us.jonesrychtar.gispatialnet;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.CannotProceedException;
@@ -130,9 +131,12 @@ public class CommandLineHelper {
      * @param od output directory
      */
     public static void exec(int act, int i, int o, String id, String od) {
+        //TODO: fix this to work on other systems
+        char sepChar ='/';
+        
         Scanner sc = new Scanner(System.in);
         GISpatialNet gsn = new GISpatialNet();
-        int row=0, col=0, Matrix_Format=0;
+        int nrow=0, ncol=0, erow=0, ecol=0, row=0, col=0, Matrix_Format=0;
         char sep = ',';
         //get input
         //get extra data if needed
@@ -143,54 +147,78 @@ public class CommandLineHelper {
             case 'D': //need row,col, format
 
             case 'E': //need row,col, format
-                Matrix_Format = new cli().getMenu("What format is the file in?",
+                Matrix_Format = new cli().getMenu("What format is the Adjacency file in?",
                     "",
                     new String[]{"Full Matrix", "Upper Matrix", "Lower Matrix"});
 
             case 'P': //need row,col?
-                System.out.println("Enter number of rows per Data Set: ");
-                row = sc.nextInt();
-                System.out.println("Enter the number of columns per Data Set: ");
-                col = sc.nextInt();
+                System.out.println("Enter number of rows per Node Data Set: ");
+                nrow = sc.nextInt();
+                System.out.println("Enter the number of columns per  Node Data Set: ");
+                ncol = sc.nextInt();
+                System.out.println("Enter number of rows per Edge Data Set: ");
+                erow = sc.nextInt();
+                System.out.println("Enter the number of columns per Edge Data Set: ");
+                ecol = sc.nextInt();
                 break;
             case 'K': //no data needed
                 break;
             case 'S': //no data needed
                 break;
         }
-        String[] inFiles = new File(id).list();
+        Matrix_Format -- ;
+        File INdir = new File(id);
+        String[] inFiles = INdir.list();
         for (int j = 0; j < inFiles.length; j++) {
             int Matrix=0;
             //get matrix type from filename
-            String typeCode = inFiles[j].substring(inFiles[j].length()-7, inFiles[j].length());
+            String typeCode = inFiles[j].substring(inFiles[j].length()-7, inFiles[j].length()-4);
             if(typeCode.equals("xya")){
                 Matrix = 0;
+                row = nrow;
+                col = ncol;
             } else if(typeCode.equals("adj")){
-                Matrix = 3;
+                Matrix = 1;
+                row = erow;
+                col = ecol;
             } else if(!(typeCode.equals("sfN")||typeCode.equals("sfE"))){
                 //error
                 System.out.println("file: "+inFiles[j]+ "does not have a proper extension (_xya or _adj or _sfN or _sfE)");
                 System.exit(1);
             }
 
+             Vector<DataSet> ds;
+             String indir = id+sepChar;
             try{
                 switch (i) { //read file to appropriate data set
                     case 'C':
-                        Reader.loadTxt(inFiles[j], Matrix, Matrix_Format, row, col, sep);
+                        ds = Reader.loadTxt(indir+inFiles[j], Matrix, Matrix_Format, row, col, sep);
+                        for(int k=0; k<ds.size(); k++)
+                            gsn.add(ds.elementAt(k));
                         break;
                     case 'D':
-                        Reader.loadDL(inFiles[j], Matrix_Format, row, col);
+                        ds = Reader.loadDL(indir+inFiles[j], Matrix_Format, row, col);
+                        for(int k=0; k<ds.size(); k++)
+                            gsn.add(ds.elementAt(k));
                         break;
                     case 'E':
-                        Reader.loadExcel(inFiles[j], Matrix, Matrix_Format, row, col);
+                        ds = Reader.loadExcel(indir+inFiles[j], Matrix, Matrix_Format, row, col);
+                        for(int k=0; k<ds.size(); k++)
+                            gsn.add(ds.elementAt(k));
                         break;
                     case 'K':
-                        Reader.loadGoogleEarth(inFiles[j]);
+                        DataSet ds1 = Reader.loadGoogleEarth(indir+inFiles[j]);
+                        gsn.add(ds1);
+                        break;
                     case 'P':
-                        Reader.loadPajek(inFiles[j], Matrix, row, col);
+                        ds = Reader.loadPajek(indir+inFiles[j], Matrix, row, col);
+                        for(int k=0; k<ds.size(); k++)
+                            gsn.add(ds.elementAt(k));
+                        break;
                     case 'S':
                         //shapefiles will have form 1_sfE.shp and 1_sfN.shp, must be in order in list to work
-                        Reader.loadShapefile(inFiles[j+1], inFiles[j]);
+                        DataSet ds2 = Reader.loadShapefile(indir+inFiles[j+1], indir+inFiles[j]);
+                        gsn.add(ds2);
                         j++;
                         break;
                 }
@@ -229,9 +257,9 @@ public class CommandLineHelper {
                     else if (act == 'b') {
                         
                     } //highlight edges
-                    else if (act == 'e') {
-                        String outFnN = od + "/" + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Node";
-                        String outFnE = od + "/" + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Edge";
+                    else if (act == 'e') {//TODO: fix this to work on other systems
+                        String outFnN = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Node";
+                        String outFnE = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Edge";
                         Algorithm.Highlight(alg, outFnE, outFnN, ds.getX(), ds.getY(), ds.getAdj());
                     }
                 }
@@ -255,9 +283,10 @@ public class CommandLineHelper {
             for (int k = 0; k < gsn.NumberOfDataSets(); k++) {
                 //TODO: fix this to work on other systems
                 //get filenames for output
-                String outFn = od + "/" + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0));
-                String outFnN = od + "/" + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Node";
-                String outFnE = od + "/" + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Edge";
+                String base = gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0);
+                String outFn = od + sepChar + (base.substring(id.length()+1, base.length()-8));
+                String outFnN = outFn + "_Node";
+                String outFnE = outFn + "_Edge";
 
                 //get dataset
                 DataSet ds = gsn.getDataSets().elementAt(k);
@@ -309,7 +338,9 @@ public class CommandLineHelper {
                 String f1 = filename1.substring(0, filename1.length() - 8);
                 String f2 = filename2.substring(0, filename2.length() - 8);
                 if (f1.equals(f2)) {
-                    DataSet newI = new SimpleMerge(gsn.getDataSets().elementAt(i), gsn.getDataSets().elementAt(j)).Merge();
+                    DataSet ds1 = gsn.getData(i);
+                    DataSet ds2 = gsn.getData(j);
+                    DataSet newI = new SimpleMerge(ds1,ds2).Merge();
                     gsn.setData(i, newI);
                     gsn.Remove(j);
                 }

@@ -95,7 +95,7 @@ public class util {
      * @throws java.lang.IllegalArgumentException
      */
     public static Matrix combine(Matrix a, Matrix b) throws IllegalArgumentException{
-        if(a.getRowCount() == b.getRowCount()){
+        if(a.getRowCount() == b.getRowCount() || a.isEmpty() || b.isEmpty()){
            Matrix temp = a.appendHorizontally(b);
            //set headers
            int col=0;
