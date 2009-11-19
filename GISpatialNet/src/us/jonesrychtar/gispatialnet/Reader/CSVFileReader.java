@@ -177,6 +177,12 @@ public class CSVFileReader extends TextFileReader{
 		return new Vector<DataSet>();//theMatrices;
 	}
 
+	/**
+	 * @param reader
+	 * @param headers
+	 * @param numRows
+	 * @return
+	 */
 	private Matrix getNextDataSet(CSVReader reader,String[] headers,int numRows){
 		Matrix theData=MatrixFactory.emptyMatrix();
 		
@@ -199,7 +205,11 @@ public class CSVFileReader extends TextFileReader{
 		
 	}
 	
-	public Vector<Matrix> SplitMatrix(Matrix m){
+	/**
+	 * @param m
+	 * @return
+	 */
+	public Vector<Matrix> SplitMatrixAtNaN(Matrix m){
 		Vector<Matrix> ret = new Vector<Matrix>(0);
 		Vector<Integer> ranges = new Vector<Integer>(0);
 		
@@ -218,14 +228,12 @@ public class CSVFileReader extends TextFileReader{
 		//put rowCnt
 		ranges.add((int)m.getRowCount()-1);
 		
-		for(int i = 0;i<ranges.size()-1;i++){
+		for(int i = 0;i<ranges.size()-1;i+=2){
 			int startRow=ranges.elementAt(i);
 			int startCol = 0;
 			int endRow = ranges.elementAt(i+1);
 			int endCol=(int)m.getColumnCount()-1;
-			long[] selection={(long)startRow,(long)startCol,(long)endRow,(long)endCol};
-			//ret.add( m.getAsMatrix( startRow,startCol,endRow,endCol));
-			ret.add(m.select(Calculation.Ret.NEW, selection));
+			ret.add(m.subMatrix(Calculation.Ret.NEW, startRow, startCol, endRow, endCol));
 		}		
 		
 		//add the matrix to the vector if there is no split.
@@ -235,6 +243,11 @@ public class CSVFileReader extends TextFileReader{
 		return ret;
 	}
 	
+	/** Returns a Matrix of Strings for every cell in the CSV file. This includes headers, etc.
+	 * @param f the File object
+	 * @return the Matrix which represents this file
+	 * @throws IOException if the File cannot be accessed
+	 */
 	public Matrix getFileAsMatrix(File f) throws IOException{
 		
 
@@ -268,7 +281,7 @@ public class CSVFileReader extends TextFileReader{
 		CSVFileReader theReader = new CSVFileReader(args[0]);
 		Matrix n = theReader.getFileAsMatrix(new File(args[0]));
 		
-		Vector<Matrix> t = theReader.SplitMatrix(n);
+		Vector<Matrix> t = theReader.SplitMatrixAtNaN(n);
 		for(int i=0;i<t.size();i++){
 			System.out.println("MATRIX "+i+":");
 			System.out.print(t.elementAt(i).toString());
