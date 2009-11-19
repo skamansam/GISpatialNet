@@ -228,6 +228,7 @@ public class CSVFileReader extends TextFileReader{
 		//put rowCnt
 		ranges.add((int)m.getRowCount()-1);
 		
+		//append matrix to list
 		for(int i = 0;i<ranges.size()-1;i+=2){
 			int startRow=ranges.elementAt(i);
 			int startCol = 0;
@@ -253,10 +254,20 @@ public class CSVFileReader extends TextFileReader{
 
 		Matrix mFromFile = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
 		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount()-1,mFromFile.getColumnCount());
-
-		//set headers
+		int egoCol=-1;
+		//set header labels
 		for (int i=0;i<mFromFile.getColumnCount();i++){
-			mNew.setColumnLabel(i, mFromFile.getAsString(0,i));
+			String label=mFromFile.getAsString(0,i);
+			mNew.setColumnLabel(i, label);
+			if(label.contains("Ego") || label.contains("ego"))
+				egoCol=i;
+		}
+		
+		//set row labels to the EgoID
+		if(egoCol!=-1){
+			for (int row=0;row<mFromFile.getRowCount();row++){
+				mNew.setRowLabel(row, mFromFile.getAsString(row,egoCol));
+			}
 		}
 		
 		//convert Strings to Doubles
@@ -271,6 +282,23 @@ public class CSVFileReader extends TextFileReader{
 	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int col) {
 		
 		return null;
+	}
+	
+	public DataSet parseMatrix(Matrix m){
+		DataSet theData=new DataSet();
+		
+		//loop through column headers
+		for (int i=0;i<m.getColumnCount();i++){
+			String label = m.getColumnLabel(i);
+			if(label.contains("ego") || label.contains("Ego")){
+				
+			}else if(label.contains("ego") || label.contains("Ego")){}
+			else if(label.contains("X")){}
+			else if(label.contains("Y")){}
+			else if(label.contains("ego") || label.contains("Ego")){}
+		
+		}
+		return theData;
 	}
 	
 	public static void main(String args[]) throws MatrixException, NumberFormatException, IOException{
