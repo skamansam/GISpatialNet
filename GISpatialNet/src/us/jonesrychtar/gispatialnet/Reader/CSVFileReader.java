@@ -10,11 +10,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
+import org.ujmp.core.calculation.Calculation;
+import org.ujmp.core.enums.ValueType;
 import org.ujmp.core.exceptions.MatrixException;
+import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 
 import com.mindprod.csv.CSVReader;
 import java.util.Vector;
@@ -31,7 +35,7 @@ public class CSVFileReader extends TextFileReader{
 	CSVReader matrixReader;				//the csv reader
 
     //formatting for file
-    private char distanceSeparatorChar=',';
+    private String seperatorChar=",";
     private char quoteChar='\"';
     private String commentChars="#";
     private boolean hideComments = true;
@@ -66,9 +70,9 @@ public class CSVFileReader extends TextFileReader{
 	public Vector<DataSet> Read(int type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
-		matrixReader = new CSVReader(new FileReader(this.getFile()),
-				distanceSeparatorChar, quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
-		return readFullMatrix(matrixReader,rows,cols);
+//		matrixReader = new CSVReader(new FileReader(this.getFile()),
+//				seperatorChar[0], quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
+		//return readFullMatrix(matrixReader,rows,cols);
 		switch(type){
 		case TextFileReader.FULL_MATRIX:
 			readFullMatrix(matrixReader,rows,cols);
@@ -194,22 +198,105 @@ public class CSVFileReader extends TextFileReader{
 		return theData;
 		
 	}
+	
+	public Vector<Matrix> SplitMatrix(Matrix m){
+		Vector<Matrix> ret = new Vector<Matrix>(0);
+		Vector<Integer> ranges = new Vector<Integer>(0);
+		
+		//put 0
+		ranges.add(0);
+		
+		//mark all ranges
+		for(int row = 0;row<m.getRowCount();row++){
+			String val=m.getAsString(row,0);
+			if(val.equals("NaN")){
+				System.out.println("New Matrix is at line "+(row+1));
+				ranges.add(row-1);
+				ranges.add(row+1);
+			}
+		}
+		//put rowCnt
+		ranges.add((int)m.getRowCount()-1);
+		
+		for(int i = 0;i<ranges.size()-1;i++){
+			int startRow=ranges.elementAt(i);
+			int startCol = 0;
+			int endRow = ranges.elementAt(i+1);
+			int endCol=(int)m.getColumnCount()-1;
+			long[] selection={(long)startRow,(long)startCol,(long)endRow,(long)endCol};
+			//ret.add( m.getAsMatrix( startRow,startCol,endRow,endCol));
+			ret.add(m.select(Calculation.Ret.NEW, selection));
+		}		
+		
+		//add the matrix to the vector if there is no split.
+		if(ret.size()<1)
+			ret.add(m);
+		
+		return ret;
+	}
+	
+	public Matrix getFileAsMatrix(File f) throws IOException{
+		
+
+		Matrix mFromFile = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
+		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount()-1,mFromFile.getColumnCount());
+
+		//set headers
+		for (int i=0;i<mFromFile.getColumnCount();i++){
+			mNew.setColumnLabel(i, mFromFile.getAsString(0,i));
+		}
+		
+		//convert Strings to Doubles
+		for (int row=1;row<mFromFile.getRowCount();row++){
+			for (int col=0;col<mFromFile.getColumnCount();col++){
+				mNew.setAsDouble(mFromFile.getAsDouble(row,col),row-1, col);
+			}
+		}
+
+		return mNew;
+	}
 	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int col) {
 		
 		return null;
 	}
 	
+	public static void main(String args[]) throws MatrixException, NumberFormatException, IOException{
+		if (args.length<1){
+			System.out.println("Please specify file!");
+			return;
+		}
+		CSVFileReader theReader = new CSVFileReader(args[0]);
+		Matrix n = theReader.getFileAsMatrix(new File(args[0]));
+		
+		Vector<Matrix> t = theReader.SplitMatrix(n);
+		for(int i=0;i<t.size();i++){
+			System.out.println("MATRIX "+i+":");
+			System.out.print(t.elementAt(i).toString());
+		}
+		//System.out.print(n.toString());
 
+	
+	}
+
+	public void printHeaders(Matrix m){
+		System.out.print("Headers: \n");
+		for (int j=0;j<m.getColumnCount();j++){
+			System.out.print("\t"+j+": "+m.getColumnLabel(j)+"\n");	
+		}
+	}
 	public Matrix getNextMatrix(CSVReader csv, int rows, int cols) throws MatrixException, NumberFormatException, IOException{
-		Matrix theMatrix = MatrixFactory.emptyMatrix();
+		Matrix m = MatrixFactory.emptyMatrix();
 
 		for(int row=0; row < rows; row++){
 			for(int col=0; col < cols; col++){
-				theMatrix.setAsDouble(csv.getDouble(), row, col);
+				double tmp=csv.getDouble();
+				System.out.println("[row:"+row+", col: "+col+"] = "+tmp);
+				
+				m.setAsDouble(tmp, row, col);
 			}
 		}
 		
-		return theMatrix;
+		return m;
 	}
 	/**
 	 * @param reader
