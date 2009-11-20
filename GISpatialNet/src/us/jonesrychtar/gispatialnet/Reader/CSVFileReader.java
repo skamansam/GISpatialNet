@@ -23,6 +23,7 @@ import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 import com.mindprod.csv.CSVReader;
 import java.util.Vector;
 import us.jonesrychtar.gispatialnet.DataSet;
+import att.grappa.*;
 
 /**
  * @author Samuel C. Tyler
@@ -33,7 +34,8 @@ public class CSVFileReader extends TextFileReader{
 	private Vector<Matrix> theMatrices; //for Matrices
 	private boolean includeEgo=false;	//are we working with Egos?
 	CSVReader matrixReader;				//the csv reader
-
+	private String filename="";
+	
     //formatting for file
     private String seperatorChar=",";
     private char quoteChar='\"';
@@ -48,6 +50,7 @@ public class CSVFileReader extends TextFileReader{
      */
     public CSVFileReader(String filename){
         this.setFile(new File(filename));
+        this.filename=filename;
     }
     /**
      *
@@ -75,7 +78,7 @@ public class CSVFileReader extends TextFileReader{
 		//return readFullMatrix(matrixReader,rows,cols);
 		switch(type){
 		case TextFileReader.FULL_MATRIX:
-			readFullMatrix(matrixReader,rows,cols);
+			readFullMatrix(filename,rows,cols);
 			break;
 		case TextFileReader.LOWER_MATRIX:
 			//readUpperMatrix(matrixReader,rows,cols);
@@ -113,68 +116,20 @@ public class CSVFileReader extends TextFileReader{
 	 * @param rows
 	 * @param cols
 	 * @return
+	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) {
-		String[] theLine;
-		//TODO: pre-read the files and get all blank lines and store them into an 
-		//array of (blankline-lastblankline) to determine the matrix lengths. 
-		//The first matrix contains the headers
-		
-		//read the header in the first matrix
-		try {
-			theLine = reader.getAllFieldsInLine();//this should be the header data
-		} catch (IOException e1) {
-			System.out.println("Error reading the network data for the next network.");
-			return theData;
-		}
-		boolean hasNext=true;
-		
-		while(hasNext){
-			DataSet d = new DataSet();
-			for (int row=0;row<rows;row++){
-				for(int col=0;col<cols;col++){
-					
-				}
-			}
-			theData.add(d);
-		}
-			//initialize the next matrix!
-		
-		//set the headers to correspond to the csv headers
-		if (theLine.length != 0){
-			for(int i=0;i<theLine.length;i++){
-				Matrix xMat=theData.elementAt(theData.size()-1).getX();
-				Matrix yMat=theData.elementAt(theData.size()-1).getX();
-				xMat.setColumnLabel(i, theLine[i]);
-				yMat.setColumnLabel(i, theLine[i]);
-			}
-		}
-		
-		//if we are using an ego, add one to each row,col count
-		//theData.get(0).add(MatrixFactory.zeros(rows+(includeEgo?1:0), cols+(includeEgo?1:0)));
+	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) throws IOException {
+		Matrix m = this.getFileAsMatrix(new File(this.filename));
+		Vector<Matrix> ret  = this.SplitMatrixAtNaN(m);
 
-		//read each row
-		for (int i = 0; i < rows; i++) {
-			try {
-				reader.skip(2); //skip the two leading fields
-				//read the fields
-				for (int j = 0; j < cols; j+=2) {
-					float value = reader.getFloat();
-					theData.elementAt(0).getX().setAsDouble(value, i, j);
-					theData.elementAt(0).getY().setAsDouble(value, i, j+1);					
-
-				}
-			} catch (MatrixException e) {
-				System.out.println("Error: Internal data writing error on line " + i + " of current network data.");
-			} catch (NumberFormatException e) {
-				System.out.println("Error: Reading an entry on line " + i + " of current network data which was not a properly formatted number.");
-			} catch (IOException e) {
-				System.out.println("An unspecified error occured at line " + i + " of the current network data.");
-			}
+		Vector<DataSet> v = new Vector<DataSet>();
+		for (int i=0;i<v.size();i++){
+			DataSet ds = new DataSet();
+			//ds.addXY(x, y);
+			//ret.add();
 		}
 		
-		//Success!
-		return new Vector<DataSet>();//theMatrices;
+		return ret;//theMatrices;
 	}
 
 	/**
