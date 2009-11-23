@@ -199,7 +199,7 @@ public class cli extends userinterface {
                 "Load File Menu:",
                 gsn.getStatus(statusLevel),
                 new String[]{"Node data (nodes with attributes)", "Adjacency data",
-                    "Noda data only", "Attribute data", "Main Menu"});
+                    "Node data only", "Attribute data", "Main Menu"});
         System.out.println("What is the filename: ");
         String fn = sc.next();
         int format = _MatrixType();

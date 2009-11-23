@@ -315,8 +315,8 @@ public class GISpatialNet {
     private static void PrintUsage(){
         System.out.println(
                 "Usage: java -jar GISpatialNet.jar [option]\n" +
-                "Usage: java -jar GISpatialNet.jar [option] [input file type]=[input folder] [output folder] \n" +
-                "Usage: java -jar GISPatialNet.jar [input file type]=[input folder] [output file type]=[output folder]\n"+
+                "Usage: java -jar GISpatialNet.jar [option] [input file type] [input folder] [output folder] \n" +
+                "Usage: java -jar GISPatialNet.jar [input file type] [input folder] [output file type] [output folder]\n"+
                 "Options   Operation\n" +
                 "---------------------------------------------------------------------------------\n" +
                 "-c        Starts command line interface. No files needed.\n" +
@@ -348,7 +348,7 @@ public class GISpatialNet {
     			"Martin Smith and Christopher Nicholson.\n\n" +
     			"You can find more information about GISPatialNet at its homepage, " +
     			"http://sourceforge.net/apps/trac/spatialnet/\n\n" +
-    			"This software is governed under the GNU Greater Public Liscence, Version " +
+    			"This software is governed under the GNU Greater Public License, Version " +
     			"2 (GPLv2). If you have not obtained the LGPL with this software, " +
     			"you can obtain it from http://www.gnu.org/licenses/gpl.html. GISpatialNet uses software governed under the GPL," +
     			"LGPL, Apache License, New BSD License\n");
