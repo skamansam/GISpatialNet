@@ -78,7 +78,7 @@ public class CSVFileReader extends TextFileReader{
 		//return readFullMatrix(matrixReader,rows,cols);
 		switch(type){
 		case TextFileReader.FULL_MATRIX:
-			readFullMatrix(filename,rows,cols);
+			//readFullMatrix(filename,rows,cols);
 			break;
 		case TextFileReader.LOWER_MATRIX:
 			//readUpperMatrix(matrixReader,rows,cols);
@@ -120,8 +120,9 @@ public class CSVFileReader extends TextFileReader{
 	 */
 	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) throws IOException {
 		Matrix m = this.getFileAsMatrix(new File(this.filename));
-		Vector<Matrix> ret  = this.SplitMatrixAtNaN(m);
-
+		Vector<Matrix> thisMatrix  = this.SplitMatrixAtNaN(m);
+		Vector<DataSet> ret = new Vector<DataSet>();
+		
 		Vector<DataSet> v = new Vector<DataSet>();
 		for (int i=0;i<v.size();i++){
 			DataSet ds = new DataSet();
@@ -234,9 +235,30 @@ public class CSVFileReader extends TextFileReader{
 
 		return mNew;
 	}
-	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int col) {
+	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int cols) {
+		Vector<Matrix> ret = new Vector<Matrix>();			//The return value
+		Matrix theMatrix = MatrixFactory.emptyMatrix();		//the file as a Matrix
+
+		//read in Matrix from CSV file
+		try {
+			theMatrix = this.getFileAsMatrix(this.file);
+		} catch (IOException e) {
+			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
+		}
 		
-		return null;
+		//parse rows, cols
+		int curTotalRow=0;
+		while(curTotalRow<theMatrix.getRowCount()){		//loop over entire Matrix
+			Matrix m = MatrixFactory.emptyMatrix();
+			for(int row=0;row<rows;row++){							//split by rows parameter
+				for(int col=0;col<cols;col++){			//set each column
+					m.setAsDouble(theMatrix.getAsDouble(curTotalRow,col), row,col);
+				}
+				curTotalRow++;
+			}
+		}
+		
+		return ret;
 	}
 	
 	public DataSet parseMatrix(Matrix m){
