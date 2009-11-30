@@ -23,8 +23,6 @@ public class Reader {
     /**
      * loads file with default options
 	 * @param filename
-	 * @throws MalformedURLException
-	 * @throws IOException
 	 */
 	public static void LoadFile(String filename) {
 		String ext = filename.substring(filename.length()-3);

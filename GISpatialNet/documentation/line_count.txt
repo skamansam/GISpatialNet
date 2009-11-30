@@ -1,0 +1,52 @@
+AS OF NOV 30, 12:30 pm.
+cd GISpatialNet/src/us/jonesrychtar
+find .|grep ".*.java$"|xargs wc -l
+   120 ./gispatialnet/Writer/Writer.java
+    85 ./gispatialnet/Writer/ExcelWriter.java
+    82 ./gispatialnet/Writer/ShapefileEdgeWriter.java
+    64 ./gispatialnet/Writer/PajekWriter.java
+    82 ./gispatialnet/Writer/KMLwriter.java
+    70 ./gispatialnet/Writer/TextFileWriter.java
+   116 ./gispatialnet/Writer/ShapefileNodeWriter.java
+   126 ./gispatialnet/Writer/ShapefileWriter.java
+    93 ./gispatialnet/Writer/DLwriter.java
+   165 ./gispatialnet/Writer/CSVwriter.java
+   110 ./gispatialnet/MatrixConversion.java
+    17 ./gispatialnet/userinterface.java
+   165 ./gispatialnet/convertUnknown.java
+   350 ./gispatialnet/CommandLineHelper.java
+   455 ./gispatialnet/Reader/CSVFileReader.java
+   142 ./gispatialnet/Reader/ExcelReader.java
+    69 ./gispatialnet/Reader/KMLreader.java
+   142 ./gispatialnet/Reader/KMLContentHandler.java
+   294 ./gispatialnet/Reader/DLreader.java
+   146 ./gispatialnet/Reader/ShapeFileReader.java
+    71 ./gispatialnet/Reader/ReaderUtil.java
+    81 ./gispatialnet/Reader/TextFileReader.java
+   220 ./gispatialnet/Reader/Reader.java
+    78 ./gispatialnet/Reader/PajekReader.java
+   745 ./gispatialnet/cli.java
+   598 ./gispatialnet/DataSet.java
+   154 ./gispatialnet/util.java
+    48 ./gispatialnet/DataMerger.java
+    49 ./gispatialnet/test/TestData.java
+   400 ./gispatialnet/test/TEST.java
+   356 ./gispatialnet/GISpatialNet.java
+    95 ./gispatialnet/Algorithm/Borders.java
+  1055 ./gispatialnet/Algorithm/QAP.java
+   192 ./gispatialnet/Algorithm/HighlightEdges.java
+   175 ./gispatialnet/Algorithm/SimpleMerge.java
+   103 ./gispatialnet/Algorithm/Algorithm.java
+    92 ./gispatialnet/Algorithm/HighlightEdgesByVal.java
+    71 ./gispatialnet/convertKnown.java
+   105 ./socialnetwork/SpatialGraph/Poisson.java
+   303 ./socialnetwork/SpatialGraph/SpatialGraphBase.java
+   953 ./socialnetwork/SpatialNetworkBias.java
+    42 ./socialnetwork/Metric.java
+    46 ./socialnetwork/CoordinateGraph/XY.java
+    46 ./socialnetwork/CoordinateGraph/Polar.java
+    99 ./socialnetwork/CoordinateGraph/CoordinateGraphBase.java
+   196 ./socialnetwork/GraphSimulation.java
+   196 ./socialnetwork/SquareLatticeSpatialGraph.java
+  9462 total
+

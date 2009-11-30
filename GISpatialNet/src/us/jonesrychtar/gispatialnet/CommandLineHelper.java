@@ -132,7 +132,8 @@ public class CommandLineHelper {
      */
     public static void exec(int act, int i, int o, String id, String od) {
         //TODO: fix this to work on other systems
-        char sepChar ='/';
+        //char sepChar ='/';
+        char sepChar = File.pathSeparatorChar;
         
         Scanner sc = new Scanner(System.in);
         GISpatialNet gsn = new GISpatialNet();
@@ -257,7 +258,7 @@ public class CommandLineHelper {
                     else if (act == 'b') {
                         
                     } //highlight edges
-                    else if (act == 'e') {//TODO: fix this to work on other systems
+                    else if (act == 'e') {
                         String outFnN = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Node";
                         String outFnE = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Edge";
                         Algorithm.Highlight(alg, outFnE, outFnN, ds.getX(), ds.getY(), ds.getAdj());
@@ -281,7 +282,6 @@ public class CommandLineHelper {
 
             //save all datasets
             for (int k = 0; k < gsn.NumberOfDataSets(); k++) {
-                //TODO: fix this to work on other systems
                 //get filenames for output
                 String base = gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0);
                 String outFn = od + sepChar + (base.substring(id.length()+1, base.length()-8));
