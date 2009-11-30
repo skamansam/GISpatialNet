@@ -580,7 +580,19 @@ public class DataSet {
     	
     }
     
+    /**
+     * Set the headers for x,y coordinate matricies
+     * @param s A pair of string labels for the vector matricies
+     */
     public void setCoordHeaders(String[] s){_setMatrixHeaders(x,s);_setMatrixHeaders(y,s);}
+    /**
+     * Sets the headers on the adjacency matrix
+     * @param s Set of labels to use
+     */
     public void setAdjHeaders(String[] s){_setMatrixHeaders(adj,s);}
+    /**
+     * Sets the headers on the attribute matrix
+     * @param s Set of labels to use
+     */
     public void setAttbHeaders(String[] s){_setMatrixHeaders(attb,s);}
 }

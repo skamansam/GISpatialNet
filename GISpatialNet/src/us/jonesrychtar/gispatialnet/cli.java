@@ -3,7 +3,7 @@
  *
  * For research by Eric Jones and Jan Rychtar.
  *
- * Requires: ujmp
+ * Requires: ujmp, org.boehn.kmlframework, geotools
  *
  */
 package us.jonesrychtar.gispatialnet;
@@ -60,42 +60,57 @@ public class cli extends userinterface {
      *
      */
     public void mainMenu() {
-        int option = getMenu(
+        
+        if(gsn.NumberOfDataSets()==0){
+            int option = getMenu(
                 "Main Menu:",
                 gsn.getStatus(statusLevel),
-                new String[]{"Load data", "Save Data", "Analyze Data","Merge Data", "Print Full Status", "Clear Data", "About GISpatialNet","Add Ego to Data", "Exit"});
-
-        switch (option) {
-            case 1:
-                loadDataMenu();
-                break;
-            case 2:
-                SaveMenu();
-                break;
-            case 3:
-                AnalyzeMenu();
-                break;
-            case 4:
-                MergeMenu();
-                break; 
-            case 5:
-                System.out.println(gsn.getStatus(3));
-                break;
-            case 6:
-                gsn.ClearData();
-                break;
-            case 7:
-                printAbout();
-                break;
-            case 8:
-                addEgo();
-                break;
-            case 9:
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Invalid input. Please re-enter.");
-                break;
+                new String[]{"Load data", "About GISpatialNet", "Exit"});
+            switch(option){
+                case 1: loadDataMenu(); break;
+                case 2: printAbout(); break;
+                case 3: System.exit(0);
+                    break;
+            }
+            
+        }
+        else{
+            int option = getMenu(
+                "Main Menu:",
+                gsn.getStatus(statusLevel),
+                new String[]{"Load data", "Save Data", "Analyse Data","Merge Data", "Print Full Status", "Clear Data", "About GISpatialNet","Add Ego to Data", "Exit"});
+            switch (option) {
+                case 1:
+                    loadDataMenu();
+                    break;
+                case 2:
+                    SaveMenu();
+                    break;
+                case 3:
+                    AnalyzeMenu();
+                    break;
+                case 4:
+                    if(gsn.NumberOfDataSets() == 1)
+                        System.out.println("Only one data set loaded.");
+                    else
+                        MergeMenu();
+                    break;
+                case 5:
+                    System.out.println(gsn.getStatus(3));
+                    break;
+                case 6:
+                    gsn.ClearData();
+                    break;
+                case 7:
+                    printAbout();
+                    break;
+                case 8:
+                    addEgo();
+                    break;
+                case 9:
+                    System.exit(0);
+                    break;
+            }
         }
     }
 
@@ -108,7 +123,7 @@ public class cli extends userinterface {
     			"Martin Smith and Christopher Nicholson.\n\n" +
     			"You can find more information about GISPatialNet at its homepage, " +
     			"http://sourceforge.net/apps/trac/spatialnet/\n\n" +
-    			"This software is governed under the GNU Greater Public Liscence, Version " +
+    			"This software is governed under the GNU Greater Public Licence, Version " +
     			"2 (GPLv2). If you have not obtained the LGPL with this software, " +
     			"you can obtain it from http://www.gnu.org/licenses/gpl.html. GISpatialNet uses software governed under the GPL," +
     			"LGPL, Apache License, New BSD License");
@@ -126,7 +141,7 @@ public class cli extends userinterface {
             case 1: _loadDBMenu(option); break;//csv
             case 2: _loadDBMenu(option); break; //excel
             case 3: { //dl
-                System.out.println("What is the filename: ");
+                System.out.println("What is the file name: ");
                 String fn = sc.next();
                 int format = _MatrixType();
                 System.out.println("Enter the number of rows: ");
@@ -144,7 +159,7 @@ public class cli extends userinterface {
                 break;
             }            
             case 4:{ //pajek
-                System.out.println("What is the filename: ");
+                System.out.println("What is the file name: ");
                 String fn = sc.next();
                 int format = _MatrixType();
                 System.out.println("Enter the number of rows: ");
@@ -162,7 +177,7 @@ public class cli extends userinterface {
                 break;
             }
             case 5:{ //google earth
-                System.out.println("What is the filename: ");
+                System.out.println("What is the file name: ");
                 String fn = sc.next();
                 
                 DataSet ds;
@@ -200,55 +215,64 @@ public class cli extends userinterface {
                 gsn.getStatus(statusLevel),
                 new String[]{"Node data (nodes with attributes)", "Adjacency data",
                     "Node data only", "Attribute data", "Main Menu"});
-        System.out.println("What is the filename: ");
-        String fn = sc.next();
-        int format = _MatrixType();
+         int format =0, rows=0,cols=0;
+         String fn="";
+        if(option!=5){
+        System.out.println("What is the file name: ");
+        fn = sc.next();
+        format = _MatrixType();
         System.out.println("Enter the number of rows: ");
-        int rows = sc.nextInt();
-        System.out.println("Enter the number of columns: ");
-        int cols = sc.nextInt();
-        int dataType =-1;
-        if(option == 1 || option ==3)
+        rows = sc.nextInt();
+            System.out.println("Enter the number of columns: ");
+            cols = sc.nextInt();
+        }
+        int dataType = -1;
+        if (option == 1 || option == 3) {
             dataType = getMenu( //graph coordinates may be XY or polar
-                "Data Format:",
-                "What format is the data in?",
-                new String[]{"XY decimal","Polar"});
+                    "Data Format:",
+                    "What format is the data in?",
+                    new String[]{"XY decimal", "Polar"});
+        }
         //fix stuff
         format--;
-        option --;
-        switch (what) {
-            case 1: { //txt/csv
-                System.out.print("What is the field seperator? ");
-                char sp = sc.next().charAt(0);
+        option--;
+        if (option != 4) {
+            switch (what) {
+                case 1: { //txt/csv
+                    System.out.print("What is the field separator? ");
+                    char sp = sc.next().charAt(0);
                     try {
-                    	Vector<DataSet> vds= Reader.loadTxt(fn, option, format, rows, cols, sp);
+                        Vector<DataSet> vds = Reader.loadTxt(fn, option, format, rows, cols, sp);
 
-                        for(int i=0; i<vds.size(); i++){
-                            if(dataType==2)
+                        for (int i = 0; i < vds.size(); i++) {
+                            if (dataType == 2) {
                                 vds.elementAt(i).PolarToXY();
+                            }
                             gsn.getDataSets().add(vds.elementAt(i));
                         }
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                break;
-            } 
-            case 2: { //excel
+                    break;
+                }
+                case 2: { //excel
                     try {
-                    	Vector<DataSet> vds = Reader.loadExcel(fn, option, format,rows, cols);
-                        for(int i=0; i<vds.size(); i++){
-                            if(dataType==2)
+                        Vector<DataSet> vds = Reader.loadExcel(fn, option, format, rows, cols);
+                        for (int i = 0; i < vds.size(); i++) {
+                            if (dataType == 2) {
                                 vds.elementAt(i).PolarToXY();
+                            }
                             gsn.getDataSets().add(vds.elementAt(i));
                         }
                     } catch (Exception ex) {
                         Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                break;
+                    break;
+                }
+                case 3:
+                    loadDataMenu();
+                    break;
             }
-            case 3:
-                loadDataMenu();
-                break;
         }
     }
 
@@ -257,16 +281,18 @@ public class cli extends userinterface {
     }
     
     private void SaveMenu() {
+        int matrix=0;
         int option = getMenu(
                 "Save Data:",
                 gsn.getStatus(statusLevel),
                 new String[]{"Delimited text file (.csv,.txt)",
                     "DL/ucinet (.txt,.dat)", "Pajek (.net)", "Excel file (.xls)",
                     "Google Earth (.kml)", "Shape File (.shp)", "Back"});
-        int matrix = this._MatrixChoice();
+        if(option !=7)
+            matrix = this._MatrixChoice();
         switch (option) {
             case 1: { //txt,csv
-                System.out.println("Enter field seperator: ");
+                System.out.println("Enter field separator: ");
                 char sp = sc.next().charAt(0);
                 System.out.println("Enter the name of the Node File: ");
                 String fnn = sc.next();
@@ -400,7 +426,7 @@ public class cli extends userinterface {
 
     private void AnalyzeMenu() {
         int option = getMenu(
-                "Analyze Data:",
+                "Analyse Data:",
                 gsn.getStatus(statusLevel),
                 new String[]{"QAP", "Sample Network Bias", "Borders",
                     "Highlight Edges", "Matrix Conversion", "Back"});
@@ -421,7 +447,7 @@ public class cli extends userinterface {
                         fa = sc.next();
                         System.out.println("Enter the name of the second file: ");
                         fb = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-s", fa, fb, Integer.toString(perm)};
                         break;
@@ -431,7 +457,7 @@ public class cli extends userinterface {
                         fa = sc.next();
                         System.out.println("Enter the name of the second file: ");
                         fb = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-se", fa, fb, Integer.toString(perm)};
                         break;
@@ -443,7 +469,7 @@ public class cli extends userinterface {
                         fb = sc.next();
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-p", fa, fb, fc, Integer.toString(perm)};
                         break;
@@ -455,7 +481,7 @@ public class cli extends userinterface {
                         fb = sc.next();
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-pe", fa, fb, fc, Integer.toString(perm)};
                         break;
@@ -467,7 +493,7 @@ public class cli extends userinterface {
                         fb = sc.next();
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-pr", fa, fb, fc, Integer.toString(perm)};
                         break;
@@ -479,7 +505,7 @@ public class cli extends userinterface {
                         fb = sc.next();
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
-                        System.out.println("Enter the number of randomizations: ");
+                        System.out.println("Enter the number of randomisations: ");
                         perm = sc.nextInt();
                         args = new String[]{"-pre", fa, fb, fc, Integer.toString(perm)};
                         break;
@@ -641,10 +667,20 @@ public class cli extends userinterface {
     private int _MatrixChoice(){
         int out;
         System.out.println("Enter the number of the Data Set to use["+1+"-"+gsn.NumberOfDataSets()+"]: ");
-        out = sc.nextInt();
-        while(out<1 || out>gsn.NumberOfDataSets()){
-            System.out.println("Invalid input. Enter the number of the Data Set to use["+0+"-"+gsn.NumberOfDataSets()+"]: ");
+        if(sc.hasNextInt())
             out = sc.nextInt();
+        else{
+            out=-1;
+            sc.next();
+        }
+        while(out<1 || out>gsn.NumberOfDataSets()){
+            System.out.println("Invalid input. Enter the number of the Data Set to use["+1+"-"+gsn.NumberOfDataSets()+"]: ");
+            if(sc.hasNextInt())
+                out = sc.nextInt();
+            else{
+                out=-1;
+                sc.next();
+            }
         }
         out --;
         return out;
@@ -676,6 +712,7 @@ public class cli extends userinterface {
 
         //do menu while the input is not valid
         while (!validInput) {
+            validInput = true;
             //print the menu.
             System.out.println("\n\n" + title + "\n");
             System.out.print(info + "\n");
@@ -685,13 +722,21 @@ public class cli extends userinterface {
             System.out.println("Please enter your selection (1-" + items.length + "): ");
 
             //get user input
-            option = sc.nextInt();
+            if(sc.hasNextInt()){
+                option = sc.nextInt();
+            }else{
+                System.out.println("Input is not a number. ");
+                option = -1;
+                //flush first bad input
+               sc.next();
+            }
 
             //validate input
             if (option >= 1 && option <= items.length) {
-                validInput = true;
+                //do nothing
             } else {
                 System.out.println("Invalid Input.");
+                validInput=false;
             }
         }
 

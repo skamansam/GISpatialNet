@@ -56,7 +56,7 @@ public class PajekWriter extends TextFileWriter {
         for (int row = 0; row < arcs.getRowCount(); row++) {
             for (int col = 0; col < arcs.getColumnCount(); col++) {
                 if(arcs.getAsDouble(row,col) > 0)
-                    pw.println(" "+row+" "+col+" "+arcs.getAsString(row, col));
+                    pw.println(" "+(row+1)+" "+(col+1)+" "+arcs.getAsString(row, col));
             }
         }
         pw.close();

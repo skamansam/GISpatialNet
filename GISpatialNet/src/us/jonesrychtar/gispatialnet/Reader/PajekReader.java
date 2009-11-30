@@ -62,7 +62,7 @@ public class PajekReader extends TextFileReader {
     			}
     		}else if(theType.equalsIgnoreCase("*Arcs")){ //we are reading adjaceny
     			while(theFile.hasNext() && theFile.next("\n*")!="\n*"){
-    				
+    				//finish code here
     			}
     		}
     		

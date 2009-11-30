@@ -50,27 +50,27 @@ public class TEST {
        //run.printData();
 
        //functions
-       //run.testHE(); //works
-       //run.testConversion(); //works
-       //run.testUnknownShapeFile(); //works
-       //run.testQAP(); //works
+       //run.testHE(); 
+       //run.testConversion();
+       //run.testUnknownShapeFile();
+       //run.testQAP(); 
        //run.testHighlightByVal();
 
        //writers
-       run.TESTShapefileWriter(); //works
-       run.TestXLSwriter(); //works
-       run.TestKMLwriter(); //works
-       run.TestCSVwriter(); //works
-       run.TestDLwriter(); //works
-       run.TestPajekWriter(); //works
+       //run.TESTShapefileWriter();
+       //run.TestXLSwriter();
+       //run.TestKMLwriter();
+       //run.TestCSVwriter();
+       //run.TestDLwriter();
+       //run.TestPajekWriter();
 
 
        //readers
-       //run.TestSHPreader(); //works
-       //run.TestExcelReader(); //works
-       //run.testKMLreader(); //works so far
+       //run.TestSHPreader();
+       //run.TestExcelReader(); 
+       //run.testKMLreader();
        //run.testPajekReader();
-       //run.testDLreader();
+       run.testDLreader();
        //run.testCSVreader();
 
     }
@@ -255,9 +255,8 @@ public class TEST {
     public void TestDLwriter(){
         //works
 
-        Matrix temp = u.combine(x,y);
         //System.out.println("Temp Labels:  "+temp.getColumnLabel(0)+"  "+temp.getColumnLabel(1));
-        DLwriter dlw = new DLwriter(temp, "test");
+        DLwriter dlw = new DLwriter(a, "test");
         try {
             dlw.WriteFile();
         } catch (FileNotFoundException ex) {
@@ -330,7 +329,7 @@ public class TEST {
     public void testKMLreader(){
         KMLreader kr = null;
         try {
-            kr = new KMLreader("doc.kml");
+            kr = new KMLreader("test.kml");
         }catch (IOException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParserConfigurationException ex) {
@@ -354,8 +353,14 @@ public class TEST {
      */
     public void testPajekReader(){
         PajekReader pr = new PajekReader("Test.net");
-        Matrix[] temp = new Matrix[]{MatrixFactory.emptyMatrix()};
-            //temp = pr.Read(0, 10, 10);
+        Vector<DataSet> ds= new Vector<DataSet>();
+        try {
+            ds = pr.Read(0, 10, 10);
+        } catch (Exception ex) {
+            Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(int i=0; i<ds.size(); i++)
+            System.out.println(ds.elementAt(i));
     }
     /**
      *
