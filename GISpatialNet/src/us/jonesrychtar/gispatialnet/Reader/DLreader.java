@@ -277,6 +277,9 @@ public class DLreader{
         if (in.equals("labels:")) {
             String word = sc.next();
             while (!(_analyzeHeader(word, sc)) && !(word.toLowerCase().equals("data:"))) {
+                if(word.endsWith(",")){
+                    word = word.substring(0, word.length()-1);
+                }
                 if (header.rORc == 1) {
                     header.labels.add(word);
                 } else if (header.rORc == 2) {
