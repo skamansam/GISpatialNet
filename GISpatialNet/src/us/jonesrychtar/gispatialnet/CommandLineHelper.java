@@ -133,8 +133,9 @@ public class CommandLineHelper {
     public static void exec(int act, int i, int o, String id, String od) {
         //TODO: fix this to work on other systems
         //char sepChar ='/';
-        char sepChar = File.pathSeparatorChar;
-        
+        char sepChar = File.separatorChar;
+        boolean unknown=false;
+        int alg=0;
         Scanner sc = new Scanner(System.in);
         GISpatialNet gsn = new GISpatialNet();
         int nrow=0, ncol=0, erow=0, ecol=0, row=0, col=0, Matrix_Format=0;
@@ -153,10 +154,12 @@ public class CommandLineHelper {
                     new String[]{"Full Matrix", "Upper Matrix", "Lower Matrix"});
 
             case 'P': //need row,col?
-                System.out.println("Enter number of rows per Node Data Set: ");
-                nrow = sc.nextInt();
-                System.out.println("Enter the number of columns per  Node Data Set: ");
-                ncol = sc.nextInt();
+                if(i!='D'){
+                    System.out.println("Enter number of rows per Node Data Set: ");
+                    nrow = sc.nextInt();
+                    System.out.println("Enter the number of columns per  Node Data Set: ");
+                    ncol = sc.nextInt();
+                }
                 System.out.println("Enter number of rows per Edge Data Set: ");
                 erow = sc.nextInt();
                 System.out.println("Enter the number of columns per Edge Data Set: ");
@@ -232,7 +235,7 @@ public class CommandLineHelper {
 
         if (act != -1) { //perform action and save to od
             double bias = 0.0;
-            int alg = 0;
+
             //get extra data if needed
             switch (act) {
                 case 's': //need bias
@@ -259,8 +262,11 @@ public class CommandLineHelper {
                         
                     } //highlight edges
                     else if (act == 'e') {
-                        String outFnN = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Node";
-                        String outFnE = od + sepChar + (gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0)) + "_Edge";
+                        String prefix = gsn.getDataSets().elementAt(k).GetLoadedFiles().elementAt(0);
+                        String pre2 = prefix.substring(0,(prefix.length()-8));
+                        pre2= pre2.split(String.valueOf(sepChar))[pre2.split(String.valueOf(sepChar)).length-1];
+                        String outFnN = od + sepChar + pre2 + "_Node";
+                        String outFnE = od + sepChar + pre2 + "_Edge";
                         Algorithm.Highlight(alg, outFnE, outFnN, ds.getX(), ds.getY(), ds.getAdj());
                     }
                 }
@@ -274,7 +280,32 @@ public class CommandLineHelper {
             switch (o) {
                 case 'C': //need seperator
                     System.out.println("Enter seperator character: ");
-                    sep = (char) sc.nextInt();
+                    sep = sc.next().charAt(0);
+                    break;
+                case 'S': //need to know if XY is known
+                    System.out.println("Is XY known?(y or n)");
+                    char uk = sc.next().charAt(0);
+                    
+                    if(uk == 'n')
+                        unknown = true;
+
+                    if(unknown){
+                        //get algorithm to use
+                        System.out.println("Choose an algorithm:\n"+
+                                   "1) GeoNet Algorithm");
+                        while(!sc.hasNextInt())
+                            System.out.println("Input not a number. Choose an algorithm:\n"+
+                                   "1) GeoNet Algorithm");
+                        alg = sc.nextInt();
+                        while(alg<0 || alg>1){
+                            System.out.println("Incorrect choice. Choose an algorithm:\n"+
+                                   "1) GeoNet Algorithm");
+                        while(!sc.hasNextInt())
+                            System.out.println("Input not a number. Choose an algorithm:\n"+
+                                   "1) GeoNet Algorithm");
+                        alg = sc.nextInt();
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -293,12 +324,11 @@ public class CommandLineHelper {
                 try {
                     switch (o) { //write data to file
                         case 'C':
-                            outFnN += ".csv";
-                            outFnE += ".csv";
+                            
                             Writer.saveCSV(outFnN, outFnE, sep, ds);
                             break;
                         case 'D':
-                            outFn += ".dat";
+                           
                             Writer.saveDL(outFn, DLwriter.DAT, ds);
                             break;
                         case 'E':
@@ -311,11 +341,15 @@ public class CommandLineHelper {
                             Writer.saveGoogleEarth(outFn, ds);
                             break;
                         case 'P':
-                            outFn += ".net";
+                            
                             Writer.savePajek(outFn, ds);
                             break;
                         case 'S':
-                            Writer.saveShapefile(outFnE, outFnE, ds);
+                            int h = (int) (ds.getX().getColumnCount() * 100);
+                            if(unknown){
+                                Writer.saveShapefileUnknown(outFnE, outFnN, alg, h, h, ds);
+                            }else
+                                Writer.saveShapefile(outFnE, outFnN, ds);
                             break;
                     }
                 } catch (Exception e) {

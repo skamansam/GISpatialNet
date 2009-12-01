@@ -77,7 +77,7 @@ public class Algorithm {
     public static void Highlight(int alg, String filename, String nodeFilename,Matrix x,Matrix y, Matrix adj) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
         ShapefileNodeWriter sfnw = new ShapefileNodeWriter(nodeFilename, x,y);
         sfnw.write();
-        if(alg!=5){
+        if(alg!=4){
             HighlightEdges h = new HighlightEdges(filename, x,y,adj,alg);
             h.write();
         } else{
