@@ -51,7 +51,7 @@ public class ExcelReader {
             Matrix temp = MatrixFactory.zeros(rows, c);
             boolean quit = false;
             switch (MatrixFormat) {
-                case 0: {
+                case 0: { //full
                     //i is row j is col
                     for (int i = 1; i <= rows; i++) {
                         for (int j = 0; j < c && j <= 256; j++) { //Max 256 col

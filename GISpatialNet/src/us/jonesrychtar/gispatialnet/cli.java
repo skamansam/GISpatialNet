@@ -145,9 +145,9 @@ public class cli extends userinterface {
                 String fn = sc.next();
                 int format = _MatrixType();
                 System.out.println("Enter the number of rows: ");
-                int rows = sc.nextInt();
+                int rows = _getPosInt(sc);
                 System.out.println("Enter the number of columns: ");
-                int cols = sc.nextInt();
+                int cols = _getPosInt(sc);
                 Vector<DataSet> vds;
                 try {
                     vds = Reader.loadDL(fn, --format, rows, cols);
@@ -163,9 +163,9 @@ public class cli extends userinterface {
                 String fn = sc.next();
                 int format = _MatrixType();
                 System.out.println("Enter the number of rows: ");
-                int rows = sc.nextInt();
+                int rows = _getPosInt(sc);
                 System.out.println("Enter the number of columns: ");
-                int cols = sc.nextInt();
+                int cols = _getPosInt(sc);
                 Vector<DataSet> vds;
                 try {
                     vds = Reader.loadPajek(fn, format, rows, cols);
@@ -222,9 +222,9 @@ public class cli extends userinterface {
         fn = sc.next();
         format = _MatrixType();
         System.out.println("Enter the number of rows: ");
-        rows = sc.nextInt();
+        rows = _getPosInt(sc);
             System.out.println("Enter the number of columns: ");
-            cols = sc.nextInt();
+            cols = _getPosInt(sc);
         }
         int dataType = -1;
         if (option == 1 || option == 3) {
@@ -448,7 +448,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the second file: ");
                         fb = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-s", fa, fb, Integer.toString(perm)};
                         break;
                     }
@@ -458,7 +458,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the second file: ");
                         fb = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-se", fa, fb, Integer.toString(perm)};
                         break;
                     }
@@ -470,7 +470,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-p", fa, fb, fc, Integer.toString(perm)};
                         break;
                     }
@@ -482,7 +482,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-pe", fa, fb, fc, Integer.toString(perm)};
                         break;
                     }
@@ -494,7 +494,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-pr", fa, fb, fc, Integer.toString(perm)};
                         break;
                     }
@@ -506,7 +506,7 @@ public class cli extends userinterface {
                         System.out.println("Enter the name of the third file: ");
                         fc = sc.next();
                         System.out.println("Enter the number of randomisations: ");
-                        perm = sc.nextInt();
+                        perm = _getPosInt(sc);
                         args = new String[]{"-pre", fa, fb, fc, Integer.toString(perm)};
                         break;
                     }
@@ -582,9 +582,9 @@ public class cli extends userinterface {
                 switch (op) {
                     case 1: { //translate
                         System.out.println("Input amount to move on x direction: ");
-                        double xm = sc.nextDouble();
+                        double xm = _getPosDouble(sc);
                         System.out.println("input amount to move on y direction: ");
-                        double ym = sc.nextDouble();
+                        double ym = _getPosDouble(sc);
                         gsn.getData(matrix).translate(xm, ym);
                         break;
                     }
@@ -595,13 +595,13 @@ public class cli extends userinterface {
                     }
                     case 3: {
                         System.out.println("Enter number of degrees: ");
-                        double deg = sc.nextDouble();
+                        double deg = _getPosDouble(sc);
                         gsn.getData(matrix).rotate(deg);
                         break;
                     }
                     case 4: {
                         System.out.println("Enter scale factor: ");
-                        double fac = sc.nextDouble();
+                        double fac = _getPosDouble(sc);
                         gsn.getData(matrix).scale(fac);
                         break;
                     }
@@ -693,6 +693,47 @@ public class cli extends userinterface {
     }
     //end helper menus
 
+    /**
+     * Gets int from command line (error checking included)
+     * @param sc Scanner used for command line
+     * @return Int from command line
+     */
+    private static int _getPosInt(Scanner sc){
+        int out=-1;
+        if(sc.hasNextInt())
+            out = sc.nextInt();
+        else
+            sc.next();//clear junk
+        while(out<1){
+            System.out.println("Invalid input.");
+            if(sc.hasNextInt())
+                out = sc.nextInt();
+            else
+                sc.next();//clear junk
+            }
+        return out;
+    }
+
+    /**
+     * Gets double from command line (error checking included)
+     * @param sc Scanner used in command line
+     * @return Double from command line
+     */
+    private static double _getPosDouble(Scanner sc){
+        double out=-1;
+        if(sc.hasNextDouble())
+            out = sc.nextDouble();
+        else
+            sc.next();//clear junk
+        while(out<1){
+            System.out.println("Invalid input.");
+            if(sc.hasNextDouble())
+                out = sc.nextDouble();
+            else
+                sc.next();//clear junk
+            }
+        return out;
+    }
     /**
      * Creates a formatted menu and validates user input for menu choice
      * @param title Menu title to be printed at top of menu

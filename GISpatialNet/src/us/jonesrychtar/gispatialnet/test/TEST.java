@@ -67,10 +67,10 @@ public class TEST {
 
        //readers
        //run.TestSHPreader();
-       //run.TestExcelReader(); 
+       run.TestExcelReader(); 
        //run.testKMLreader();
        //run.testPajekReader();
-       run.testDLreader();
+       //run.testDLreader();
        //run.testCSVreader();
 
     }
