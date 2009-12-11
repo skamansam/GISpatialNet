@@ -97,7 +97,14 @@ public class cli extends userinterface {
                         MergeMenu();
                     break;
                 case 5:
+                	System.out.println("Do you want to display as GUI? ");
+                	if(sc.next().charAt(0) == 'y'){
+                		for(DataSet m : gsn.getDataSets()){
+                			m.toGUI();
+                		}
+                	}
                     System.out.println(gsn.getStatus(3));
+                    
                     break;
                 case 6:
                     gsn.ClearData();

@@ -199,7 +199,7 @@ public class GISpatialNet {
         }
     	return out;
     }
-    
+        
     /**
      * Sets detail level
      * @param Matrix Index of dataset to set level on
