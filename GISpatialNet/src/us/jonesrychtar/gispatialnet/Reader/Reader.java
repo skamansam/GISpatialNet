@@ -187,6 +187,7 @@ public class Reader {
         Vector<Matrix> out = csvr.ReadAsMatrices(MatrixType, rows, col);
         Vector<DataSet> ds = new Vector<DataSet>();
         for(int m=0; m<out.size(); m++){
+        	//3System.out.println(out.get(m));
             DataSet dstemp = new DataSet();
             Matrix temp = out.elementAt(m);
             switch (Matrix) {

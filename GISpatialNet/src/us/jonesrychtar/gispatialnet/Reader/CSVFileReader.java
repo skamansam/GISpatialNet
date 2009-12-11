@@ -249,13 +249,15 @@ public class CSVFileReader extends TextFileReader{
 		//parse rows, cols
 		int curTotalRow=0;
 		while(curTotalRow<theMatrix.getRowCount()){		//loop over entire Matrix
-			Matrix m = MatrixFactory.emptyMatrix();
+			Matrix m = MatrixFactory.dense(rows,cols);
 			for(int row=0;row<rows;row++){							//split by rows parameter
 				for(int col=0;col<cols;col++){			//set each column
+					//System.out.println();
 					m.setAsDouble(theMatrix.getAsDouble(curTotalRow,col), row,col);
 				}
 				curTotalRow++;
 			}
+			ret.add(m);
 		}
 		
 		return ret;

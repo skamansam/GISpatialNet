@@ -23,6 +23,7 @@ import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
+import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
 /**
  *
@@ -526,8 +527,11 @@ public class cli extends userinterface {
                 break;
             }
             case 2: { //SNB
-                int matrix = this._MatrixChoice();
-                System.out.println("Function not supported yet.");
+                int dataset_idx = this._MatrixChoice();
+                //System.out.println("Function not supported yet.");
+                System.out.println("Enter a bias: ");
+                double bias=sc.nextDouble();
+                Algorithm.SNB(gsn.getData(dataset_idx), bias);
                 break;
             }
             case 3: { //Borders
