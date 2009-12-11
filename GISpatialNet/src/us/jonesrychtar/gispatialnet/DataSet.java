@@ -580,6 +580,13 @@ public class DataSet {
     	
     }
     
+    public void toGUI(){
+    	this.x.showGUI();
+    	this.y.showGUI();
+    	this.adj.showGUI();
+    	this.attb.showGUI();
+    }
+    
     /**
      * Set the headers for x,y coordinate matricies
      * @param s A pair of string labels for the vector matricies

@@ -257,6 +257,7 @@ public class CSVFileReader extends TextFileReader{
 				}
 				curTotalRow++;
 			}
+			m.setLabel(this.file.getAbsolutePath());
 			ret.add(m);
 		}
 		
