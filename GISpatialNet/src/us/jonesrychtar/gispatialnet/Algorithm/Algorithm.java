@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import javax.naming.CannotProceedException;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
+
+import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.Writer.ShapefileNodeWriter;
 import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
@@ -85,6 +87,7 @@ public class Algorithm {
             h.write();
         }
     }
+
     /**
      * Not supported yet
      * @param x 
@@ -99,5 +102,15 @@ public class Algorithm {
     	sg.calculateBiasAndEstimates();
     	return sg;
     }
-
+    
+    
+    public static void SNB(DataSet ds, double bias){
+    	SpatialGraphBase sg=new SpatialGraphBase(ds.getX(),ds.getY(),ds.getAdj());
+    	sg.setBias(bias);
+    	sg.calculateBiasAndEstimates();
+    	ds.setAdj(sg.getA());
+    	ds.setX(sg.getX());
+    	ds.setY(sg.getY());
+    	//return sg;
+    }
 }
