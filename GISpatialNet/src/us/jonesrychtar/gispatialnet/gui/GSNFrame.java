@@ -4,10 +4,13 @@
 package us.jonesrychtar.gispatialnet.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Event;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -21,7 +24,7 @@ import us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel;
  * @author sam
  * 
  */
-public class GSNFrame extends JFrame implements ActionListener {
+public class GSNFrame extends JFrame implements ActionListener, WindowListener {
 	private GSNMenuBar theMenu;
 	private GSNToolBar theToolBar;
 	private GSNPanel thePanel;
@@ -33,7 +36,8 @@ public class GSNFrame extends JFrame implements ActionListener {
 	public GSNFrame() {
 
 		this.setTitle("GISpatialNet");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(this);
 		this.setBounds(100, 100, 500, 500);
 		JPanel innerFrame=new JPanel();
 		innerFrame.setLayout(new BorderLayout());
@@ -45,6 +49,16 @@ public class GSNFrame extends JFrame implements ActionListener {
 		thePanel = new GSNPanel();
 		theStatus = new GSNStatusBar();
 
+		//tell the menu and toolbar they will be operating on the GSNPanel
+		theMenu.setGSNPanel(thePanel);
+		theToolBar.setGSNPanel(thePanel);
+		
+		//tell the other components they will be working with the status bar
+		theMenu.setStatusBar(theStatus);
+		theToolBar.setStatusBar(theStatus);
+		thePanel.setStatusBar(theStatus);
+
+		
 		// add menu
 		this.setJMenuBar(theMenu);
 		// add toolbar
@@ -104,6 +118,48 @@ public class GSNFrame extends JFrame implements ActionListener {
 
 		GSNFrame t = new GSNFrame();
 		t.setVisible(true);
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		this.thePanel.onClose();
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
