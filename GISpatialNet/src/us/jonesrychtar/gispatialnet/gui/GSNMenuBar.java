@@ -11,6 +11,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 
+import us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel;
+
 /**
  * @author sam
  *
@@ -20,6 +22,7 @@ public class GSNMenuBar extends JMenuBar {
 	 * 
 	 */
 	private static final long serialVersionUID = 2627609337586570432L;
+	GSNPanel thePanel;
 	JMenu 
 			fileMenu = new JMenu("File"),
 			transformMenu = new JMenu("Transform"), 
@@ -65,6 +68,7 @@ public class GSNMenuBar extends JMenuBar {
 		f_quit.setMnemonic(KeyEvent.VK_Q);
 		f_quit.setIcon(util.getGeneralSmallIcon("Remove"));
 		f_quit.getAccessibleContext().setAccessibleDescription("Quit");
+		f_quit.setActionCommand("exit");
 		fileMenu.add(f_quit);
 		
 		//transform menu
@@ -131,5 +135,13 @@ public class GSNMenuBar extends JMenuBar {
 	public JMenu getDataSetMenu(){return datasetMenu;}
 	public JMenu getHelpMenu(){return helpMenu;}
 	
+	public void setGSNPanel(GSNPanel gsp){
+		this.thePanel=gsp;
+		registerPanel();
+	}
+	private void registerPanel(){
+		f_quit.addActionListener(thePanel);
+	}
+
 	public void setStatusBar(GSNStatusBarInterface sb){this.status=sb;}
 }
