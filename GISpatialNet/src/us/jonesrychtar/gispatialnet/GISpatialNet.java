@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
+import us.jonesrychtar.gispatialnet.gui.GSNFrame;
 
 /**
  * @author sam, cfbevan
@@ -269,13 +270,15 @@ public class GISpatialNet {
         else{
             Getopt g = new Getopt("GISpatialNet", args, "cgsbeqhvlC:D:E:K:P:S:");
             int op;
-            boolean inputTypeSet = false, outputTypeSet=false;
+            boolean inputTypeSet = false, 
+            	outputTypeSet=false,
+            	iscmdLine = false;
             int in=-1,out=-1,action=-1;
             String InDir=null, OutDir=null;
             while((op=g.getopt())!=-1){
                 switch(op){
-                    case 'c': cli.main(args); break;
-                    case 'g': System.out.println("No gui yet."); break;
+                    case 'c': cli.main(args); iscmdLine=true; break;
+                    case 'g': System.err.println("WARNING: GISpatialNet GUI Not yet complete."); iscmdLine=false; break;
                     case 's': action = op; break;
                     case 'b': action = op; System.out.println("Borders not finished."); break;
                     case 'e': action = op; break;
@@ -303,12 +306,21 @@ public class GISpatialNet {
                     default: System.out.println("Invalid input."); PrintUsage(); break;
                 }
             }
-            if(!outputTypeSet){
+            if(!outputTypeSet && iscmdLine){
                 OutDir = args[g.getOptind()];
             }
-            CommandLineHelper.exec(action, in, out, InDir, OutDir);
+            if(iscmdLine)
+            	CommandLineHelper.exec(action, in, out, InDir, OutDir);
+            else
+            	buildGUI();
         }
 	}
+	
+	public static void buildGUI(){
+		GSNFrame gf = new GSNFrame();
+		gf.setVisible(true);
+	}
+	
     /**
      * Prints usage of command line functions
      */
