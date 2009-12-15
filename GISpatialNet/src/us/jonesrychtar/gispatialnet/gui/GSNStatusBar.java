@@ -2,18 +2,26 @@ package us.jonesrychtar.gispatialnet.gui;
 
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
 public class GSNStatusBar extends JPanel implements GSNStatusBarInterface{
 	private Vector<String> text;
-	private JLabel theLabel=new JLabel();
+	private JLabel theLabel=new JLabel("GSNSpatialnet");
 	private int displayTime = 3000;
 
 	public int getDisplayTime() {return displayTime;}
 	public void setDisplayTime(int displayTime) {this.displayTime = displayTime;}
 
 	private void setup(){
+		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		theLabel.setAlignmentX(LEFT_ALIGNMENT);
+		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		
 		this.add(theLabel);
 	}
 	
@@ -30,7 +38,7 @@ public class GSNStatusBar extends JPanel implements GSNStatusBarInterface{
 	 * @param text the text to set
 	 */
 	public void setStatus(String text) {
-		
+		theLabel.setText(text);
 	}
 
 	/**

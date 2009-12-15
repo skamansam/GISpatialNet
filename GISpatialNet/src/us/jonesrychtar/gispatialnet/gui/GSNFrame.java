@@ -38,7 +38,7 @@ public class GSNFrame extends JFrame implements ActionListener, WindowListener {
 		this.setTitle("GISpatialNet");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(this);
-		this.setBounds(100, 100, 500, 500);
+		this.setBounds(100, 100, 900, 700);
 		JPanel innerFrame=new JPanel();
 		innerFrame.setLayout(new BorderLayout());
 		//innerFrame.setLayout(new BoxLayout(innerFrame,BoxLayout.Y_AXIS));
@@ -50,8 +50,8 @@ public class GSNFrame extends JFrame implements ActionListener, WindowListener {
 		theStatus = new GSNStatusBar();
 
 		//tell the menu and toolbar they will be operating on the GSNPanel
-		theMenu.setGSNPanel(thePanel);
-		theToolBar.setGSNPanel(thePanel);
+		theMenu.setActionPanel(thePanel);
+		theToolBar.setActionPanel(thePanel);
 		
 		//tell the other components they will be working with the status bar
 		theMenu.setStatusBar(theStatus);
