@@ -48,21 +48,16 @@ public class GSNToolBar extends JToolBar implements MouseListener {
 		this.theStatus=theStatus;
 	}
 	
-	@Override
 	public void mouseEntered(MouseEvent e) {
 		JButton theItem = (JButton)e.getSource();
 		theStatus.setStatus(theItem.getToolTipText());
 	}
 
-	@Override
 	public void mouseClicked(MouseEvent e) {}
-	@Override
 	public void mouseExited(MouseEvent e) {
-		//theStatus.setStatus("");
+		theStatus.setStatus(" ");
 		}
-	@Override
 	public void mousePressed(MouseEvent e) {}
-	@Override
 	public void mouseReleased(MouseEvent e) {}
 
 }

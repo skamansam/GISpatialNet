@@ -24,7 +24,11 @@ import us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel;
  * @author sam
  * 
  */
-public class GSNFrame extends JFrame implements ActionListener, WindowListener {
+public class GSNFrame extends JFrame implements WindowListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2274497597773371971L;
 	private GSNMenuBar theMenu;
 	private GSNToolBar theToolBar;
 	private GSNPanel thePanel;
@@ -70,17 +74,6 @@ public class GSNFrame extends JFrame implements ActionListener, WindowListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * @param args
@@ -120,43 +113,36 @@ public class GSNFrame extends JFrame implements ActionListener, WindowListener {
 		t.setVisible(true);
 	}
 
-	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void windowClosing(WindowEvent e) {
 		this.thePanel.onClose();
 		
 	}
 
-	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
