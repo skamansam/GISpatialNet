@@ -1,6 +1,8 @@
 package us.jonesrychtar.gispatialnet.gui;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -46,12 +48,29 @@ public class util {
 		if(url != null){
 				return new ImageIcon(url);
 		}else{
-			System.err.println("Could not find icon "+iconName);
+			System.err.println("Could not find icon "+"/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
 			return null;
 		}
 	}
 
-	
+	/** Creates and adds a toolbar button to the specified JToolBar.
+	 * @param tb the JToolBar to add the button to
+	 * @param label the label of the button
+	 * @param icon the icon name for the icon (see {@link getIcon} for icon name criteria)
+	 * @param actionCmd	the ActionCommand for the button
+	 * @return a reference to the added JButton
+	 */
+	public static JButton addToolBarButton(JToolBar tb,String label, String desc, String icon, String actionCmd){
+		JButton tmp = new JButton(label);
+		tmp.setActionCommand(actionCmd);
+		tmp.setIcon(util.getGeneralIcon(icon));
+		tmp.setVerticalTextPosition(JButton.BOTTOM);
+		tmp.setHorizontalTextPosition(JButton.CENTER);
+		tmp.setToolTipText(desc);
+		tb.add(tmp);
+		return tmp;
+	}
+
 	public static void printIconKeys() {
 		UIManager.LookAndFeelInfo looks[] = UIManager
 				.getInstalledLookAndFeels();
