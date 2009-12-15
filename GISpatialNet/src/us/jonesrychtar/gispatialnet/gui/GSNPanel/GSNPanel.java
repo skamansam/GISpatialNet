@@ -36,7 +36,6 @@ public class GSNPanel extends JPanel implements ActionListener{
 		this.add(thePane);
 	}
 	
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action on GSNPanel: "+e.getActionCommand());
 		//exit has been issued
