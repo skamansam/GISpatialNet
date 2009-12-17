@@ -23,9 +23,9 @@ public class GSNToolBar extends JToolBar implements MouseListener {
 	GSNStatusBarInterface theStatus;
 	public GSNToolBar(){
 		//add toolbar buttons
-		exitBtn = util.addToolBarButton(this,"Exit","Exit program","Stop","exit");
-		saveBtn = util.addToolBarButton(this,"Save","Save data","Save","save");
-		openBtn = util.addToolBarButton(this,"Open","Open a file","Open","open");
+		exitBtn = GUIutil.addToolBarButton(this,"Exit","Exit program","Stop","exit");
+		saveBtn = GUIutil.addToolBarButton(this,"Save","Save data","Save","save");
+		openBtn = GUIutil.addToolBarButton(this,"Open","Open a file","Open","open");
 	}
 	/**Since this toolbar works with a GSNPanel, we need a reference to it. 
 	 * The GSNPanel is the Panel that handles the ActionEvents for 

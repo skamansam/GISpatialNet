@@ -6,15 +6,17 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
 import javax.swing.UIDefaults;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * @author sam
  *
  */
-public class util {
+public class GUIutil {
 
 	//convenience functions for retrieving icons from the jlfgr-1_0.jar file
 	public static ImageIcon getGeneralSmallIcon(String iconName){return getIcon("general",iconName,16);}
@@ -44,7 +46,7 @@ public class util {
 	 * @return an ImageIcon which represents the given parameters
 	 */
 	public static ImageIcon getIcon(String category, String iconName, int size){
-		URL url=util.class.getResource("/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
+		URL url=GUIutil.class.getResource("/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
 		if(url != null){
 				return new ImageIcon(url);
 		}else{
@@ -63,7 +65,7 @@ public class util {
 	public static JButton addToolBarButton(JToolBar tb,String label, String desc, String icon, String actionCmd){
 		JButton tmp = new JButton(label);
 		tmp.setActionCommand(actionCmd);
-		tmp.setIcon(util.getGeneralIcon(icon));
+		tmp.setIcon(GUIutil.getGeneralIcon(icon));
 		tmp.setVerticalTextPosition(JButton.BOTTOM);
 		tmp.setHorizontalTextPosition(JButton.CENTER);
 		tmp.setToolTipText(desc);
@@ -71,7 +73,7 @@ public class util {
 		return tmp;
 	}
 
-	public static void printIconKeys() {
+	public static void printLnFPropertyKeys() {
 		UIManager.LookAndFeelInfo looks[] = UIManager
 				.getInstalledLookAndFeels();
 
@@ -79,16 +81,12 @@ public class util {
 			try {
 				UIManager.setLookAndFeel(info.getClassName());
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (UnsupportedLookAndFeelException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -104,6 +102,7 @@ public class util {
 	}
 
 	public static void main(String[] args){
-		printIconKeys();
+		printLnFPropertyKeys();
 	}
+
 }
