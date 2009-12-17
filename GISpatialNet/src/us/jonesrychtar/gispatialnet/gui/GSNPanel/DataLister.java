@@ -24,6 +24,7 @@ import org.ujmp.core.MatrixFactory;
 import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.GISpatialNet;
 import us.jonesrychtar.gispatialnet.cli;
+import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.gui.helpers.CSVOptionsFrame;
 
@@ -38,7 +39,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	GISpatialNet gsn = new GISpatialNet();
 	static DefaultMutableTreeNode topNode = new DefaultMutableTreeNode("DataSets Loaded:");
 	static DefaultTreeModel tm = new DefaultTreeModel(topNode);
-
+	DataDisplayPanel display;
 	private class DSMTreeNode extends DefaultMutableTreeNode{
 		private int dsIdx = -1;
 		private String theTitle = "[No Label]";
@@ -64,6 +65,8 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		this.setRootVisible(false);
 		this.addTreeSelectionListener(this);
 	}
+	public void setDisplayPanel(DataDisplayPanel gsp){this.display=gsp;}
+	public DataDisplayPanel getDisplayPanel(){return this.display;}
 
 	public GISpatialNet getGSN() {
 		return gsn;
@@ -102,9 +105,13 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		for(DataSet ds : gsn.getDataSets()){
 			DSMTreeNode next = new DSMTreeNode(ds.GetLoadedFiles().elementAt(0),ds);
 			//System.out.println("Inserting "+ds.GetLoadedFiles().elementAt(0));
-			next.add(new DSMTreeNode("X",ds.getX()) );
+			if(!ds.getX().isEmpty())
+				next.add(new DSMTreeNode("X",ds.getX()) );
+			if(!ds.getY().isEmpty())
 			next.add(new DSMTreeNode("Y",ds.getY()) );
+			if(!ds.getAdj().isEmpty())
 			next.add(new DSMTreeNode("Adjacency",ds.getAdj()) );
+			if(!ds.getAttb().isEmpty())
 			next.add( new DSMTreeNode("Attributes",ds.getAttb()) );
 			topNode.add(next);
 			
@@ -136,8 +143,16 @@ public class DataLister extends JTree implements TreeSelectionListener {
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
+		if(this.getLastSelectedPathComponent()==null) return;
 		DSMTreeNode dt = (DSMTreeNode) this.getLastSelectedPathComponent();
-		if(!dt.hasDataSet())
-			System.out.print("Selected :\n"+dt.getMatrix());
+		if(dt.hasDataSet()){
+			displayData(display,util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb()))));
+		}else{
+			displayData(display,dt.getMatrix());
+		}
+	}
+	private void displayData(DataDisplayPanel dsp,Matrix m){
+		if(dsp == null){System.err.println("Display Panel is null!");return;}
+		dsp.displayMatrix(m);
 	}
 }
