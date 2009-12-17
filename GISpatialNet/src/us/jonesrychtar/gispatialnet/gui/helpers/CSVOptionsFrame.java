@@ -33,8 +33,8 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	boolean isPolar = false;
 	boolean hasCancelled = false;
 	JComboBox dst = new JComboBox(new String[] {
-			"Node data (nodes with attributes)", "Adjacency data",
-			"Node data only", "Attribute data" });
+			"Coordinate data with attributes", "Adjacency data",
+			"Coordinate data only", "Attribute data" });
 	JComboBox mt = new JComboBox(new String[] { "Full", "Upper", "Lower" });
 	JSpinner rowSpinner = new JSpinner(new SpinnerNumberModel(25, 0, 999999, 1));
 	JSpinner colSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 999999, 1));
@@ -121,6 +121,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		CSVOptionsFrame f = new CSVOptionsFrame();
 		System.out.println("\n=========\n");
 		f.printInfo();
+		f.dispose();
 	}
 	public void printInfo(){
 		System.out.println("DSType: " + getDataSetType());
@@ -228,7 +229,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			else
 				this.separator = sepVal.charAt(0);
 		}
-		printInfo();
+		//printInfo();
 	}
 
 	@Override
@@ -237,7 +238,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			this.rows = new Integer(rowSpinner.getValue().toString());
 		if(e.getSource().equals(colSpinner))
 			this.cols = new Integer(colSpinner.getValue().toString());
-		printInfo();
+		//printInfo();
 
 	}
 
@@ -254,7 +255,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			else
 				this.separator = sepVal.charAt(0);
 		}
-		printInfo();
+		//printInfo();
 	}
 
 	@Override

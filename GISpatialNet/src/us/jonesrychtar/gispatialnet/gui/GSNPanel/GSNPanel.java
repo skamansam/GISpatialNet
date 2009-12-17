@@ -45,6 +45,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		leftPane = new JScrollPane(theList);
 		rightPane = new JScrollPane(theDisplay);
 		thePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,leftPane,rightPane);
+		theList.setDisplayPanel(theDisplay);
 		//theList.setGSN(gsn);
 		//theDisplay.setGSN(gsn);
 		this.add(thePane);
@@ -138,6 +139,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		dlg.setFileFilter(new GSNFileFilter(""));
 		dlg.setMultiSelectionEnabled(true);
 		String theFile="";
+		dlg.setCurrentDirectory(new File("."));
 		if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
 
 		theFile = dlg.getSelectedFile().getAbsolutePath();
