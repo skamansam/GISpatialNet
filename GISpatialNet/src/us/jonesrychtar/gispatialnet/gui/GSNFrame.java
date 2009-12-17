@@ -124,7 +124,7 @@ public class GSNFrame extends JFrame implements WindowListener {
 	}
 
 	public void windowClosing(WindowEvent e) {
-		this.thePanel.onClose();
+		this.thePanel.handleClose();
 		
 	}
 

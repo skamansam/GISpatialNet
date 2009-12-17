@@ -8,6 +8,10 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
@@ -150,5 +154,42 @@ public class util {
      */
     public static Matrix stripNumCol(Matrix in){
         return in.selectColumns(Calculation.Ret.NEW, 1, in.getColumnCount()-1);
+    }
+
+    /*
+     * Get the extension of a file.
+     */  
+    public static String getFileExtension(File f) {
+        String ext = null;
+        String fname = f.getName();
+        int i = fname.lastIndexOf('.');
+
+        if (i > 0 &&  i < fname.length() - 1) {
+            ext = fname.substring(i+1).toLowerCase();
+        }
+        return ext;
+    }
+    
+    public static String determineFileType(File f){
+		String ext = getFileExtension(f);
+		if(ext.equals("xls")) return "excel";
+		if(ext.equals("csv")) return "csv";
+		if(ext.equals("shp")) return "shapefile";
+    	try {
+			Scanner sc = new Scanner(f);
+			String first = sc.next();
+			
+			if(first.endsWith(",")) return "csv";
+			if(first.startsWith("*")) return "payek";
+			if(first.startsWith("<?xml")) return "kml";
+			if(first.toLowerCase().equals("dl")) return "ucinet";
+			
+		} catch (FileNotFoundException e) {System.err.println("Can't read "+f.getAbsolutePath());}
+    	return null;
+    }
+    
+    public String determineFileType(String f){
+    	
+    	return null;
     }
 }

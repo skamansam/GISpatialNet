@@ -30,12 +30,14 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 			transformMenu = new JMenu("Transform"), 
 			algorithmMenu = new JMenu("Algorithm"), 
 			datasetMenu = new JMenu("Data"),
+			viewMenu = new JMenu("View With"),
 			helpMenu = new JMenu("Help");
 	JMenuItem 
 			f_open,f_save,f_save_as,f_save_all,f_quit,							//file menu
 			t_flip,t_rotate,t_resize,t_match_best,t_find_duplicate,	//transform menu
 			a_qap,a_snb,a_borders,a_hilite_edges,								//algorithm menu
 			d_find,d_merge,d_seperate,d_add,d_add_ego,				//data menu
+			v_pajek,v_ucinet,v_g_earth,v_g_maps,v_egonet,v_geotools,v_arcgis,				//view in menu
 			h_about,h_help;											//help menu
 	
 	GSNStatusBarInterface status;			//the staus bar. for rollovers
@@ -66,10 +68,19 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		//dataset menu
 		d_find = createMenuItem(datasetMenu,"Find...",KeyEvent.VK_F,"Find content within data","general","Search","data_find");
 		d_merge = createMenuItem(datasetMenu,"Merge",KeyEvent.VK_M,"Merge this data set with another.","general","Import","data_merge");
-		d_seperate = createMenuItem(datasetMenu,"Seperate",KeyEvent.VK_DIVIDE,"Seperate data set into multiple sets.","table","RowDelete","data_seperate");
+		d_seperate = createMenuItem(datasetMenu,"Seperate",KeyEvent.VK_DIVIDE,"Seperate data set into multiple sets.","table","RowDelete","data_separate");
 		d_add = createMenuItem(datasetMenu,"Add...",KeyEvent.VK_ADD,"Add data to the existing data.","general","Add","data_add");
 		d_add_ego = createMenuItem(datasetMenu,"Add Ego...",KeyEvent.VK_SHIFT+KeyEvent.VK_ADD,"Add an ego file to the current data set.","general","Add","data_add_ego");
 
+		//view with menu
+		v_pajek = createMenuItem(viewMenu,"Pajek",KeyEvent.VK_F,"Open current data set in Pajek.","development","WebComponentAdd","view_pajek");
+		v_egonet = createMenuItem(viewMenu,"EgoNet",KeyEvent.VK_ADD,"Open current data set in EgoNet.","development","WebComponentAdd","view_egonet");
+		v_ucinet = createMenuItem(viewMenu,"UCINet",KeyEvent.VK_SHIFT+KeyEvent.VK_ADD,"Open current data set in ucinet.","development","WebComponentAdd","view_ucinet");
+		v_geotools = createMenuItem(viewMenu,"GeoTools",KeyEvent.VK_ADD,"Open current data set in GeoTools.","development","WebComponentAdd","view_geotools");
+		v_arcgis = createMenuItem(viewMenu,"ArcGIS",KeyEvent.VK_SHIFT+KeyEvent.VK_ADD,"Open current data set in ArcGIS.","development","WebComponentAdd","view_arcgis");
+		v_g_earth = createMenuItem(viewMenu,"Google Earth",KeyEvent.VK_M,"Open current data set in Google Earth.","development","WebComponentAdd","view_g_earth");
+		v_g_maps = createMenuItem(viewMenu,"Google Maps",KeyEvent.VK_DIVIDE,"Open current data set in Google Maps.","development","WebComponentAdd","view_g_maps");
+		
 		
 		//help menu
 		h_about = createMenuItem(helpMenu,"About...",KeyEvent.VK_F12,"Information about GISpatialnet","general","TipOfTheDay","show_about");
@@ -80,6 +91,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		this.add(transformMenu);
 		this.add(algorithmMenu);
 		this.add(datasetMenu);
+		this.add(viewMenu);
 		this.add(helpMenu);
 		
 	}
@@ -88,6 +100,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 	public JMenu getAlgorithmMenu(){return algorithmMenu;}
 	public JMenu getDataSetMenu(){return datasetMenu;}
 	public JMenu getHelpMenu(){return helpMenu;}
+	public JMenu getViewMenu(){return viewMenu;}
 	
 	public void setActionPanel(GSNPanel gsp){
 		this.thePanel=gsp;
@@ -98,6 +111,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		f_open.addActionListener(thePanel);
 		f_save.addActionListener(thePanel);
 		f_save_as.addActionListener(thePanel);
+		f_save_all.addActionListener(thePanel);
 		f_quit.addActionListener(thePanel);
 		t_flip.addActionListener(thePanel);
 		t_rotate.addActionListener(thePanel);
@@ -107,6 +121,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		a_qap.addActionListener(thePanel);
 		a_snb.addActionListener(thePanel);
 		a_borders.addActionListener(thePanel);
+		a_hilite_edges.addActionListener(thePanel);
 		d_find.addActionListener(thePanel);
 		d_merge.addActionListener(thePanel);
 		d_seperate.addActionListener(thePanel);
@@ -114,14 +129,20 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		d_add_ego.addActionListener(thePanel);
 		h_about.addActionListener(thePanel);
 		h_help.addActionListener(thePanel);
-		
+		v_pajek.addActionListener(thePanel);
+		v_ucinet.addActionListener(thePanel);
+		v_g_earth.addActionListener(thePanel);
+		v_g_maps.addActionListener(thePanel);
+		v_egonet.addActionListener(thePanel);
+		v_geotools.addActionListener(thePanel);
+		v_arcgis.addActionListener(thePanel);
 	}
 
 	public JMenuItem createMenuItem(JMenu parent, String label, int mnemonic, String desc, String iconCat,String iconName, String actionCommand){
 		JMenuItem tmp = new JMenuItem(label);
 		tmp.setMnemonic(mnemonic);
 		tmp.getAccessibleContext().setAccessibleDescription(desc);
-		tmp.setIcon(util.getIcon(iconCat,iconName,16));
+		tmp.setIcon(GUIutil.getIcon(iconCat,iconName,16));
 		tmp.setActionCommand(actionCommand);
 		tmp.addMouseListener(this);
 		parent.add(tmp);
