@@ -105,10 +105,8 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		for(DataSet ds : gsn.getDataSets()){
 			DSMTreeNode next = new DSMTreeNode(ds.GetLoadedFiles().elementAt(0),ds);
 			//System.out.println("Inserting "+ds.GetLoadedFiles().elementAt(0));
-			if(!ds.getX().isEmpty())
-				next.add(new DSMTreeNode("X",ds.getX()) );
-			if(!ds.getY().isEmpty())
-			next.add(new DSMTreeNode("Y",ds.getY()) );
+			if(!ds.getX().isEmpty() || !ds.getY().isEmpty())
+				next.add(new DSMTreeNode("Coordinates",util.combine(ds.getX(),ds.getY())) );
 			if(!ds.getAdj().isEmpty())
 			next.add(new DSMTreeNode("Adjacency",ds.getAdj()) );
 			if(!ds.getAttb().isEmpty())
