@@ -8,6 +8,7 @@ package us.jonesrychtar.gispatialnet.Reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import us.jonesrychtar.gispatialnet.Reader.TextFileReader;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
@@ -204,7 +205,7 @@ public class CSVFileReader extends TextFileReader{
 		
 
 		Matrix mFromFile = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
-		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount()-1,mFromFile.getColumnCount()-1);
+		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount(),mFromFile.getColumnCount());
 		int egoCol=-1;
 
 		//set header labels
@@ -230,6 +231,7 @@ public class CSVFileReader extends TextFileReader{
 		//convert Strings to Doubles
 		for (int row=0;row<mFromFile.getRowCount();row++){
 			for (int col=0;col<mFromFile.getColumnCount();col++){
+				System.out.println("Converting: ("+row+","+col+") "+mFromFile.getAsDouble(row,col)+" to Double.");
 				mNew.setAsDouble(mFromFile.getAsDouble(row,col),row, col);
 			}
 		}
