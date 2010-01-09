@@ -22,7 +22,9 @@ import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+//import org.opengis.feature.type.FeatureType;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 
@@ -36,7 +38,7 @@ public class ShapeFileReader {
     private File file = null;
     private File fileEdge = null;
     private ShapefileDataStore store = null;
-    private FeatureCollection featureCollection = null;
+    private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection = null;
 
     /**
      * constructor
@@ -64,11 +66,11 @@ public class ShapeFileReader {
             shapeURL = file.toURI().toURL();
             store = new ShapefileDataStore(shapeURL);
             String[] names = store.getTypeNames(); //filenames
-            FeatureSource source = store.getFeatureSource(names[0]);
+            FeatureSource<SimpleFeatureType,SimpleFeature> source = store.getFeatureSource(names[0]);
             featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
             int featureCount = featureCollection.size();
             //FeatureType type = featureCollection.getSchema(); //gets schema of db
-            FeatureIterator fi = featureCollection.features();
+            FeatureIterator<SimpleFeature> fi = featureCollection.features();
             //set up matrix
             x = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
             y = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, 1);
@@ -104,16 +106,16 @@ public class ShapeFileReader {
             shapeURL = fileEdge.toURI().toURL();
             store = new ShapefileDataStore(shapeURL);
             String[] names = store.getTypeNames(); //filenames
-            FeatureSource source = store.getFeatureSource(names[0]);
+            FeatureSource<SimpleFeatureType, SimpleFeature>  source = store.getFeatureSource(names[0]);
             featureCollection = source.getFeatures(); // featureCollection queries data of Shapefile
             int featureCount = (int) x.getRowCount();
-            FeatureType type = featureCollection.getSchema(); //gets schema of db
-            FeatureIterator fi = featureCollection.features();
+            //FeatureType type = featureCollection.getSchema(); //gets schema of db
+            FeatureIterator<SimpleFeature> fi = featureCollection.features();
             adj = MatrixFactory.zeros(org.ujmp.core.enums.ValueType.DOUBLE, featureCount, featureCount);
 
             //copy feature collection to adj matrix
             for (int row = 0; row < featureCount; row++) {
-                int setr, setc;
+                //int setr, setc;
                 MultiLineString temp = (MultiLineString) fi.next().getValue().iterator().next().getValue();
                 Coordinate[] ctemp = temp.getCoordinates();
 

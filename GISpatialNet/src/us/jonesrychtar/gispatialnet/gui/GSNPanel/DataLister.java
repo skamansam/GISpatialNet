@@ -77,7 +77,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	}
 	public void addCSV(String theFile){
 		Reader reader = new Reader();
-		CSVOptionsFrame f = new CSVOptionsFrame();
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
         try {
             Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSeparator());
 

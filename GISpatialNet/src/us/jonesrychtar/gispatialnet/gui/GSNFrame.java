@@ -4,15 +4,15 @@
 package us.jonesrychtar.gispatialnet.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Event;
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+//import java.awt.Event;
+//import java.awt.GraphicsConfiguration;
+//import java.awt.HeadlessException;
+//import java.awt.event.ActionEvent;
+//import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.BoxLayout;
+//import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -39,8 +39,39 @@ public class GSNFrame extends JFrame implements WindowListener {
 	 */
 	public GSNFrame() {
 
+		boolean hasSetUI = false;
+		
+		try {
+			UIManager.setLookAndFeel("org.fife.plaf.Office2003.Office2003LookAndFeel");
+			hasSetUI=true;
+		} catch (UnsupportedLookAndFeelException e) {
+			System.err.println("Office 2003 LnF is Unsupported on your platform");
+		} catch (ClassNotFoundException e) {
+			System.err.println("Office 2003 LnF cannot be found");
+		} catch (InstantiationException e) {
+			System.err.println("Office 2003 LnF cannot be instatntiated");
+		} catch (IllegalAccessException e) {
+			System.err.println("Office 2003 LnF Error: Illegal Access");
+		}
+		
+		if(!hasSetUI){
+			try {
+				System.err.println("Setting LnF to "+UIManager.getSystemLookAndFeelClassName());
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				hasSetUI=true;
+			} catch (UnsupportedLookAndFeelException e) {
+				System.err.println("System LnF is Unsupported on your platform");
+			} catch (ClassNotFoundException e) {
+				System.err.println("System LnF cannot be found");
+			} catch (InstantiationException e) {
+				System.err.println("System LnF cannot be instatntiated");
+			} catch (IllegalAccessException e) {
+				System.err.println("System LnF Error: Illegal Access");
+			}
+		}
+
 		this.setTitle("GISpatialNet");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		//this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(this);
 		this.setBounds(100, 100, 900, 700);
 		JPanel innerFrame=new JPanel();
@@ -72,6 +103,7 @@ public class GSNFrame extends JFrame implements WindowListener {
 		// add statusbar
 		innerFrame.add(theStatus,BorderLayout.PAGE_END);
 
+		this.setVisible(true);
 	}
 
 
@@ -79,73 +111,30 @@ public class GSNFrame extends JFrame implements WindowListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		boolean hasSetUI = false;
-		try {
-			UIManager.setLookAndFeel("org.fife.plaf.Office2003.Office2003LookAndFeel");
-			hasSetUI=true;
-		} catch (UnsupportedLookAndFeelException e) {
-			System.err.println("Office 2003 LnF is Unsupported on your platform");
-		} catch (ClassNotFoundException e) {
-			System.err.println("Office 2003 LnF cannot be found");
-		} catch (InstantiationException e) {
-			System.err.println("Office 2003 LnF cannot be instatntiated");
-		} catch (IllegalAccessException e) {
-			System.err.println("Office 2003 LnF Error: Illegal Access");
-		}
-		
-		if(!hasSetUI){
-			try {
-				System.err.println("Setting LnF to "+UIManager.getSystemLookAndFeelClassName());
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				hasSetUI=true;
-			} catch (UnsupportedLookAndFeelException e) {
-				System.err.println("System LnF is Unsupported on your platform");
-			} catch (ClassNotFoundException e) {
-				System.err.println("System LnF cannot be found");
-			} catch (InstantiationException e) {
-				System.err.println("System LnF cannot be instatntiated");
-			} catch (IllegalAccessException e) {
-				System.err.println("System LnF Error: Illegal Access");
-			}
-		}
-
-		GSNFrame t = new GSNFrame();
-		t.setVisible(true);
+		new GSNFrame();
 	}
 
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void windowClosing(WindowEvent e) {
-		this.thePanel.handleClose();
+		thePanel.handleClose();
 		
 	}
 
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

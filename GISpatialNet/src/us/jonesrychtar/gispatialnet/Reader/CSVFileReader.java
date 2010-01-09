@@ -7,11 +7,7 @@ package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
@@ -23,7 +19,6 @@ import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 import com.mindprod.csv.CSVReader;
 import java.util.Vector;
 import us.jonesrychtar.gispatialnet.DataSet;
-import att.grappa.*;
 
 /**
  * @author Samuel C. Tyler
@@ -31,7 +26,7 @@ import att.grappa.*;
  */
 public class CSVFileReader extends TextFileReader{
 	private Vector<DataSet> theData; 	//for DataSets 
-	private Vector<Matrix> theMatrices; //for Matrices
+//	private Vector<Matrix> theMatrices; //for Matrices
 	private boolean includeEgo=false;	//are we working with Egos?
 	CSVReader matrixReader;				//the csv reader
 	private String filename="";
@@ -209,27 +204,33 @@ public class CSVFileReader extends TextFileReader{
 		
 
 		Matrix mFromFile = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
-		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount()-1,mFromFile.getColumnCount());
+		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount()-1,mFromFile.getColumnCount()-1);
 		int egoCol=-1;
+
 		//set header labels
 		for (int i=0;i<mFromFile.getColumnCount();i++){
 			String label=mFromFile.getAsString(0,i);
 			mNew.setColumnLabel(i, label);
-			if(label.contains("Ego") || label.contains("ego"))
+			if(label.toLowerCase().contains("ego") && egoCol==-1)
 				egoCol=i;
 		}
 		
-		//set row labels to the EgoID
+		//set row labels to the EgoID, else, use first column
 		if(egoCol!=-1){
 			for (int row=0;row<mFromFile.getRowCount();row++){
 				mNew.setRowLabel(row, mFromFile.getAsString(row,egoCol));
 			}
+		}else{
+			for (int row=0;row<mFromFile.getRowCount();row++){
+				mNew.setRowLabel(row, mFromFile.getAsString(row,0));
+			}
+			
 		}
-		
+		mNew.showGUI();
 		//convert Strings to Doubles
-		for (int row=1;row<mFromFile.getRowCount();row++){
+		for (int row=0;row<mFromFile.getRowCount();row++){
 			for (int col=0;col<mFromFile.getColumnCount();col++){
-				mNew.setAsDouble(mFromFile.getAsDouble(row,col),row-1, col);
+				mNew.setAsDouble(mFromFile.getAsDouble(row,col),row, col);
 			}
 		}
 
@@ -246,14 +247,19 @@ public class CSVFileReader extends TextFileReader{
 			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
 		}
 		
+		System.out.println("Matrix has "+theMatrix.getRowCount()+" rows and "+theMatrix.getColumnCount()+" columns.");
+		
 		//parse rows, cols
-		int curTotalRow=0;
+		int curTotalRow=0;								//keep track of total rows seen
 		while(curTotalRow<theMatrix.getRowCount()){		//loop over entire Matrix
-			Matrix m = MatrixFactory.dense(rows,cols);
-			for(int row=0;row<rows;row++){							//split by rows parameter
-				for(int col=0;col<cols;col++){			//set each column
-					//System.out.println();
-					m.setAsDouble(theMatrix.getAsDouble(curTotalRow,col), row,col);
+			Matrix m = MatrixFactory.dense(rows,cols);  //create empty matrix, dim'd to (rows, cols)
+			for(int row=0;row<rows && curTotalRow<theMatrix.getRowCount();row++){							//split by rows parameter
+				System.out.println("NEW MATRIX:");
+				for(int col=0;col<cols && col<theMatrix.getColumnCount();col++){			//set each column
+					System.out.print("( "+row+" , "+col+" ) = ");
+					Double cVal=theMatrix.getAsDouble(curTotalRow,col);
+					System.out.print(""+cVal+"\n");
+					m.setAsDouble(cVal, row,col);
 				}
 				curTotalRow++;
 			}

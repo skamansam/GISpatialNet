@@ -72,7 +72,8 @@ public class ShapefileWriter {
         FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory();
         //make the file
         file = new File(name + ".shp");
-        //map to store data in memory untill it is written to file
+        //map to store data in memory until it is written to file
+        //TODO: make this warning-free by making map the correct type: Map<String,URL> so it works with factory.createNewDataStore(map)
         Map map = Collections.singletonMap("url", file.toURI().toURL());
         //use factory and map to make a datastore
         myData = factory.createNewDataStore(map);

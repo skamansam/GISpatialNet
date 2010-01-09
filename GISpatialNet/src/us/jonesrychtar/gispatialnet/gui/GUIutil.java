@@ -6,11 +6,11 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import java.io.File;
+//import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
-import javax.swing.UIDefaults;
-import javax.swing.filechooser.FileFilter;
+//import javax.swing.UIDefaults;
+//import javax.swing.filechooser.FileFilter;
 
 /**
  * @author sam
@@ -90,8 +90,8 @@ public class GUIutil {
 				e.printStackTrace();
 			}
 
-			UIDefaults defaults = UIManager.getDefaults();
-			Enumeration newKeys = defaults.keys();
+			//UIDefaults defaults = UIManager.getDefaults();
+			Enumeration<Object> newKeys = UIManager.getDefaults().keys();
 
 			while (newKeys.hasMoreElements()) {
 				Object obj = newKeys.nextElement();

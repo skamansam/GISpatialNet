@@ -42,8 +42,18 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			"Polar (decimal and degrees)" });
 	JComboBox sep = new JComboBox(new String[] { "Comma",
 	"Tab","Space" });
-
+	String FName = "[not specified]";
+	
+	public CSVOptionsFrame(String filename) {
+		this.FName=filename;
+		this.setupGUI();
+	}
+	
 	public CSVOptionsFrame() {
+		this.setupGUI();
+	}
+	
+	private void setupGUI(){
 		this.setTitle("CSV Import Options");
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.setBounds(100, 100, 500, 350);
@@ -52,6 +62,8 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		this.add(p);
 
+		p.add(new JLabel("File: "+FName));
+		
 		dst.addActionListener(this);
 		JLabel dstl = new JLabel("Data to read: ");
 		JPanel r1 = new JPanel();
