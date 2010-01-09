@@ -176,6 +176,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 	}
 
 	public void handleClose() {
+		System.err.println("GSNPanel.handleClose()");
 		if(isTainted && JOptionPane.showConfirmDialog(this,"Do you wish to save first?","Data has been edited, but not saved.",JOptionPane.YES_NO_OPTION)==0){
 			this.handleSaveAll();
 		}else{
