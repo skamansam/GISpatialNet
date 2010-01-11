@@ -9,10 +9,10 @@
 package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+//import java.io.FileNotFoundException;
 
 import java.util.Vector;
-import org.ujmp.core.Matrix;
+//import org.ujmp.core.Matrix;
 import us.jonesrychtar.gispatialnet.DataSet;
 
 /*

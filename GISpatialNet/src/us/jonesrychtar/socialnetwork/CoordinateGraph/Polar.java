@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * 
  */
 
 package us.jonesrychtar.socialnetwork.CoordinateGraph;
@@ -40,7 +39,7 @@ public class Polar extends CoordinateGraphBase {
             break;
         }
     }
-
+    public angleType getAngletype(){return theType;}
     public Polar(int angleType) {
     }
 }

@@ -49,7 +49,7 @@ public class ExcelReader {
         //read all col, rows of sheet s
         for (int s = 1; s <= w1.getNumberOfSheets(); s++) {
             Matrix temp = MatrixFactory.zeros(rows, c);
-            boolean quit = false;
+            //boolean quit = false;
             switch (MatrixFormat) {
                 case 0: { //full
                     //i is row j is col

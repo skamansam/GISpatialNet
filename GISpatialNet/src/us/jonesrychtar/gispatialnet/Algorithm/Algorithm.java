@@ -57,7 +57,8 @@ public class Algorithm {
      * @throws CannotProceedException
      */
     public static void QAP(String arg[]) throws IllegalArgumentException, IOException, Error, CannotProceedException{
-        QAP q = new QAP(arg.length - 2, arg);
+        //QAP q = new QAP(arg.length - 2, arg);
+        new QAP(arg.length - 2, arg);
     }
     /**
      * Highlighrs edges and saves edge shapefile

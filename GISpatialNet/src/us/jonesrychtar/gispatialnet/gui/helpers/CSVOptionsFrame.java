@@ -12,9 +12,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
+//import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
+//import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
@@ -28,6 +28,10 @@ import javax.swing.event.ChangeListener;
  */
 public class CSVOptionsFrame extends JDialog implements ActionListener,
 		ChangeListener, KeyListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2749991861366815222L;
 	int dsType = 0, matrixType = 0, rows = 24, cols = 4;
 	char separator = ',';
 	boolean isPolar = false;

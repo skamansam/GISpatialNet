@@ -23,7 +23,7 @@ import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
-import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
+//import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
 /**
  *
@@ -51,7 +51,7 @@ public class cli extends userinterface {
     /**
      *
      */
-    public void cli() {
+    public cli() {
         for(int i=0; i<gsn.NumberOfDataSets(); i++)
             gsn.setDebugLevel(i, statusLevel);
     }
@@ -284,10 +284,10 @@ public class cli extends userinterface {
         }
     }
 
-    private void getCSVParams(){
+/*    private void getCSVParams(){
     	
     }
-    
+*/    
     private void SaveMenu() {
         int matrix=0;
         int option = getMenu(
@@ -640,7 +640,7 @@ public class cli extends userinterface {
                 break;
             }
             case 2:{
-                DataSet temp;
+                //DataSet temp;
                 while(gsn.NumberOfDataSets() > 1){
                     SimpleMerge sdm = new SimpleMerge(gsn.getData(0), gsn.getData(1));
                     DataSet temp2 = sdm.Merge();

@@ -7,8 +7,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+//import javax.swing.JMenuItem;
+//import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel;
@@ -18,6 +18,10 @@ import us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel;
  *
  */
 public class GSNToolBar extends JToolBar implements MouseListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3751834491825837993L;
 	JButton exitBtn,openBtn, saveBtn;
 	GSNPanel thePanel;
 	GSNStatusBarInterface theStatus;

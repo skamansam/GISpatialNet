@@ -3,35 +3,39 @@
  */
 package us.jonesrychtar.gispatialnet.gui.GSNPanel;
 
-import java.awt.Color;
-import java.awt.Dimension;
+//import java.awt.Color;
+//import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowEvent;
+//import java.awt.event.ComponentEvent;
+//import java.awt.event.ComponentListener;
+//import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.swing.BorderFactory;
+//import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.filechooser.FileFilter;
+//import javax.swing.filechooser.FileFilter;
 
-import us.jonesrychtar.gispatialnet.GISpatialNet;
+//import us.jonesrychtar.gispatialnet.GISpatialNet;
 import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.gui.GSNFileFilter;
 import us.jonesrychtar.gispatialnet.gui.GSNStatusBarInterface;
-import us.jonesrychtar.gispatialnet.gui.GUIutil;
+//import us.jonesrychtar.gispatialnet.gui.GUIutil;
 
 /**
  * @author sam
  *
  */
 public class GSNPanel extends JPanel implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6627866729098304231L;
 	private boolean isTainted = false;
 	private DataLister theList=new DataLister();
 	private DataDisplayPanel theDisplay = new DataDisplayPanel();

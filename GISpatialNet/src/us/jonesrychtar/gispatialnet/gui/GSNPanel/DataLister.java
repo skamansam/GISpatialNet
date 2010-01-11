@@ -7,16 +7,16 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
+//import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+//import javax.swing.tree.TreeModel;
+//import javax.swing.tree.TreeNode;
+//import javax.swing.tree.TreePath;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
@@ -41,6 +41,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	static DefaultTreeModel tm = new DefaultTreeModel(topNode);
 	DataDisplayPanel display;
 	private class DSMTreeNode extends DefaultMutableTreeNode{
+		private static final long serialVersionUID = 3813976506231344444L;
 		private int dsIdx = -1;
 		private String theTitle = "[No Label]";
 		private DataSet ds=null;
