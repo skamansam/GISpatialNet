@@ -28,17 +28,17 @@ import us.jonesrychtar.gispatialnet.DataSet;
 public class CSVFileReader extends TextFileReader{
 	private Vector<DataSet> theData; 	//for DataSets 
 //	private Vector<Matrix> theMatrices; //for Matrices
-	private boolean includeEgo=false;	//are we working with Egos?
+	//private boolean includeEgo=false;	//are we working with Egos?
 	CSVReader matrixReader;				//the csv reader
 	private String filename="";
 	
     //formatting for file
     private String seperatorChar=",";
-    private char quoteChar='\"';
-    private String commentChars="#";
-    private boolean hideComments = true;
-    private boolean trimQuoted=true;
-    private boolean allowMultiLineFields = false;
+    //private char quoteChar='\"';
+    //private String commentChars="#";
+    //private boolean hideComments = true;
+    //private boolean trimQuoted=true;
+    //private boolean allowMultiLineFields = false;
 
     /**
      *
@@ -115,13 +115,13 @@ public class CSVFileReader extends TextFileReader{
 	 * @throws IOException 
 	 */
 	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) throws IOException {
-		Matrix m = this.getFileAsMatrix(new File(this.filename));
-		Vector<Matrix> thisMatrix  = this.SplitMatrixAtNaN(m);
+		//Matrix m = this.getFileAsMatrix(new File(this.filename));
+		//Vector<Matrix> thisMatrix  = this.SplitMatrixAtNaN(m);
 		Vector<DataSet> ret = new Vector<DataSet>();
 		
 		Vector<DataSet> v = new Vector<DataSet>();
 		for (int i=0;i<v.size();i++){
-			DataSet ds = new DataSet();
+			//DataSet ds = new DataSet();
 			//ds.addXY(x, y);
 			//ret.add();
 		}
@@ -135,7 +135,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @param numRows
 	 * @return
 	 */
-	private Matrix getNextDataSet(CSVReader reader,String[] headers,int numRows){
+/*	private Matrix getNextDataSet(CSVReader reader,String[] headers,int numRows){
 		Matrix theData=MatrixFactory.emptyMatrix();
 		
 		for (int row=0;row<numRows;row++){ // get the next row until a blank line is found
@@ -156,7 +156,7 @@ public class CSVFileReader extends TextFileReader{
 		return theData;
 		
 	}
-	
+*/	
 	/**
 	 * @param m
 	 * @return

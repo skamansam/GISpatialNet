@@ -18,6 +18,10 @@ import org.ujmp.gui.panels.MatrixEditorPanel;
  *
  */
 public class DataDisplayPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7223760456685131311L;
 	GraphPanel theGraph = new GraphPanel(MatrixFactory.emptyMatrix());
 	MatrixEditorPanel theEditor = new MatrixEditorPanel(new MatrixGUIObject(MatrixFactory.emptyMatrix()));
 	JTabbedPane tabs = new JTabbedPane();

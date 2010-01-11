@@ -92,7 +92,7 @@ public class TEST {
      */
     public void printData(){
         System.out.println("  "+x.getColumnLabel(0)+"  "+y.getColumnLabel(0));
-        System.out.println(u.combine(x, y));
+        System.out.println(util.combine(x, y));
         System.out.println(a);
     }
 
@@ -135,7 +135,8 @@ public class TEST {
         Matrix xy = x.appendHorizontally(y);
         System.out.println(xy);
 
-        MatrixConversion mc = new MatrixConversion();
+        new MatrixConversion();
+        //MatrixConversion mc = new MatrixConversion();
         //mc.Reflection(xy, mc.XAXIS);
         //mc.Reflection(xy, mc.YAXIS);
         //mc.RotateClockwise(xy, 90);
@@ -151,7 +152,8 @@ public class TEST {
     public void testUnknownShapeFile(){
         //works
         //Dimension needs to have large numbers (about 10xNumber of rows)
-        convertUnknown cu = new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
+        //convertUnknown cu = new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
+        new convertUnknown("unE","unN",a, 0, new Dimension(100,100));
     }
     /**
      *
@@ -159,7 +161,8 @@ public class TEST {
     public void testQAP(){
         //works
         try {
-              QAP q = new QAP(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
+              //QAP q = new QAP(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
+            new QAP(3, new String[]{"-s", "assoc.txt", "gond.txt", "10000"});
         } catch (CannotProceedException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
@@ -191,7 +194,8 @@ public class TEST {
         try {
             //Works
             //tests shapefileEdgeWriter, ChapefileNodeWriter, ShapefileWriter, and convertKnown
-            convertKnown ck = new convertKnown("outE", "outN", x, y, a);
+            //convertKnown ck = new convertKnown("outE", "outN", x, y, a);
+            new convertKnown("outE", "outN", x, y, a);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
@@ -207,7 +211,7 @@ public class TEST {
      */
     public void TestXLSwriter(){
         //Works!
-            ExcelWriter ew = new ExcelWriter(u.combine(x,y),"nodes.xls");
+            ExcelWriter ew = new ExcelWriter(util.combine(x,y),"nodes.xls");
             ExcelWriter eew = new ExcelWriter(a, "edges.xls");
         try {
             ew.WriteFile();
@@ -227,7 +231,7 @@ public class TEST {
         attb = td.ZeroMatrix(10, 2);
         //System.out.println(u.combine(x, y));
         //System.out.println(attb);
-        KMLwriter kmlw = new KMLwriter(u.combine(u.combine(x, y),attb),"test.kml");
+        KMLwriter kmlw = new KMLwriter(util.combine(util.combine(x, y),attb),"test.kml");
         try {
             kmlw.WriteFile();
         } catch (KmlException ex) {
@@ -241,7 +245,7 @@ public class TEST {
      */
     public void TestCSVwriter(){
         //works
-        CSVwriter csvw = new CSVwriter(u.combine(x, y),"test");
+        CSVwriter csvw = new CSVwriter(util.combine(x, y),"test");
         try {
             csvw.setSeperator(' ');
             csvw.WriteFile();
@@ -268,7 +272,7 @@ public class TEST {
      */
     public void TestPajekWriter(){
         //works
-        PajekWriter pw = new PajekWriter(u.addNumberCol(u.combine(x,y)),a,"Test");
+        PajekWriter pw = new PajekWriter(util.addNumberCol(util.combine(x,y)),a,"Test");
         try {
             pw.WriteFile();
         } catch (FileNotFoundException ex) {
@@ -309,7 +313,7 @@ public class TEST {
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
-        u.stripNumCol(temp.elementAt(0));
+        util.stripNumCol(temp.elementAt(0));
 
        System.out.println(temp.elementAt(0));
 
@@ -384,7 +388,8 @@ public class TEST {
      *
      */
     public void testCSVreader(){
-        CSVFileReader cr = new CSVFileReader("test.csv");
+        //CSVFileReader cr = new CSVFileReader("test.csv");
+        new CSVFileReader("test.csv");
         Vector<Matrix> temp = null;
         /*try {
         temp = cr.Read(0, 11, 2);

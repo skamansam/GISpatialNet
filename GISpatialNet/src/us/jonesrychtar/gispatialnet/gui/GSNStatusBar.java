@@ -6,10 +6,14 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
+//import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 public class GSNStatusBar extends JPanel implements GSNStatusBarInterface{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -220976292251375812L;
 	private Vector<String> text;
 	private JLabel theLabel=new JLabel("GSNSpatialnet");
 	private int displayTime = 3000;
@@ -46,7 +50,7 @@ public class GSNStatusBar extends JPanel implements GSNStatusBarInterface{
 	 */
 	public String getStatus() {return text.get(text.size()-1);}
 	
-	private void pop(){text.remove(text.size()-1);}
-	private void push(String s){text.add(s);}
+	//private void pop(){text.remove(text.size()-1);}
+	//private void push(String s){text.add(s);}
 
 }
