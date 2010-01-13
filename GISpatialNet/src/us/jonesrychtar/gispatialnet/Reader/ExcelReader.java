@@ -13,6 +13,8 @@ import java.util.Vector;
 import jxl.Workbook;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
+import us.jonesrychtar.gispatialnet.util;
+import us.jonesrychtar.gispatialnet.Enums.*;
 
 /**
  *
@@ -39,7 +41,7 @@ public class ExcelReader {
      * @return vector of matrix containing read data
      * @throws java.lang.Exception
      */
-    public Vector<Matrix> read(int MatrixFormat, int rows, int c) throws Exception {
+    public Vector<Matrix> read(MatrixInputType itype, int rows, int c) throws Exception {
 
         Workbook w1 = Workbook.getWorkbook(in);
         Vector<Matrix> out = new Vector<Matrix>();
@@ -50,8 +52,8 @@ public class ExcelReader {
         for (int s = 1; s <= w1.getNumberOfSheets(); s++) {
             Matrix temp = MatrixFactory.zeros(rows, c);
             //boolean quit = false;
-            switch (MatrixFormat) {
-                case 0: { //full
+            switch (itype) {
+                case FULL: { //full
                     //i is row j is col
                     for (int i = 1; i <= rows; i++) {
                         for (int j = 0; j < c && j <= 256; j++) { //Max 256 col
@@ -80,7 +82,7 @@ public class ExcelReader {
                     }
                     break;
                 }
-                case 1: { //lower
+                case LOWER: { //lower
                     for (int i = 1; i <= rows; i++) {
                         for (int j = 0; j < i - 1 && j <= 256; j++) { //Max 256 col
                             //calculate col (A - IV)
@@ -107,7 +109,7 @@ public class ExcelReader {
                     temp = ReaderUtil.LowerToFull(temp);
                     break;
                 }
-                case 2: { //upper
+                case UPPER: { //upper
                     for (int i = 1; i <= rows; i++) {
                         for (int j = i - 1; j < c && j <= 256; j++) { //Max 256 col
                             //calculate col (A - IV)

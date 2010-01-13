@@ -14,6 +14,7 @@ import java.util.Vector;
 import org.ujmp.core.Matrix;
 import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.util;
+import us.jonesrychtar.gispatialnet.Enums.*;
 
 /**
  *
@@ -135,30 +136,30 @@ public class Reader {
      * @return vector of datasets containing data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadExcel(String filename, int Matrix, int MatrixType, int row, int col) throws Exception{
+    public static Vector<DataSet> loadExcel(String filename, MatrixType type, MatrixInputType itype, int row, int col) throws Exception{
         ExcelReader er = new ExcelReader(filename);
-        Vector<Matrix> out = er.read(Matrix, row, col);
+        Vector<Matrix> out = er.read(itype, row, col);
         Vector<DataSet> ds = new Vector<DataSet>();
         for(int m=0; m<out.size(); m++){
             DataSet dstemp = new DataSet();
             Matrix temp = out.elementAt(m);
-            switch (Matrix) {
-                case 0: { //xy attb
+            switch (type) {
+                case COORD_ATT: { //xy attb
                     Matrix[] t2 = util.SplitXYAttb(temp);
                     dstemp.setX(t2[0]);
                     dstemp.setY(t2[1]);
                     dstemp.setAttributeMatrix(t2[2]);
                     break;
                 }
-                case 1: { //adj
+                case ADJACENCY: { //adj
                     dstemp.setAdj(temp);
                     break;
                 }
-                case 2: { //xy
+                case COORDINATE: { //xy
                     dstemp.setXY(temp);
                     break;
                 }
-                case 3: { //attb
+                case ATTRIBUTE: { //attb
                     dstemp.setAttb(temp);
                     break;
                 }
@@ -184,6 +185,10 @@ public class Reader {
     public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
+        Vector<DataSet> DSOut = csvr.readFullMatrix(MatrixType,rows, col);
+        return DSOut;
+    }
+/*
         Vector<Matrix> out = csvr.ReadAsMatrices(MatrixType, rows, col);
         Vector<DataSet> ds = new Vector<DataSet>();
         for(int m=0; m<out.size(); m++){
@@ -217,5 +222,5 @@ public class Reader {
             ds.elementAt(i).addFile(filename);
         return ds;
     }
-   
+*/
 }

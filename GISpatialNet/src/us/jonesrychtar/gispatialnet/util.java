@@ -22,7 +22,8 @@ import org.ujmp.core.calculation.Calculation;
  * @version 0.0.1
  */
 public class util {
-        
+	
+    
     //Matrix conversion functions-------------------------------------------------------------------------
     /**
      * Translates the stored xy to a new xy

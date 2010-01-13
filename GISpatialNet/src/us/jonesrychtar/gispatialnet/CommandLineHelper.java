@@ -18,6 +18,7 @@ import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.DLwriter;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
+import us.jonesrychtar.gispatialnet.Enums.*;
 
 /**
  *
@@ -206,7 +207,7 @@ public class CommandLineHelper {
                             gsn.add(ds.elementAt(k));
                         break;
                     case 'E':
-                        ds = Reader.loadExcel(indir+inFiles[j], Matrix, Matrix_Format, row, col);
+                        ds = Reader.loadExcel(indir+inFiles[j], MatrixType.fromInt(Matrix), MatrixInputType.fromInt(Matrix_Format), row, col);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;
