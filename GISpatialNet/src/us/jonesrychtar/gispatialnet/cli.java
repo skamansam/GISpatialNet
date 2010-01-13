@@ -23,6 +23,8 @@ import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Algorithm.SimpleMerge;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
+import us.jonesrychtar.gispatialnet.Enums.*;
+
 //import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
 /**
@@ -265,7 +267,7 @@ public class cli extends userinterface {
                 }
                 case 2: { //excel
                     try {
-                        Vector<DataSet> vds = Reader.loadExcel(fn, option, format, rows, cols);
+                        Vector<DataSet> vds = Reader.loadExcel(fn, MatrixType.fromInt(option), MatrixInputType.fromInt(format), rows, cols);
                         for (int i = 0; i < vds.size(); i++) {
                             if (dataType == 2) {
                                 vds.elementAt(i).PolarToXY();

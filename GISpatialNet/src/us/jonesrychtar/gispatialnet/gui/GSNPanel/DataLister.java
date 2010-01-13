@@ -3,11 +3,15 @@
  */
 package us.jonesrychtar.gispatialnet.gui.GSNPanel;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -25,6 +29,8 @@ import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.GISpatialNet;
 import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
+import us.jonesrychtar.gispatialnet.Enums.MatrixInputType;
+import us.jonesrychtar.gispatialnet.Enums.MatrixType;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.gui.helpers.CSVOptionsFrame;
 
@@ -76,24 +82,6 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	public void setGSN(GISpatialNet gsn) {
 		this.gsn = gsn;
 	}
-	public void addCSV(String theFile){
-		Reader reader = new Reader();
-		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
-        try {
-            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSeparator());
-
-            for (int i = 0; i < vds.size(); i++) {
-                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
-                gsn.getDataSets().add(vds.elementAt(i));
-            }
-            reloadData();
-        } catch (Exception ex) {
-            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        reloadData();
-
-	}
-	
 	private void reloadData(){
 		System.out.println(""+gsn.getDataSets().size()+" datasets are loaded!");
 		//TreeModel tm = this.getModel();
@@ -120,9 +108,37 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		
 	}
 	
+	public void addCSV(String theFile){
+		Reader reader = new Reader();
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+        try {
+            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSeparator());
+
+            for (int i = 0; i < vds.size(); i++) {
+                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
+                gsn.getDataSets().add(vds.elementAt(i));
+            }
+            reloadData();
+        } catch (Exception ex) {
+            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        reloadData();
+
+	}
+	
 	public void addExcel(String theFile) {
-		// TODO Auto-generated method stub
-		
+		Reader reader = new Reader();
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+        try {
+            Vector<DataSet> vds = Reader.loadExcel(theFile, MatrixType.fromInt(f.getDataSetTypeAsInt()), MatrixInputType.fromInt(f.getMatrixTypeAsInt()), f.getColumnsAsInt(), f.getSeparator());
+            for (int i = 0; i < vds.size(); i++) {
+                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
+                gsn.getDataSets().add(vds.elementAt(i));
+            }
+            reloadData();
+        } catch (Exception ex) {
+            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+        }
 	}
 
 	public void addUCINet(String theFile) {
@@ -136,8 +152,21 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	}
 
 	public void addShapefile(String theFile) {
-		// TODO Auto-generated method stub
-		
+		JFileChooser dlg=new JFileChooser();
+		dlg.setCurrentDirectory(new File("."));
+		if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+		String edgeFile = dlg.getSelectedFile().getAbsolutePath();
+		System.err.println("Opening "+theFile);
+
+		try {
+            DataSet ds = Reader.loadShapefile(theFile, edgeFile);
+            gsn.getDataSets().add(ds);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println("File not found.");
+            ex.getMessage();
+        }
 	}
 
 	@Override

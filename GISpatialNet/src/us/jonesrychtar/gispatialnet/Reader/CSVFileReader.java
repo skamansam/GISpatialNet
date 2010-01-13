@@ -114,7 +114,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(CSVReader reader,int rows, int cols) throws IOException {
+	public Vector<DataSet> readFullMatrix(int MatrixType,int rows, int cols) throws IOException {
 		//Matrix m = this.getFileAsMatrix(new File(this.filename));
 		//Vector<Matrix> thisMatrix  = this.SplitMatrixAtNaN(m);
 		Vector<DataSet> ret = new Vector<DataSet>();
