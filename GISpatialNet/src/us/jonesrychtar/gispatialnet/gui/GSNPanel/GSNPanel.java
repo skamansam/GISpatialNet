@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 //import java.awt.event.ComponentListener;
 //import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.prefs.Preferences;
 
 //import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -42,6 +43,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 	GSNStatusBarInterface theStatus;
 	JScrollPane leftPane,rightPane;
 	JSplitPane thePane;
+	Preferences prefs = Preferences.userRoot();
 	//GISpatialNet gsn = new GISpatialNet();
 
 	public GSNPanel(){
@@ -54,6 +56,9 @@ public class GSNPanel extends JPanel implements ActionListener{
 		//theDisplay.setGSN(gsn);
 		this.add(thePane);
 	}
+	
+	public Preferences getPrefs(){return this.prefs;}
+	public void setPrefs(Preferences p){this.prefs = p;}
 	
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action on GSNPanel: "+e.getActionCommand());
@@ -132,8 +137,11 @@ public class GSNPanel extends JPanel implements ActionListener{
 	}
 
 	private void handleSave() {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(this, "Save has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+	}
+
+	public void saveAllData(){
+		JOptionPane.showMessageDialog(this, "Saving All has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	//when open is called.
@@ -143,9 +151,9 @@ public class GSNPanel extends JPanel implements ActionListener{
 		dlg.setFileFilter(new GSNFileFilter(""));
 		dlg.setMultiSelectionEnabled(true);
 		String theFile="";
-		dlg.setCurrentDirectory(new File("."));
+		dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
 		if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-
+		prefs.put("LAST_OPEN_DIR", dlg.getSelectedFile().getAbsolutePath());
 		theFile = dlg.getSelectedFile().getAbsolutePath();
 		System.err.println("Opening "+theFile);
 
@@ -176,8 +184,6 @@ public class GSNPanel extends JPanel implements ActionListener{
 		}
 	}
 
-	public void saveAllData(){
-	}
 
 	public void handleClose() {
 		System.err.println("GSNPanel.handleClose()");
@@ -189,6 +195,8 @@ public class GSNPanel extends JPanel implements ActionListener{
 		}
 		
 	}
+
+	
 	public void setStatusBar(GSNStatusBarInterface sb){this.theStatus=sb;}
 
 }
