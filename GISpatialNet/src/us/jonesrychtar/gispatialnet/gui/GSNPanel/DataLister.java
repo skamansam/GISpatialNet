@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 //import javax.swing.JFrame;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -31,6 +32,7 @@ import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Enums.MatrixInputType;
 import us.jonesrychtar.gispatialnet.Enums.MatrixType;
+import us.jonesrychtar.gispatialnet.Reader.DLreader;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.gui.helpers.CSVOptionsFrame;
 
@@ -142,12 +144,38 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	}
 
 	public void addUCINet(String theFile) {
-		// TODO Auto-generated method stub
-		
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+        Vector<DataSet> vds=null;
+        try {
+            vds = Reader.loadDL(theFile, f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt());
+            for (int i = 0; i < vds.size(); i++) {
+                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
+                gsn.getDataSets().add(vds.elementAt(i));
+            }
+            reloadData();
+        } catch (Exception ex) {
+        	JOptionPane.showMessageDialog(this, ex);
+            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        System.err.println("Imported "+vds.size()+" Data Sets.");
+
 	}
 
 	public void addPajek(String theFile) {
-		// TODO Auto-generated method stub
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+        Vector<DataSet> vds=null;
+        try {
+            vds = Reader.loadPajek(theFile, f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt());
+            for (int i = 0; i < vds.size(); i++) {
+                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
+                gsn.getDataSets().add(vds.elementAt(i));
+            }
+            reloadData();
+        } catch (Exception ex) {
+        	JOptionPane.showMessageDialog(this, ex);
+            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.err.println("Imported "+vds.size()+" Data Sets.");
 		
 	}
 
@@ -156,7 +184,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		dlg.setCurrentDirectory(new File("."));
 		if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
 		String edgeFile = dlg.getSelectedFile().getAbsolutePath();
-		System.err.println("Opening "+theFile);
+		System.out.println("Opening "+theFile);
 
 		try {
             DataSet ds = Reader.loadShapefile(theFile, edgeFile);
@@ -174,6 +202,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		if(this.getLastSelectedPathComponent()==null) return;
 		DSMTreeNode dt = (DSMTreeNode) this.getLastSelectedPathComponent();
 		if(dt.hasDataSet()){
+			System.out.println("Selection has a DataSet.");
 			displayData(display,util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb()))));
 		}else{
 			displayData(display,dt.getMatrix());

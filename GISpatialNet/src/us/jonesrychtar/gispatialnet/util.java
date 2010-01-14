@@ -100,7 +100,12 @@ public class util {
      * @throws java.lang.IllegalArgumentException
      */
     public static Matrix combine(Matrix a, Matrix b) throws IllegalArgumentException{
-        if(a.getRowCount() == b.getRowCount() || a.isEmpty() || b.isEmpty()){
+    	if (!a.isEmpty() && b.isEmpty())
+        	return MatrixFactory.copyFromMatrix(a);
+    	if (!b.isEmpty() && a.isEmpty())
+        	return MatrixFactory.copyFromMatrix(b);
+    	
+    	if(a.getRowCount() == b.getRowCount()){
            Matrix temp = a.appendHorizontally(b);
            //set headers
            int col=0;
