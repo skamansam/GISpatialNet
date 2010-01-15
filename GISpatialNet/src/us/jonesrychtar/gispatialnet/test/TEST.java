@@ -360,7 +360,7 @@ public class TEST {
         PajekReader pr = new PajekReader("Test.net");
         Vector<DataSet> ds= new Vector<DataSet>();
         try {
-            ds = pr.Read(0, 10, 10);
+            ds = pr.Read(MatrixInputType.fromInt(0), 10, 10);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }

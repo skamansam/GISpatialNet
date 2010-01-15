@@ -48,6 +48,8 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	static DefaultMutableTreeNode topNode = new DefaultMutableTreeNode("DataSets Loaded:");
 	static DefaultTreeModel tm = new DefaultTreeModel(topNode);
 	DataDisplayPanel display;
+	Matrix selectedMatrix = MatrixFactory.emptyMatrix();
+	
 	private class DSMTreeNode extends DefaultMutableTreeNode{
 		private static final long serialVersionUID = 3813976506231344444L;
 		private int dsIdx = -1;
@@ -80,7 +82,11 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	public GISpatialNet getGSN() {
 		return gsn;
 	}
-
+	
+	public Matrix getSelectedMatrix(){
+		return this.selectedMatrix;
+	}
+	
 	public void setGSN(GISpatialNet gsn) {
 		this.gsn = gsn;
 	}
@@ -92,6 +98,8 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		while(topNode.getChildCount()!=0){
 			tm.removeNodeFromParent((MutableTreeNode) topNode.getChildAt(0));
 		}
+		
+		if (gsn.getDataSets().size()<1) return;
 		
 		for(DataSet ds : gsn.getDataSets()){
 			DSMTreeNode next = new DSMTreeNode(ds.GetLoadedFiles().elementAt(0),ds);
@@ -201,11 +209,14 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	public void valueChanged(TreeSelectionEvent e) {
 		if(this.getLastSelectedPathComponent()==null) return;
 		DSMTreeNode dt = (DSMTreeNode) this.getLastSelectedPathComponent();
+
 		if(dt.hasDataSet()){
 			System.out.println("Selection has a DataSet.");
-			displayData(display,util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb()))));
+			this.selectedMatrix = util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb())));
+			displayData(display,this.selectedMatrix);
 		}else{
-			displayData(display,dt.getMatrix());
+			this.selectedMatrix = dt.getMatrix();
+			displayData(display,this.selectedMatrix);
 		}
 	}
 	private void displayData(DataDisplayPanel dsp,Matrix m){

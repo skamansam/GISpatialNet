@@ -195,7 +195,6 @@ public class util {
     }
     
     public String determineFileType(String f){
-    	
-    	return null;
+    	return determineFileType(new File(f));
     }
 }

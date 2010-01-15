@@ -10,6 +10,7 @@ package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
 //import java.io.FileNotFoundException;
+import us.jonesrychtar.gispatialnet.Enums.*;
 
 import java.util.Vector;
 //import org.ujmp.core.Matrix;
@@ -76,6 +77,6 @@ public abstract class TextFileReader {
      * @return Vector of data sets
      * @throws java.lang.Exception
      */
-    public abstract Vector<DataSet> Read(int type, int rows, int col) throws Exception;
+    public abstract Vector<DataSet> Read(MatrixInputType mit, int rows, int col) throws Exception;
 
 }

@@ -20,6 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+
+import org.ujmp.core.Matrix;
 //import javax.swing.filechooser.FileFilter;
 
 //import us.jonesrychtar.gispatialnet.GISpatialNet;
@@ -43,14 +45,16 @@ public class GSNPanel extends JPanel implements ActionListener{
 	GSNStatusBarInterface theStatus;
 	JScrollPane leftPane,rightPane;
 	JSplitPane thePane;
-	Preferences prefs = Preferences.userRoot();
+	Preferences prefs;
 	//GISpatialNet gsn = new GISpatialNet();
 
 	public GSNPanel(){
+		prefs = Preferences.userNodeForPackage(this.getClass());
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		leftPane = new JScrollPane(theList);
 		rightPane = new JScrollPane(theDisplay);
 		thePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,leftPane,rightPane);
+		thePane.setDividerLocation(200);
 		theList.setDisplayPanel(theDisplay);
 		//theList.setGSN(gsn);
 		//theDisplay.setGSN(gsn);
@@ -107,7 +111,12 @@ public class GSNPanel extends JPanel implements ActionListener{
 	}
 
 	private void handleOpenWith(String progName) {
-		JOptionPane.showMessageDialog(this, "Sorry!\nOpening in "+progName+" is not implemented yet!", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+		//TODO: Make this work!
+		if(!prefs.get("OPEN_"+progName, "").equals("")){
+			//Matrix m=theList.getSelectedMatrix();
+		}else{
+			JOptionPane.showMessageDialog(this, "Sorry!\nOpening in "+progName+" is not implemented yet!", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void handleData(String manipulation) {
