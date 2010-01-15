@@ -602,4 +602,50 @@ public class DataSet {
      * @param s Set of labels to use
      */
     public void setAttbHeaders(String[] s){_setMatrixHeaders(attb,s);}
+
+	public void addHeuristic(Matrix theMatrix) {
+		Matrix m = MatrixFactory.copyFromMatrix(theMatrix);
+		
+		int egolbl=-1, idlbl=-1, xlbl=-1,ylbl=-1;
+		
+		for(int i=0;i<m.getColumnCount();i++)
+			System.out.print(""+m.getColumnLabel(i)+" ");
+		System.out.print("\n");
+		
+	//	Array<int> extra=null;
+		for(int i=0;i<m.getColumnCount();i++){
+			String lbl = m.getColumnLabel(i).toLowerCase();
+			
+			//get first ego column
+			if(lbl.contains("ego") && egolbl==-1)
+				egolbl=i;
+			
+			//get first x and y columns with labels that have 'dist' or 'coo' in them
+			if( lbl.contains("coo") || lbl.contains("dist") ){
+				if((lbl.startsWith("x") || lbl.endsWith("x") ) && xlbl==-1)
+					xlbl=i;
+				if((lbl.startsWith("y") || lbl.endsWith("y") ) && ylbl==-1)
+					ylbl=i;
+			}
+		}
+		
+		System.out.println("  Ego: "+egolbl+"  X: "+xlbl+"  Y: "+ylbl);
+		if(xlbl!=-1){
+			this.setX(m.selectColumns(Calculation.Ret.NEW, xlbl).toDoubleMatrix());
+			m = m.deleteColumns(Calculation.Ret.NEW,xlbl);
+			ylbl--;
+		}
+		if(ylbl!=-1){
+			this.setY(m.selectColumns(Calculation.Ret.NEW, ylbl).toDoubleMatrix());
+			m = m.deleteColumns(Calculation.Ret.NEW,ylbl);
+		}
+
+		this.setAttb(m);
+	}
+
+	public static Vector<DataSet> SplitByEgo(Matrix m) {
+		Vector<DataSet> list = null;
+		
+		return list;
+	}	
 }

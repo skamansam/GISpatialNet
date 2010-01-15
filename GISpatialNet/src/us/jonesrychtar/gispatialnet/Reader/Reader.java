@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.util.Vector;
 import org.ujmp.core.Matrix;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.Enums;
 import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Enums.*;
 
@@ -86,7 +87,7 @@ public class Reader {
      */
     public static Vector<DataSet> loadPajek(String filename, int MatrixType, int rows, int cols) throws Exception{
         PajekReader pr = new PajekReader(filename);
-        Vector<DataSet> ds = pr.Read(MatrixType, rows, cols);
+        Vector<DataSet> ds = pr.Read(MatrixInputType.fromInt(MatrixType), rows, cols);
         for(int i=0; i<ds.size(); i++)
             ds.elementAt(i).addFile(filename);
         return ds;
@@ -185,7 +186,7 @@ public class Reader {
     public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
-        Vector<DataSet> DSOut = csvr.readFullMatrix(MatrixType,rows, col);
+        Vector<DataSet> DSOut = csvr.Read(Enums.MatrixInputType.fromInt(MatrixType),rows, col);
         return DSOut;
     }
 /*

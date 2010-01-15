@@ -20,6 +20,7 @@ import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 import com.mindprod.csv.CSVReader;
 import java.util.Vector;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.Enums.*;
 
 /**
  * @author Samuel C. Tyler
@@ -66,21 +67,20 @@ public class CSVFileReader extends TextFileReader{
      */
     @Override
     //TODO: New Output type needs coding
-	public Vector<DataSet> Read(int type, int rows, int cols)
+	public Vector<DataSet> Read(MatrixInputType type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 //		matrixReader = new CSVReader(new FileReader(this.getFile()),
 //				seperatorChar[0], quoteChar, commentChars, hideComments, trimQuoted, allowMultiLineFields);
 		//return readFullMatrix(matrixReader,rows,cols);
 		switch(type){
-		case TextFileReader.FULL_MATRIX:
-			//readFullMatrix(filename,rows,cols);
+		case FULL:
+			return readFullMatrix(type,rows,cols);
+		case LOWER:
+			//return readLower(matrixReader,rows,cols);
 			break;
-		case TextFileReader.LOWER_MATRIX:
-			//readUpperMatrix(matrixReader,rows,cols);
-			break;
-		case TextFileReader.UPPER_MATRIX:
-			//readUpperMatrix(matrixReader,rows,cols);
+		case UPPER:
+			//return readUpper(matrixReader,rows,cols);
 			break;
 		default:	
 		
@@ -114,19 +114,60 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(int MatrixType,int rows, int cols) throws IOException {
-		//Matrix m = this.getFileAsMatrix(new File(this.filename));
-		//Vector<Matrix> thisMatrix  = this.SplitMatrixAtNaN(m);
+	public Vector<DataSet> readFullMatrix(MatrixInputType type,int rows, int cols) throws IOException {
+		Matrix m = this.getFileAsMatrix(new File(this.filename));
+		//Vector<Matrix> ml  = this.ReadAsMatrices(type, rows, cols);
 		Vector<DataSet> ret = new Vector<DataSet>();
 		
-		Vector<DataSet> v = new Vector<DataSet>();
-		for (int i=0;i<v.size();i++){
-			//DataSet ds = new DataSet();
-			//ds.addXY(x, y);
-			//ret.add();
-		}
+		DataSet ds = new DataSet();
+		ds.addFile(new File(this.filename).getName());
+		ds.addHeuristic(m);
+		ret.add(ds);
+
+		/*for (int i=0;i<ml.size();i++){
+			DataSet ds = new DataSet();
+			ds.addFile(this.filename);
+			ds.addHeuristic(ml.elementAt(i));
+			ret.add(ds);
+		}*/
+		
+		System.out.println(""+ret.size()+" sets found!");
 		
 		return ret;//theMatrices;
+	}
+
+	public Vector<Matrix> ReadAsMatrices(MatrixInputType type, int rows, int cols) {
+		Vector<Matrix> ret = new Vector<Matrix>();			//The return value
+		Matrix theMatrix = MatrixFactory.emptyMatrix();		//the file as a Matrix
+
+		//read in Matrix from CSV file
+		try {
+			theMatrix = this.getFileAsMatrix(this.file);
+		} catch (IOException e) {
+			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
+		}
+		
+		System.out.println("Matrix has "+theMatrix.getRowCount()+" rows and "+theMatrix.getColumnCount()+" columns.");
+		
+		//parse rows, cols
+		int curTotalRow=0;								//keep track of total rows seen
+		while(curTotalRow<theMatrix.getRowCount()){		//loop over entire Matrix
+			Matrix m = MatrixFactory.emptyMatrix();  //create empty matrix, dim'd to (rows, cols)
+			for(int row=0;row<rows && curTotalRow<theMatrix.getRowCount();row++){							//split by rows parameter
+				//System.out.println("NEW MATRIX:");
+				for(int col=0;col<cols && col<theMatrix.getColumnCount();col++){			//set each column
+					//System.out.print("( "+row+" , "+col+" ) = ");
+					Double cVal=theMatrix.getAsDouble(curTotalRow,col);
+					//System.out.print(""+cVal+"\n");
+					m.setAsDouble(cVal, row,col);
+				}
+				curTotalRow++;
+			}
+			m.setLabel(this.file.getName());
+			ret.add(m);
+		}
+		
+		return ret;
 	}
 
 	/**
@@ -161,7 +202,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @param m
 	 * @return
 	 */
-	public Vector<Matrix> SplitMatrixAtNaN(Matrix m){
+	public static Vector<Matrix> SplitMatrixAtNaN(Matrix m){
 		Vector<Matrix> ret = new Vector<Matrix>(0);
 		Vector<Integer> ranges = new Vector<Integer>(0);
 		
@@ -204,76 +245,51 @@ public class CSVFileReader extends TextFileReader{
 	public Matrix getFileAsMatrix(File f) throws IOException{
 		
 
-		Matrix mFromFile = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
-		Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount(),mFromFile.getColumnCount());
+		Matrix m = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
+		//Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount(),mFromFile.getColumnCount());
 		int egoCol=-1;
 
 		//set header labels
-		for (int i=0;i<mFromFile.getColumnCount();i++){
-			String label=mFromFile.getAsString(0,i);
-			mNew.setColumnLabel(i, label);
+		for (int i=0;i<m.getColumnCount();i++){
+			String label=m.getAsString(0,i);
+			m.setColumnLabel(i, label);
 			if(label.toLowerCase().contains("ego") && egoCol==-1)
 				egoCol=i;
 		}
 		
+		//delete header row
+		m.deleteColumns(Calculation.Ret.NEW, 0);
+		
 		//set row labels to the EgoID, else, use first column
 		if(egoCol!=-1){
-			for (int row=0;row<mFromFile.getRowCount();row++){
-				mNew.setRowLabel(row, mFromFile.getAsString(row,egoCol));
+			for (int row=0;row<m.getRowCount();row++){
+				m.setRowLabel(row, m.getAsString(row,egoCol));
 			}
 		}else{
-			for (int row=0;row<mFromFile.getRowCount();row++){
-				mNew.setRowLabel(row, mFromFile.getAsString(row,0));
+			for (int row=0;row<m.getRowCount();row++){
+				m.setRowLabel(row, m.getAsString(row,0));
 			}
 			
 		}
-		mNew.showGUI();
+		
+		
+		//m = m.toDoubleMatrix();
+		//mNew.showGUI();
 		//convert Strings to Doubles
-		for (int row=0;row<mFromFile.getRowCount();row++){
-			for (int col=0;col<mFromFile.getColumnCount();col++){
-				System.out.println("Converting: ("+row+","+col+") "+mFromFile.getAsDouble(row,col)+" to Double.");
+/*		for (int row=0;row<m.getRowCount();row++){
+			for (int col=0;col<m.getColumnCount();col++){
+				//System.out.println("Converting: ("+row+","+col+") "+mFromFile.getAsDouble(row,col)+" to Double.");
 				mNew.setAsDouble(mFromFile.getAsDouble(row,col),row, col);
 			}
 		}
+		*/
 
-		return mNew;
-	}
-	public Vector<Matrix> ReadAsMatrices(int matrixType, int rows, int cols) {
-		Vector<Matrix> ret = new Vector<Matrix>();			//The return value
-		Matrix theMatrix = MatrixFactory.emptyMatrix();		//the file as a Matrix
-
-		//read in Matrix from CSV file
-		try {
-			theMatrix = this.getFileAsMatrix(this.file);
-		} catch (IOException e) {
-			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
-		}
-		
-		System.out.println("Matrix has "+theMatrix.getRowCount()+" rows and "+theMatrix.getColumnCount()+" columns.");
-		
-		//parse rows, cols
-		int curTotalRow=0;								//keep track of total rows seen
-		while(curTotalRow<theMatrix.getRowCount()){		//loop over entire Matrix
-			Matrix m = MatrixFactory.dense(rows,cols);  //create empty matrix, dim'd to (rows, cols)
-			for(int row=0;row<rows && curTotalRow<theMatrix.getRowCount();row++){							//split by rows parameter
-				System.out.println("NEW MATRIX:");
-				for(int col=0;col<cols && col<theMatrix.getColumnCount();col++){			//set each column
-					System.out.print("( "+row+" , "+col+" ) = ");
-					Double cVal=theMatrix.getAsDouble(curTotalRow,col);
-					System.out.print(""+cVal+"\n");
-					m.setAsDouble(cVal, row,col);
-				}
-				curTotalRow++;
-			}
-			m.setLabel(this.file.getAbsolutePath());
-			ret.add(m);
-		}
-		
-		return ret;
+		return m;
 	}
 	
-	public DataSet parseMatrix(Matrix m){
+	public static DataSet parseMatrix(Matrix m){
 		DataSet theData=new DataSet();
+		int xcol=-1,ycol=-1,egocol=-1;
 		
 		//loop through column headers
 		for (int i=0;i<m.getColumnCount();i++){
@@ -281,7 +297,9 @@ public class CSVFileReader extends TextFileReader{
 			if(label.contains("ego") || label.contains("Ego")){
 				
 			}else if(label.contains("ego") || label.contains("Ego")){}
-			else if(label.contains("X")){}
+			else if(label.contains("X")){
+				
+			}
 			else if(label.contains("Y")){}
 			else if(label.contains("ego") || label.contains("Ego")){}
 		
@@ -297,7 +315,7 @@ public class CSVFileReader extends TextFileReader{
 		CSVFileReader theReader = new CSVFileReader(args[0]);
 		Matrix n = theReader.getFileAsMatrix(new File(args[0]));
 		
-		Vector<Matrix> t = theReader.SplitMatrixAtNaN(n);
+		Vector<Matrix> t = CSVFileReader.SplitMatrixAtNaN(n);
 		for(int i=0;i<t.size();i++){
 			System.out.println("MATRIX "+i+":");
 			System.out.print(t.elementAt(i).toString());
