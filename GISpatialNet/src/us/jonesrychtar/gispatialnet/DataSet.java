@@ -608,17 +608,8 @@ public class DataSet {
 		
 		int egolbl=-1, idlbl=-1, xlbl=-1,ylbl=-1;
 		
-		for(int i=0;i<m.getColumnCount();i++)
-			System.out.print(""+m.getColumnLabel(i)+" ");
-		System.out.print("\n");
-		
-	//	Array<int> extra=null;
 		for(int i=0;i<m.getColumnCount();i++){
 			String lbl = m.getColumnLabel(i).toLowerCase();
-			
-			//get first ego column
-			if(lbl.contains("ego") && egolbl==-1)
-				egolbl=i;
 			
 			//get first x and y columns with labels that have 'dist' or 'coo' in them
 			if( lbl.contains("coo") || lbl.contains("dist") ){
@@ -627,25 +618,68 @@ public class DataSet {
 				if((lbl.startsWith("y") || lbl.endsWith("y") ) && ylbl==-1)
 					ylbl=i;
 			}
+			//TODO figure out adjacencies
 		}
 		
 		System.out.println("  Ego: "+egolbl+"  X: "+xlbl+"  Y: "+ylbl);
 		if(xlbl!=-1){
-			this.setX(m.selectColumns(Calculation.Ret.NEW, xlbl).toDoubleMatrix());
+			Matrix xm = m.selectColumns(Calculation.Ret.NEW, xlbl).toDoubleMatrix();
+			m.setColumnLabel(0, m.getColumnLabel(xlbl));
+			this.setX(xm);
 			m = m.deleteColumns(Calculation.Ret.NEW,xlbl);
 			ylbl--;
 		}
 		if(ylbl!=-1){
-			this.setY(m.selectColumns(Calculation.Ret.NEW, ylbl).toDoubleMatrix());
+			Matrix ym = m.selectColumns(Calculation.Ret.NEW, ylbl).toDoubleMatrix();
+			m.setColumnLabel(0, m.getColumnLabel(ylbl));
+			this.setY(ym);
 			m = m.deleteColumns(Calculation.Ret.NEW,ylbl);
 		}
 
 		this.setAttb(m);
 	}
 
-	public static Vector<DataSet> SplitByEgo(Matrix m) {
-		Vector<DataSet> list = null;
+	public Vector<DataSet> SplitByEgo(Matrix theMatrix) {
+		Matrix m = MatrixFactory.copyFromMatrix(theMatrix); //don't destroy input matrix
+		Vector<DataSet> dslist = new Vector<DataSet>(); //the list returned
+		Vector<Matrix> mlist = new Vector<Matrix>();	//new matrices
+		int egocol=-1;
 		
-		return list;
+		//get first ego column
+		for(int i=0;i<m.getColumnCount();i++){
+			String lbl = m.getColumnLabel(i).toLowerCase();
+			if(lbl.contains("ego") && egocol==-1){
+				egocol=i;
+				break;
+			}
+		}
+		if(egocol==-1)egocol=0;		//if no ego column found, default to first column 
+		
+		//the first ego name in matrix
+		String curEgo = m.getAsString(0,egocol);
+		while(!m.isEmpty()){		//while matrix is viable
+			System.out.println("Matrix has "+m.getRowCount()+" rows.");
+			Matrix n = m.selectRows(Calculation.Ret.NEW, 0);
+			m = m.deleteRows(Calculation.Ret.NEW, 0);
+			for(int i=1;i<m.getRowCount();i++){		//loop through each row
+				if(curEgo.equals(m.getAsString(i,egocol))){
+					//append row to new matrix
+					n.appendVertically(m.selectRows(Calculation.Ret.NEW, i));
+					//remove row
+					m = m.deleteRows(Calculation.Ret.NEW, i);
+					System.out.println("Removing row "+i+". New size is "+m.getRowCount());
+				}
+			}
+			util.copyColumnLabels(m, n);
+			mlist.add(n);	//add new matrix to list
+		}		
+		for(Matrix thisM : mlist){
+			DataSet n = new DataSet(thisM);
+			n.addFile(this.GetLoadedFiles().elementAt(0));
+			n.addHeuristic(thisM);
+			dslist.add(n);
+		}
+		
+		return dslist;
 	}	
 }
