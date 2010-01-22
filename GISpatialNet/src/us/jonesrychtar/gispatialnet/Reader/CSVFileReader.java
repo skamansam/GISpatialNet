@@ -121,9 +121,9 @@ public class CSVFileReader extends TextFileReader{
 		
 		DataSet ds = new DataSet();
 		ds.addFile(new File(this.filename).getName());
-		ds.addHeuristic(m);
-		ret.add(ds);
-
+		//ds.addHeuristic(m);
+		//ret.add(ds);
+		ret = ds.SplitByEgo(m);
 		/*for (int i=0;i<ml.size();i++){
 			DataSet ds = new DataSet();
 			ds.addFile(this.filename);

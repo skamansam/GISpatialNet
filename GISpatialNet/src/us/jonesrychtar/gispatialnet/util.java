@@ -197,4 +197,22 @@ public class util {
     public String determineFileType(String f){
     	return determineFileType(new File(f));
     }
+    
+    public static void copyColumnLabels(Matrix from, Matrix to){
+    	if(from.getColumnCount()!=to.getColumnCount()){
+    		System.err.println("Matrix columns not equal ("+from.getColumnCount()+" != "+to.getColumnCount()+"). Cannot set column headers.");
+    		return;
+    	}
+    	for(int i=0;i<from.getColumnCount();i++){
+    		to.setColumnLabel(i, from.getColumnLabel(i));
+    	}
+    }
+    public static void addRow(Matrix from, Matrix to,int rowNum){
+    	Matrix m = MatrixFactory.emptyMatrix();
+    	from.selectRows(Calculation.Ret.NEW, 0);
+    	for(int i=0;i<from.getColumnCount();i++){
+    		//to.set(i, from.getColumnLabel(i));
+    	}
+    	to.appendVertically(m);
+    }
 }
