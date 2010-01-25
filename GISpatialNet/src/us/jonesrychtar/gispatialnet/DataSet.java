@@ -621,7 +621,7 @@ public class DataSet {
 			//TODO figure out adjacencies
 		}
 		
-		System.out.println("  Ego: "+egolbl+"  X: "+xlbl+"  Y: "+ylbl);
+		//System.out.println("  Ego: "+egolbl+"  X: "+xlbl+"  Y: "+ylbl);
 		if(xlbl!=-1){
 			Matrix xm = m.selectColumns(Calculation.Ret.NEW, xlbl).toDoubleMatrix();
 			m.setColumnLabel(0, m.getColumnLabel(xlbl));
@@ -639,14 +639,19 @@ public class DataSet {
 		this.setAttb(m);
 	}
 
-	public Vector<DataSet> SplitByEgo(Matrix theMatrix) {
-		Matrix m = MatrixFactory.copyFromMatrix(theMatrix); //don't destroy input matrix
+	public Vector<DataSet> SplitByColumn(Matrix theMatrix,int colNum,int rowStart) {
+		Matrix mFull = MatrixFactory.copyFromMatrix(theMatrix); //don't destroy input matrix
 		Vector<DataSet> dslist = new Vector<DataSet>(); //the list returned
 		Vector<Matrix> mlist = new Vector<Matrix>();	//new matrices
-		int egocol=-1;
+		
+		//remove all rows from 0 to startRow
+		if(rowStart>0)
+			mFull = mFull.deleteRows(Calculation.Ret.NEW, 0, rowStart);
+
+		//int egocol=-1;
 		
 		//get first ego column
-		for(int i=0;i<m.getColumnCount();i++){
+		/*for(int i=0;i<m.getColumnCount();i++){
 			String lbl = m.getColumnLabel(i).toLowerCase();
 			if(lbl.contains("ego") && egocol==-1){
 				egocol=i;
@@ -654,24 +659,31 @@ public class DataSet {
 			}
 		}
 		if(egocol==-1)egocol=0;		//if no ego column found, default to first column 
-		
+		*/
+
 		//the first ego name in matrix
-		String curEgo = m.getAsString(0,egocol);
-		while(!m.isEmpty()){		//while matrix is viable
-			System.out.println("Matrix has "+m.getRowCount()+" rows.");
-			Matrix n = m.selectRows(Calculation.Ret.NEW, 0);
-			m = m.deleteRows(Calculation.Ret.NEW, 0);
-			for(int i=1;i<m.getRowCount();i++){		//loop through each row
-				if(curEgo.equals(m.getAsString(i,egocol))){
-					//append row to new matrix
-					n.appendVertically(m.selectRows(Calculation.Ret.NEW, i));
-					//remove row
-					m = m.deleteRows(Calculation.Ret.NEW, i);
-					System.out.println("Removing row "+i+". New size is "+m.getRowCount());
+		int totalRowCount=(int) mFull.getRowCount();
+		boolean found = false;
+		while(!mFull.isEmpty()){		//while matrix is viable
+			String curID = mFull.getAsString(0,colNum);					//the current name
+			Matrix next = mFull.selectRows(Calculation.Ret.NEW, 0);		//start matrix using first row
+			mFull = mFull.deleteRows(Calculation.Ret.NEW, 0);			//remove first row
+			//if (!found) System.out.println("Processing for "+curID+". "+mFull.getRowCount()+"/"+totalRowCount+" rows remaining.");
+			
+			for(int row=0;row<mFull.getRowCount();row++){			//loop through each row
+				String curGroup = mFull.getAsString(row,colNum);	//the current string for sorting
+				if(curID.equals(curGroup)){							//test to see if this row has 
+					next = next.appendVertically(mFull.selectRows(Calculation.Ret.NEW, row));
+					mFull = mFull.deleteRows(Calculation.Ret.NEW, row);
+//					mFull = moveRow(mFull,next,row);
+					//System.out.println("Removing row "+row+" for "+curGroup+". New size is "+mFull.getRowCount());
+					row--;
+					found=true;
 				}
 			}
-			util.copyColumnLabels(m, n);
-			mlist.add(n);	//add new matrix to list
+			//System.out.println("New matrix has "+next.getRowCount()+" rows.");
+			util.copyColumnLabels(mFull, next);
+			mlist.add(next);	//add new matrix to list
 		}		
 		for(Matrix thisM : mlist){
 			DataSet n = new DataSet(thisM);
@@ -682,4 +694,11 @@ public class DataSet {
 		
 		return dslist;
 	}	
+	private Matrix moveRow(Matrix from,Matrix to, int row){
+		to.appendHorizontally(from.selectRows(Calculation.Ret.NEW, row));
+		from = from.deleteRows(Calculation.Ret.NEW, row);
+		return from;
+		
+	}
 }
+

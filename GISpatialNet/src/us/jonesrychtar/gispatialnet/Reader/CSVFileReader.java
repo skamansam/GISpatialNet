@@ -116,6 +116,11 @@ public class CSVFileReader extends TextFileReader{
 	 */
 	public Vector<DataSet> readFullMatrix(MatrixInputType type,int rows, int cols) throws IOException {
 		Matrix m = this.getFileAsMatrix(new File(this.filename));
+		//NOTE: add field for ego row. Ego column should be closeness to ties.
+		//TODO: ASK for EGO "chunk by" column. 
+		//TODO: Add extra row for ego in output. ask user.
+		//TODO: run algorithms with/out ego?
+		//TODO: add button for turning on/off egos "layers"
 		//Vector<Matrix> ml  = this.ReadAsMatrices(type, rows, cols);
 		Vector<DataSet> ret = new Vector<DataSet>();
 		
@@ -123,7 +128,7 @@ public class CSVFileReader extends TextFileReader{
 		ds.addFile(new File(this.filename).getName());
 		//ds.addHeuristic(m);
 		//ret.add(ds);
-		ret = ds.SplitByEgo(m);
+		ret = ds.SplitByColumn(m,1,1);
 		/*for (int i=0;i<ml.size();i++){
 			DataSet ds = new DataSet();
 			ds.addFile(this.filename);
