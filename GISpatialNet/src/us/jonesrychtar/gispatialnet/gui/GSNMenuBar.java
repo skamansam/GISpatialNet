@@ -27,13 +27,15 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 	GSNPanel thePanel;
 	JMenu 
 			fileMenu = new JMenu("File"),
+			f_save_as=new JMenu("Save As..."),
 			transformMenu = new JMenu("Transform"), 
 			algorithmMenu = new JMenu("Algorithm"), 
 			datasetMenu = new JMenu("Data"),
 			viewMenu = new JMenu("View With"),
 			helpMenu = new JMenu("Help");
 	JMenuItem 
-			f_open,f_save,f_save_as,f_save_all,f_quit,							//file menu
+			f_open,f_save,f_save_all,f_quit,							//file menu
+			sa_csv,sa_pajek,sa_shapefile,sa_ucinet,sa_excel,					//save as menu
 			t_flip,t_rotate,t_resize,t_match_best,t_find_duplicate,	//transform menu
 			a_qap,a_snb,a_borders,a_hilite_edges,								//algorithm menu
 			d_find,d_merge,d_seperate,d_add,d_add_ego,				//data menu
@@ -46,10 +48,17 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		//file menu
 		f_open = createMenuItem(fileMenu,"Open...",KeyEvent.VK_O,"Open a file.","general","Open","open");
 		f_save = createMenuItem(fileMenu,"Save...",KeyEvent.VK_S,"Save currently selected data set.","general","Save","save");
-		f_save_as = createMenuItem(fileMenu,"Save As...",KeyEvent.VK_SHIFT+KeyEvent.VK_S,"Save as a different file.","general","SaveAs","save_as");
+		//f_save_as = createMenuItem(fileMenu,"Save As...",KeyEvent.VK_SHIFT+KeyEvent.VK_S,"Save as a different file.","general","SaveAs","save_as");
+		fileMenu.add(f_save_as);
 		f_save_all = createMenuItem(fileMenu,"Save All",KeyEvent.VK_SHIFT+KeyEvent.VK_A,"Save all data sets.","general","SaveAll","save_all");
 		fileMenu.addSeparator();
 		f_quit = createMenuItem(fileMenu,"Quit",KeyEvent.VK_Q,"Exit Program","general","Stop","exit");
+
+		sa_csv = createMenuItem(f_save_as,"CSV",KeyEvent.VK_M,"Save as a CSV file.","general","SaveAs","save_as_csv");
+		sa_pajek = createMenuItem(f_save_as,"Pajek",KeyEvent.VK_N,"Save as a Pajek file..","general","SaveAs","save_as_pajek");
+		sa_shapefile = createMenuItem(f_save_as,"Shapefile",KeyEvent.VK_Z,"Save as a different file.","general","SaveAs","save_as_shapefile");
+		sa_ucinet = createMenuItem(f_save_as,"DL / UCINet",KeyEvent.VK_D,"Save as a different file.","general","SaveAs","save_as_ucinet");
+		sa_excel = createMenuItem(f_save_as,"Excel",KeyEvent.VK_C,"Save as a different file.","general","SaveAs","save_as_excel");
 		
 		//transform menu
 		t_flip = createMenuItem(transformMenu,"Flip",KeyEvent.VK_T,"Flip","general","Redo","transform_flip");
@@ -113,6 +122,12 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		f_save_as.addActionListener(thePanel);
 		f_save_all.addActionListener(thePanel);
 		f_quit.addActionListener(thePanel);
+		sa_csv.addActionListener(thePanel);
+		sa_pajek.addActionListener(thePanel);
+		sa_shapefile.addActionListener(thePanel);
+		sa_ucinet.addActionListener(thePanel);
+		sa_excel.addActionListener(thePanel);
+
 		t_flip.addActionListener(thePanel);
 		t_rotate.addActionListener(thePanel);
 		t_resize.addActionListener(thePanel);

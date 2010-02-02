@@ -20,6 +20,7 @@ import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 import com.mindprod.csv.CSVReader;
 import java.util.Vector;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Enums.*;
 
 /**
@@ -32,7 +33,7 @@ public class CSVFileReader extends TextFileReader{
 	//private boolean includeEgo=false;	//are we working with Egos?
 	CSVReader matrixReader;				//the csv reader
 	private String filename="";
-	
+	private int colSort=-1;
     //formatting for file
     private String seperatorChar=",";
     //private char quoteChar='\"';
@@ -67,7 +68,7 @@ public class CSVFileReader extends TextFileReader{
      */
     @Override
     //TODO: New Output type needs coding
-	public Vector<DataSet> Read(MatrixInputType type, int rows, int cols)
+    public Vector<DataSet> Read(MatrixInputType type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 //		matrixReader = new CSVReader(new FileReader(this.getFile()),
@@ -115,7 +116,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @throws IOException 
 	 */
 	public Vector<DataSet> readFullMatrix(MatrixInputType type,int rows, int cols) throws IOException {
-		Matrix m = this.getFileAsMatrix(new File(this.filename));
+		Matrix m = this.getFileAsMatrix(new File(this.filename),true);
 		//NOTE: add field for ego row. Ego column should be closeness to ties.
 		//TODO: ASK for EGO "chunk by" column. 
 		//TODO: Add extra row for ego in output. ask user.
@@ -126,9 +127,15 @@ public class CSVFileReader extends TextFileReader{
 		
 		DataSet ds = new DataSet();
 		ds.addFile(new File(this.filename).getName());
-		//ds.addHeuristic(m);
-		//ret.add(ds);
-		ret = ds.SplitByColumn(m,1,1);
+
+		if(this.hasHeader)
+			util.readHeader(m,0);
+		
+		if(this.SortByColumn!=-1)
+			ret = ds.SplitByColumn(m,1,1);
+		else{
+			ds.addHeuristic(m);
+		}
 		/*for (int i=0;i<ml.size();i++){
 			DataSet ds = new DataSet();
 			ds.addFile(this.filename);
@@ -136,7 +143,7 @@ public class CSVFileReader extends TextFileReader{
 			ret.add(ds);
 		}*/
 		
-		System.out.println(""+ret.size()+" sets found!");
+		//System.out.println(""+ret.size()+" sets found!");
 		
 		return ret;//theMatrices;
 	}
@@ -147,7 +154,7 @@ public class CSVFileReader extends TextFileReader{
 
 		//read in Matrix from CSV file
 		try {
-			theMatrix = this.getFileAsMatrix(this.file);
+			theMatrix = this.getFileAsMatrix(this.file,true);
 		} catch (IOException e) {
 			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
 		}
@@ -247,7 +254,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return the Matrix which represents this file
 	 * @throws IOException if the File cannot be accessed
 	 */
-	public Matrix getFileAsMatrix(File f) throws IOException{
+	public Matrix getFileAsMatrix(File f, boolean hasHeaderRow) throws IOException{
 		
 
 		Matrix m = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
@@ -255,15 +262,19 @@ public class CSVFileReader extends TextFileReader{
 		int egoCol=-1;
 
 		//set header labels
-		for (int i=0;i<m.getColumnCount();i++){
-			String label=m.getAsString(0,i);
-			m.setColumnLabel(i, label);
-			if(label.toLowerCase().contains("ego") && egoCol==-1)
-				egoCol=i;
+		if(hasHeaderRow){
+			for (int i=0;i<m.getColumnCount();i++){
+				String label=m.getAsString(0,i);
+				m.setColumnLabel(i, label);
+				if(label.toLowerCase().contains("ego") && egoCol==-1)
+					egoCol=i;
+			}
+			//util.printHeaders(m);
+			//delete header row
+			m=m.deleteColumns(Calculation.Ret.NEW, 0);		
 		}
 		
-		//delete header row
-		m.deleteColumns(Calculation.Ret.NEW, 0);
+		
 		
 		//set row labels to the EgoID, else, use first column
 		if(egoCol!=-1){
@@ -318,7 +329,7 @@ public class CSVFileReader extends TextFileReader{
 			return;
 		}
 		CSVFileReader theReader = new CSVFileReader(args[0]);
-		Matrix n = theReader.getFileAsMatrix(new File(args[0]));
+		Matrix n = theReader.getFileAsMatrix(new File(args[0]),true);
 		
 		Vector<Matrix> t = CSVFileReader.SplitMatrixAtNaN(n);
 		for(int i=0;i<t.size();i++){

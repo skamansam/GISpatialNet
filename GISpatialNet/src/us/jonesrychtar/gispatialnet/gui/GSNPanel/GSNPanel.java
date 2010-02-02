@@ -11,11 +11,13 @@ import java.awt.event.ActionListener;
 //import java.awt.event.ComponentListener;
 //import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
 
 //import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,9 +27,13 @@ import org.ujmp.core.Matrix;
 //import javax.swing.filechooser.FileFilter;
 
 //import us.jonesrychtar.gispatialnet.GISpatialNet;
+import us.jonesrychtar.gispatialnet.Enums;
 import us.jonesrychtar.gispatialnet.util;
+import us.jonesrychtar.gispatialnet.Writer.CSVwriter;
+import us.jonesrychtar.gispatialnet.Writer.Writer;
 import us.jonesrychtar.gispatialnet.gui.GSNFileFilter;
 import us.jonesrychtar.gispatialnet.gui.GSNStatusBarInterface;
+import us.jonesrychtar.gispatialnet.gui.helpers.SaveType;
 //import us.jonesrychtar.gispatialnet.gui.GUIutil;
 
 /**
@@ -69,7 +75,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		//exit has been issued
 		if (e.getActionCommand() == "open"){handleOpen();}
 		if (e.getActionCommand() == "save"){handleSave();}
-		if (e.getActionCommand() == "save_as"){handleSaveAs();}
+		if (e.getActionCommand().startsWith("save_as")){handleSaveAs(e.getActionCommand());}
 		if (e.getActionCommand() == "save_all"){handleSaveAll();}
 		if (e.getActionCommand() == "exit"){handleClose();}
 		
@@ -128,6 +134,18 @@ public class GSNPanel extends JPanel implements ActionListener{
 	}
 
 	private void handleAlgorithm(String algorithm) {
+		if(algorithm.equals("qap")){
+			Matrix m=theList.getSelectedMatrices().elementAt(0);
+			String[] options  = new String[]{"Simple Mantel Test", "SMT with exact permutation",
+                    "Partial Mantel Test", "PMT with exact permutation", "PMT with raw values",
+                    "PMT with exact permutation and raw values"};
+			String theChoice = (String)JOptionPane.showInputDialog(this, "What type of computation would you like to perform?", 
+					"Choose Algorithm", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if(theChoice == null) return;
+			System.out.println("Running QAP as "+theChoice+"...");
+			if(theList.getSelectionRows().length!=2){ JOptionPane.showMessageDialog(this, "You must select two matrices in order to run this algorithm.");return;}
+			
+		}else
 		JOptionPane.showMessageDialog(this, "Sorry!\nThe "+algorithm+" algorithm is not implemented yet!", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -140,12 +158,47 @@ public class GSNPanel extends JPanel implements ActionListener{
 		this.isTainted=false;
 	}
 
-	private void handleSaveAs() {
-		JOptionPane.showMessageDialog(this, "Save As has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+	private void handleSaveAs(String type) {
+		if(theList.getSelectedMatrices().size()==0)return;
+		System.out.println("Saving as "+type);
+		type=type.replace("save_as_", "");
+		Enums.FileType t = Enums.FileType.fromString(type.toUpperCase());
+		JFileChooser c = new JFileChooser();
+		int d = c.showSaveDialog(this);
+		if (d!=JFileChooser.APPROVE_OPTION) return;
+		File f=c.getSelectedFile();
+		switch(t){
+			case CSV:
+			try {
+				new CSVwriter(theList.getSelectedMatrices().elementAt(0), f.getAbsolutePath(), ',').WriteFile();
+			} catch (FileNotFoundException e) {
+				JOptionPane.showMessageDialog(theList,
+					    "Cannot locate file. Please check permissions.");
+			}
+				break;
+			case EXCEL:
+				JOptionPane.showMessageDialog(this, "Save As Excel has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+				break;
+			case SHAPEFILE:
+				JOptionPane.showMessageDialog(this, "Save As Shapefile has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+				break;
+			case UCINET:
+				JOptionPane.showMessageDialog(this, "Save As DL/UCINet has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+				break;
+			case PAJEK:
+				JOptionPane.showMessageDialog(this, "Save As Pajek has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+				break;
+			default:
+					
+		}
 		
 	}
 
 	private void handleSave() {
+		//SaveType s = new SaveType();
+		//s.setVisible(true);
+		//System.out.println("Saving as "+Enums.FileType.toString(s.getType()));
+
 		JOptionPane.showMessageDialog(this, "Save has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
 	}
 

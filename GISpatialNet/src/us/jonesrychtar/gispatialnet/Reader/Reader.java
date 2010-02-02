@@ -183,10 +183,13 @@ public class Reader {
      * @return vector of datasets containing data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, char sep) throws Exception{
+    public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col,char sep) throws Exception{
+    	return loadTxt(filename, Matrix, MatrixType, rows, col, -1 ,true, sep);
+    }
+    public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, int colSort,boolean hasHeader,char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
-        Vector<DataSet> DSOut = csvr.Read(Enums.MatrixInputType.fromInt(MatrixType),rows, col);
+        Vector<DataSet> DSOut = csvr.Read(Enums.MatrixInputType.fromInt(MatrixType),rows, col, colSort,hasHeader);
         return DSOut;
     }
 /*

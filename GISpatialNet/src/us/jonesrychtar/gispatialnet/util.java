@@ -199,6 +199,7 @@ public class util {
     }
     
     public static void copyColumnLabels(Matrix from, Matrix to){
+    	printHeaders(from);
     	if(from.getColumnCount()!=to.getColumnCount()){
     		System.err.println("Matrix columns not equal ("+from.getColumnCount()+" != "+to.getColumnCount()+"). Cannot set column headers.");
     		return;
@@ -215,4 +216,23 @@ public class util {
     	}
     	to.appendVertically(m);
     }
+    public static void printHeaders(Matrix m){
+		if(m.getColumnLabel(0).equals(null) || m.getColumnLabel(0).equals("") || m.getColumnLabel(0).equals(" ") ){
+			System.out.println("No header found for "+m.getLabel());return;
+		}
+    	System.out.print("Header: ");
+		for (int i=0;i<m.getColumnCount();i++){
+			System.out.print(""+m.getColumnLabel(i)+" ");
+		}			
+		System.out.print("\n");
+    }
+    //moves row number to column labels
+	public static void readHeader(Matrix m,int rowNum) {
+		for(int i=0;i<m.getColumnCount();i++){
+			m.setColumnLabel(i, m.getAsString(rowNum,i));
+		}
+		m=m.deleteRows(Calculation.Ret.NEW, rowNum);
+		System.out.println("__util.readHeader().headers:__");
+		util.printHeaders(m);
+	}
 }

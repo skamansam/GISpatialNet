@@ -50,7 +50,7 @@ public class GUIutil {
 		if(url != null){
 				return new ImageIcon(url);
 		}else{
-			System.err.println("Could not find icon "+"/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
+			//System.err.println("Could not find icon "+"/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
 			return null;
 		}
 	}

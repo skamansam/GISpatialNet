@@ -9,6 +9,8 @@
 package us.jonesrychtar.gispatialnet.Reader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 //import java.io.FileNotFoundException;
 import us.jonesrychtar.gispatialnet.Enums.*;
 
@@ -45,7 +47,8 @@ public abstract class TextFileReader {
      * File that is being used
      */
     protected File file;
-
+    protected int SortByColumn;
+	protected boolean hasHeader;
     /**
      *
      * @return the file
@@ -78,5 +81,10 @@ public abstract class TextFileReader {
      * @throws java.lang.Exception
      */
     public abstract Vector<DataSet> Read(MatrixInputType mit, int rows, int col) throws Exception;
-
+	
+    public Vector<DataSet> Read(MatrixInputType mit, int rows, int cols, int colSort,boolean hasHeader) throws Exception{
+		this.SortByColumn=colSort;
+		this.hasHeader=hasHeader;
+		return Read(mit, rows, cols);
+	}
 }

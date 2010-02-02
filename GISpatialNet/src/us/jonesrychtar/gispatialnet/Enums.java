@@ -81,4 +81,88 @@ public class Enums {
 		}
     }
 
+    public static enum FileType{ 
+    	EXCEL, CSV, SHAPEFILE, UCINET,PAJEK;
+    	public static FileType fromInt(int num) {
+    		switch (num) {
+    			case 0: { return EXCEL; }
+    			case 1: { return CSV; }
+    			case 2: { return SHAPEFILE; }
+    			case 3: { return UCINET; }
+    			case 4: { return PAJEK; }
+    			default: { return null; }
+    		}
+    	}
+		public static int toInt(FileType mt) {
+			switch (mt) {
+				case EXCEL: { return 0; }
+				case CSV: { return 1; }
+				case SHAPEFILE: { return 2; }
+				case UCINET: { return 3; }
+				case PAJEK: { return 4; }
+				default: { return -1; }
+			}
+    	}
+		public static String toString(FileType mt) {
+			switch (mt) {
+				case EXCEL: { return "EXCEL"; }
+				case CSV: { return "CSV"; }
+				case SHAPEFILE: { return "SHAPEFILE"; }
+				case UCINET: { return "UCINET"; }
+				case PAJEK: { return "PAJEK"; }
+				default: { return null; }
+			}		
+		}
+		public static FileType fromString(String str) {
+			if (str.toUpperCase().equals("EXCEL")) return EXCEL;
+			if (str.toUpperCase().equals("CSV")) return CSV;
+			if (str.toUpperCase().equals("SHAPEFILE")) return SHAPEFILE;
+			if (str.toUpperCase().equals("UCINET")) return UCINET;
+			if (str.toUpperCase().equals("PAJEK")) return PAJEK;
+			return null;
+		}
+    }
+
+    public static enum AlgorithmType{ 
+    	QAP, SNB, BORDERS, HILIGHT_EDGES,CONVERSION;
+    	public static AlgorithmType fromInt(int num) {
+    		switch (num) {
+    			case 0: { return QAP; }
+    			case 1: { return SNB; }
+    			case 2: { return BORDERS; }
+    			case 3: { return HILIGHT_EDGES; }
+    			case 4: { return CONVERSION; }
+    			default: { return null; }
+    		}
+    	}
+		public static int toInt(AlgorithmType mt) {
+			switch (mt) {
+				case QAP: { return 0; }
+				case SNB: { return 1; }
+				case BORDERS: { return 2; }
+				case HILIGHT_EDGES: { return 3; }
+				case CONVERSION: { return 4; }
+				default: { return -1; }
+			}
+    	}
+		public static String toString(AlgorithmType mt) {
+			switch (mt) {
+				case QAP: { return "QAP"; }
+				case SNB: { return "SNB"; }
+				case BORDERS: { return "BORDERS"; }
+				case HILIGHT_EDGES: { return "UCINET"; }
+				case CONVERSION: { return "PAJEK"; }
+				default: { return null; }
+			}		
+		}
+		public static AlgorithmType fromString(String str) {
+			if (str.toUpperCase().equals("QAP")) return QAP;
+			if (str.toUpperCase().equals("SNB")) return SNB;
+			if (str.toUpperCase().equals("BORDERS")) return BORDERS;
+			if (str.toUpperCase().equals("HILIGHT_EDGES")) return HILIGHT_EDGES;
+			if (str.toUpperCase().equals("CONVERSION")) return CONVERSION;
+			return null;
+		}
+    }
+
 }
