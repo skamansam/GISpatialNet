@@ -19,6 +19,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
 //import javax.swing.tree.TreeModel;
 //import javax.swing.tree.TreeNode;
 //import javax.swing.tree.TreePath;
@@ -48,7 +49,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	static DefaultMutableTreeNode topNode = new DefaultMutableTreeNode("DataSets Loaded:");
 	static DefaultTreeModel tm = new DefaultTreeModel(topNode);
 	DataDisplayPanel display;
-	Matrix selectedMatrix = MatrixFactory.emptyMatrix();
+	Vector<Matrix> selectedMatrices = new Vector<Matrix>();
 	
 	private class DSMTreeNode extends DefaultMutableTreeNode{
 		private static final long serialVersionUID = 3813976506231344444L;
@@ -83,8 +84,8 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		return gsn;
 	}
 	
-	public Matrix getSelectedMatrix(){
-		return this.selectedMatrix;
+	public Vector<Matrix> getSelectedMatrices(){
+		return this.selectedMatrices;
 	}
 	
 	public void setGSN(GISpatialNet gsn) {
@@ -121,8 +122,9 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	public void addCSV(String theFile){
 		Reader reader = new Reader();
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+		if(f.userCancelled()) return;
         try {
-            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSeparator());
+            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSortByColumn(), f.getHasHeader(),f.getSeparator());
 
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
@@ -208,19 +210,37 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		if(this.getLastSelectedPathComponent()==null) return;
-		DSMTreeNode dt = (DSMTreeNode) this.getLastSelectedPathComponent();
-
-		if(dt.hasDataSet()){
-			System.out.println("Selection has a DataSet.");
-			this.selectedMatrix = util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb())));
-			displayData(display,this.selectedMatrix);
-		}else{
-			this.selectedMatrix = dt.getMatrix();
-			displayData(display,this.selectedMatrix);
+		this.selectedMatrices.clear();
+		TreePath[] tp = this.getSelectionPaths();
+		for (TreePath t : tp){
+			DSMTreeNode dt = (DSMTreeNode) t.getPath()[t.getPath().length-1];			
+			Matrix m = dt.getMatrix();
+			if(dt.hasDataSet()){
+				m = util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb())));
+			}
+			this.selectedMatrices.add(m);
 		}
+		Matrix c=MatrixFactory.emptyMatrix();
+		for(Matrix x : this.selectedMatrices){
+			c=util.combine(c, x);
+		}
+		displayData(display,this.selectedMatrices.elementAt(this.selectedMatrices.size()-1));
+		//displayData(display,c);
+		System.out.println("Selection has "+this.selectedMatrices.size()+" matrices.");
 	}
 	private void displayData(DataDisplayPanel dsp,Matrix m){
 		if(dsp == null){System.err.println("Display Panel is null!");return;}
 		dsp.displayMatrix(m);
 	}
+
+    private int getChoice(String title, String info, String[] items) {
+        //return and err out if length of items is less than one.
+        if (items.length < 1) {
+            System.err.println("Incorrect length for menu items.");
+            return 0;
+        }
+        
+        return JOptionPane.showOptionDialog(this, info, "Options", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE, null, items, items[0]);
+        
+    }
 }

@@ -605,7 +605,7 @@ public class DataSet {
 
 	public void addHeuristic(Matrix theMatrix) {
 		Matrix m = MatrixFactory.copyFromMatrix(theMatrix);
-		
+		util.copyColumnLabels(theMatrix, m);
 		int egolbl=-1, idlbl=-1, xlbl=-1,ylbl=-1;
 		
 		for(int i=0;i<m.getColumnCount();i++){
@@ -641,6 +641,8 @@ public class DataSet {
 
 	public Vector<DataSet> SplitByColumn(Matrix theMatrix,int colNum,int rowStart) {
 		Matrix mFull = MatrixFactory.copyFromMatrix(theMatrix); //don't destroy input matrix
+		util.copyColumnLabels(theMatrix, mFull);
+		util.printHeaders(theMatrix);
 		Vector<DataSet> dslist = new Vector<DataSet>(); //the list returned
 		Vector<Matrix> mlist = new Vector<Matrix>();	//new matrices
 		
@@ -667,6 +669,7 @@ public class DataSet {
 		while(!mFull.isEmpty()){		//while matrix is viable
 			String curID = mFull.getAsString(0,colNum);					//the current name
 			Matrix next = mFull.selectRows(Calculation.Ret.NEW, 0);		//start matrix using first row
+			util.copyColumnLabels(mFull, next);
 			mFull = mFull.deleteRows(Calculation.Ret.NEW, 0);			//remove first row
 			//if (!found) System.out.println("Processing for "+curID+". "+mFull.getRowCount()+"/"+totalRowCount+" rows remaining.");
 			

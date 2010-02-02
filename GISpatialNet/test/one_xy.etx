@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AddTextFileWizard xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="900">
+  <Delimiter>,</Delimiter>
+  <Qualifier />
+  <IsFirstLineFields>true</IsFirstLineFields>
+  <IsConsecutiveDelimiters>false</IsConsecutiveDelimiters>
+  <InAddressMode>false</InAddressMode>
+  <InCoordinatesMode>true</InCoordinatesMode>
+  <LonIndex>2</LonIndex>
+  <LatIndex>3</LatIndex>
+  <MGRSIndex>0</MGRSIndex>
+  <EleIndex>-1</EleIndex>
+  <UnitsIndex>0</UnitsIndex>
+  <TitleIndex>-1</TitleIndex>
+  <DescripIndex>-1</DescripIndex>
+  <CoordinateSysID>54051</CoordinateSysID>
+  <InMultipleFieldsMode>false</InMultipleFieldsMode>
+  <AddressIndex>-1</AddressIndex>
+  <StreetIndex>-1</StreetIndex>
+  <CityIndex>-1</CityIndex>
+  <StateIndex>-1</StateIndex>
+  <ZipIndex>-1</ZipIndex>
+  <constCity />
+  <constState />
+  <constZip />
+  <Country />
+  <DataSource />
+  <FieldColumns>
+    <string>ID_order_of_capture</string>
+    <string>EgoID</string>
+    <string>DistX</string>
+    <string>DistY</string>
+  </FieldColumns>
+</AddTextFileWizard>
