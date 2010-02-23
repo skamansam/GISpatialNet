@@ -41,7 +41,7 @@ public class ExcelReader {
      * @return vector of matrix containing read data
      * @throws java.lang.Exception
      */
-    public Vector<Matrix> read(MatrixInputType itype, int rows, int c) throws Exception {
+    public Vector<Matrix> read(MatrixFormat itype, int rows, int c) throws Exception {
 
         Workbook w1 = Workbook.getWorkbook(in);
         Vector<Matrix> out = new Vector<Matrix>();

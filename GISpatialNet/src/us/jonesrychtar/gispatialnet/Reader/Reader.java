@@ -79,15 +79,15 @@ public class Reader {
     /**
      * Loads Data from a Pajek file into memory
      * @param filename Name of file to load
-     * @param MatrixType Format of saved data
+     * @param DataSetMatrixType Format of saved data
      * @param rows Number of rows in File
      * @param cols Number of cols in file
      * @return vector of datasets with data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadPajek(String filename, int MatrixType, int rows, int cols) throws Exception{
+    public static Vector<DataSet> loadPajek(String filename, MatrixFormat fmt, int rows, int cols) throws Exception{
         PajekReader pr = new PajekReader(filename);
-        Vector<DataSet> ds = pr.Read(MatrixInputType.fromInt(MatrixType), rows, cols);
+        Vector<DataSet> ds = pr.Read(fmt, rows, cols);
         for(int i=0; i<ds.size(); i++)
             ds.elementAt(i).addFile(filename);
         return ds;
@@ -96,15 +96,15 @@ public class Reader {
     /**
      * Loads data from a DL/UCINET file into memory
      * @param filename name of file to load
-     * @param MatrixType Format of data (may be overwritten if defined in file)
+     * @param DataSetMatrixType Format of data (may be overwritten if defined in file)
      * @param rows number of rows (may be overwritten if defined in file)
      * @param col number of cols (may be overwritten if defined  in file)
      * @return vector of datasets with data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadDL(String filename, int MatrixType, int rows, int col) throws Exception{
+    public static Vector<DataSet> loadDL(String filename, Enums.MatrixFormat mt, int rows, int col) throws Exception{
         DLreader dlr = new DLreader(filename);
-        Vector<DataSet> ds = dlr.Read(MatrixType, rows, col);
+        Vector<DataSet> ds = dlr.Read(mt, rows, col);
 
         for(int i=0; i<ds.size(); i++)
             ds.elementAt(i).addFile(filename);
@@ -120,7 +120,7 @@ public class Reader {
      * 3 Attb
      *
      * Handled in other class:
-     * MatrixType:
+     * DataSetMatrixType:
      * 0 Full Matrix
      * 1 Lower Matrix
      * 2 Upper Matrix
@@ -131,13 +131,13 @@ public class Reader {
      * Load data from Excel file into memory
      * @param filename File to load
      * @param Matrix Which matrix to load into
-     * @param MatrixType Format of data in file
+     * @param DataSetMatrixType Format of data in file
      * @param row number of rows per set of data in file
      * @param col number of columns per set of data in file
      * @return vector of datasets containing data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadExcel(String filename, MatrixType type, MatrixInputType itype, int row, int col) throws Exception{
+    public static Vector<DataSet> loadExcel(String filename, DataSetMatrixType type, MatrixFormat itype, int row, int col) throws Exception{
         ExcelReader er = new ExcelReader(filename);
         Vector<Matrix> out = er.read(itype, row, col);
         Vector<DataSet> ds = new Vector<DataSet>();
@@ -176,24 +176,24 @@ public class Reader {
      * Loads data from a txt/csv file into memory
      * @param filename name of file to load
      * @param Matrix Matrix to load into
-     * @param MatrixType Format of file
+     * @param DataSetMatrixType Format of file
      * @param rows number of rows in file
      * @param col number of cols in file
      * @param sep Field Seperator character
      * @return vector of datasets containing data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col,char sep) throws Exception{
-    	return loadTxt(filename, Matrix, MatrixType, rows, col, -1 ,true, sep);
+    public static Vector<DataSet> loadTxt(String filename, DataSetMatrixType dst, MatrixFormat fmt, int rows, int col,char sep) throws Exception{
+    	return loadTxt(filename, dst, fmt, rows, col, -1 ,true, sep);
     }
-    public static Vector<DataSet> loadTxt(String filename, int Matrix, int MatrixType, int rows, int col, int colSort,boolean hasHeader,char sep) throws Exception{
+    public static Vector<DataSet> loadTxt(String filename, DataSetMatrixType dst, MatrixFormat fmt, int rows, int col, int colSort,boolean hasHeader,char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
-        Vector<DataSet> DSOut = csvr.Read(Enums.MatrixInputType.fromInt(MatrixType),rows, col, colSort,hasHeader);
+        Vector<DataSet> DSOut = csvr.Read(fmt,rows, col, colSort,hasHeader);
         return DSOut;
     }
 /*
-        Vector<Matrix> out = csvr.ReadAsMatrices(MatrixType, rows, col);
+        Vector<Matrix> out = csvr.ReadAsMatrices(DataSetMatrixType, rows, col);
         Vector<DataSet> ds = new Vector<DataSet>();
         for(int m=0; m<out.size(); m++){
         	//3System.out.println(out.get(m));

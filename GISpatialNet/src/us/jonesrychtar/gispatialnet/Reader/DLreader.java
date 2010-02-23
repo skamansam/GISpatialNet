@@ -14,6 +14,7 @@ import org.ujmp.core.MatrixFactory;
 import java.util.Scanner;
 import java.util.Vector;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.Enums;
 
 /**
  *
@@ -76,10 +77,11 @@ public class DLreader{
      * @return vector of datasets containing data from file
      * @throws java.lang.Exception
      */
-    public Vector<DataSet> Read(int type, int rows, int col) throws Exception {
+    public Vector<DataSet> Read(Enums.MatrixFormat type, int rows, int col) throws Exception {
         Scanner sc;
         header.nc = col;
         header.nr = rows;
+        System.out.println("Matrix Type: "+type);
         Vector<DataSet> ds = new Vector<DataSet>();
         //make empty matrix
         Matrix output = MatrixFactory.zeros(header.nr, header.nc);
@@ -97,7 +99,7 @@ public class DLreader{
         for (; header.nm > 0; header.nm--) {
             output = MatrixFactory.zeros(header.nr, header.nc);
             //type 0 = full matrix
-            if (type == 0) {
+            if (type == Enums.MatrixFormat.FULL) {
                 //if col labels embedded, read labels
                 if (header.cembed) {
                     for (int c = 0; c < header.nc; c++) {
@@ -117,7 +119,7 @@ public class DLreader{
                     }
                 }
             } //type 1 = lower matrix
-            else if (type == 1) {
+            if (type == Enums.MatrixFormat.LOWER) {
                 if (header.cembed) {
                     for (int c = 0; c < header.nc; c++) {
                         output.setColumnLabel(c, sc.next());
@@ -138,7 +140,7 @@ public class DLreader{
                 }
                 output = ReaderUtil.LowerToFull(output);
             } //type 2 = upper matrix
-            else if (type == 2) {
+            else if (type == Enums.MatrixFormat.UPPER) {
                 if (header.cembed) {
                     for (int c = 0; c < header.nc; c++) {
                         output.setColumnLabel(c, sc.next());

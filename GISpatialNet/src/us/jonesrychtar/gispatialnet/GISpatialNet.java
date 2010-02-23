@@ -2,6 +2,14 @@
  *
  */
 package us.jonesrychtar.gispatialnet;
+//TODO: Functionality:
+/* Production of shapefiles
+ * Algorithms - edge length bias (SNB)
+ * DLReader: why is it not working? - one fewer columns - (0-23 should be 0-24) should break by rowNum, not just one
+ * 
+ * 
+ * */
+
 
 import gnu.getopt.Getopt;
 import java.io.IOException;
