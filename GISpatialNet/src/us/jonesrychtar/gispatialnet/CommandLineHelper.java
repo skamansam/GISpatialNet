@@ -194,20 +194,21 @@ public class CommandLineHelper {
 
              Vector<DataSet> ds;
              String indir = id+sepChar;
+             MatrixFormat fmt=MatrixFormat.fromInt(Matrix_Format);
             try{
                 switch (i) { //read file to appropriate data set
                     case 'C':
-                        ds = Reader.loadTxt(indir+inFiles[j], Matrix, Matrix_Format, row, col, sep);
+                        ds = Reader.loadTxt(indir+inFiles[j], DataSetMatrixType.fromInt(Matrix), fmt, row, col, sep);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;
                     case 'D':
-                        ds = Reader.loadDL(indir+inFiles[j], Matrix_Format, row, col);
+                        ds = Reader.loadDL(indir+inFiles[j], fmt, row, col);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;
                     case 'E':
-                        ds = Reader.loadExcel(indir+inFiles[j], MatrixType.fromInt(Matrix), MatrixInputType.fromInt(Matrix_Format), row, col);
+                        ds = Reader.loadExcel(indir+inFiles[j], DataSetMatrixType.fromInt(Matrix), MatrixFormat.fromInt(Matrix_Format), row, col);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;
@@ -216,7 +217,7 @@ public class CommandLineHelper {
                         gsn.add(ds1);
                         break;
                     case 'P':
-                        ds = Reader.loadPajek(indir+inFiles[j], Matrix, row, col);
+                        ds = Reader.loadPajek(indir+inFiles[j], MatrixFormat.fromInt(Matrix), row, col);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;
