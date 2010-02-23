@@ -31,6 +31,8 @@ import javax.swing.event.ChangeListener;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 
+import us.jonesrychtar.gispatialnet.Enums;
+
 /**
  * @author sam
  * 
@@ -41,7 +43,10 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	 * 
 	 */
 	private static final long serialVersionUID = -2749991861366815222L;
-	int dsType = 0, matrixType = 0, rows = 24, cols = 4;
+	//int dsType = 0, matrixType = 0, 
+	int rows = 24, cols = 4;
+	Enums.MatrixFormat fmt;
+	Enums.DataSetMatrixType dsType;
 	char separator = ',';
 	boolean isPolar = false;
 	boolean hasCancelled = false;
@@ -232,48 +237,20 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 */
 	public void printInfo(){
 		System.out.println("DSType: " + getDataSetType());
-		System.out.println("MatrixType: " + getMatrixType());
+		System.out.println("MatrixType: " + getMatrixFormat());
 		System.out.println("Rows: " + getRows());
 		System.out.println("Columns: " + getColumns());
 		System.out.println("Separator: '" + getSeparator()+"'");		
 	}
 	// ["Node data (nodes with attributes)", "Adjacency data", "Node data only",
 	// "Attribute data"]
-	public String getDataSetType() {
-		switch (dsType) {
-		case 0:
-			return "node_attb";
-		case 1:
-			return "adj";
-		case 2:
-			return "node";
-		case 3:
-			return "attb";
-		default:
-			return "node_attb";
-		}
-	}
-
-	public int getDataSetTypeAsInt() {
-		return dsType;
+	public Enums.DataSetMatrixType getDataSetType() {
+		return this.dsType;
 	}
 
 	// {Full, Upper, Lower}
-	public String getMatrixType() {
-		switch (matrixType) {
-		case 0:
-			return "full";
-		case 1:
-			return "upper";
-		case 2:
-			return "lower";
-		default:
-			return "full";
-		}
-	}
-
-	public int getMatrixTypeAsInt() {
-		return matrixType;
+	public Enums.MatrixFormat getMatrixFormat(){
+		return this.fmt;
 	}
 
 	public String getRows() {
@@ -327,9 +304,9 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		}
 
 		if(e.getSource().equals(dst))
-			this.dsType = dst.getSelectedIndex();
+			this.dsType = Enums.DataSetMatrixType.fromInt(dst.getSelectedIndex());
 		if(e.getSource().equals(mt))
-			this.matrixType = mt.getSelectedIndex();
+			this.fmt = Enums.MatrixFormat.fromInt(mt.getSelectedIndex());
 		if(e.getSource().equals(coord))
 			this.isPolar = coord.getSelectedIndex()==0?false:true;
 		if(e.getSource().equals(columnList))

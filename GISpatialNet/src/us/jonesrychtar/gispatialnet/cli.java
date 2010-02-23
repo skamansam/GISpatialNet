@@ -160,7 +160,7 @@ public class cli extends userinterface {
                 int cols = _getPosInt(sc);
                 Vector<DataSet> vds;
                 try {
-                    vds = Reader.loadDL(fn, --format, rows, cols);
+                    vds = Reader.loadDL(fn, MatrixFormat.fromInt(--format), rows, cols);
                     for(int i=0; i<vds.size(); i++)
                         gsn.getDataSets().add(vds.elementAt(i));
                 } catch (Exception ex) {
@@ -178,7 +178,7 @@ public class cli extends userinterface {
                 int cols = _getPosInt(sc);
                 Vector<DataSet> vds;
                 try {
-                    vds = Reader.loadPajek(fn, format, rows, cols);
+                    vds = Reader.loadPajek(fn, MatrixFormat.fromInt(format), rows, cols);
                     for(int i=0; i<vds.size(); i++)
                         gsn.getDataSets().add(vds.elementAt(i));
                 } catch (Exception ex) {
@@ -252,7 +252,7 @@ public class cli extends userinterface {
                     System.out.print("What is the field separator? ");
                     char sp = sc.next().charAt(0);
                     try {
-                        Vector<DataSet> vds = Reader.loadTxt(fn, option, format, rows, cols, sp);
+                        Vector<DataSet> vds = Reader.loadTxt(fn, DataSetMatrixType.fromInt(option), MatrixFormat.fromInt(format), rows, cols, sp);
 
                         for (int i = 0; i < vds.size(); i++) {
                             if (dataType == 2) {
@@ -267,7 +267,7 @@ public class cli extends userinterface {
                 }
                 case 2: { //excel
                     try {
-                        Vector<DataSet> vds = Reader.loadExcel(fn, MatrixType.fromInt(option), MatrixInputType.fromInt(format), rows, cols);
+                        Vector<DataSet> vds = Reader.loadExcel(fn, DataSetMatrixType.fromInt(option), MatrixFormat.fromInt(format), rows, cols);
                         for (int i = 0; i < vds.size(); i++) {
                             if (dataType == 2) {
                                 vds.elementAt(i).PolarToXY();
@@ -365,7 +365,7 @@ public class cli extends userinterface {
                 break;
             }
             case 6: { //shapefile
-                if (!(gsn.getData(matrix).hasX() && gsn.getData(matrix).hasX())) {
+                if (!(gsn.getData(matrix).hasX() && gsn.getData(matrix).hasY())) {
                     int op = getMenu("Node data not found: ",
                             "What do you want to do?",
                             new String[]{"Create XY data", "Write only Edge file"});

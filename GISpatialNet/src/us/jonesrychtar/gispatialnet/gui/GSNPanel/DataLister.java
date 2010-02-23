@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 //import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -31,8 +32,8 @@ import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.GISpatialNet;
 import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
-import us.jonesrychtar.gispatialnet.Enums.MatrixInputType;
-import us.jonesrychtar.gispatialnet.Enums.MatrixType;
+import us.jonesrychtar.gispatialnet.Enums.MatrixFormat;
+import us.jonesrychtar.gispatialnet.Enums.DataSetMatrixType;
 import us.jonesrychtar.gispatialnet.Reader.DLreader;
 import us.jonesrychtar.gispatialnet.Reader.Reader;
 import us.jonesrychtar.gispatialnet.gui.helpers.CSVOptionsFrame;
@@ -50,6 +51,10 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	static DefaultTreeModel tm = new DefaultTreeModel(topNode);
 	DataDisplayPanel display;
 	Vector<Matrix> selectedMatrices = new Vector<Matrix>();
+	Vector<Integer> selectedDataSetIdxs = new Vector<Integer>();
+	
+	//TODO: add context menu for adding to fields.
+	JPopupMenu popup = new JPopupMenu();
 	
 	private class DSMTreeNode extends DefaultMutableTreeNode{
 		private static final long serialVersionUID = 3813976506231344444L;
@@ -79,7 +84,15 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	}
 	public void setDisplayPanel(DataDisplayPanel gsp){this.display=gsp;}
 	public DataDisplayPanel getDisplayPanel(){return this.display;}
-
+	public Vector<Integer> getSelectedDataSetIdxs(){return this.selectedDataSetIdxs;}
+	public Vector<DataSet> getSelectedDataSets(){
+		Vector<DataSet> d=new Vector<DataSet>();
+		for(int i : this.selectedDataSetIdxs){
+			d.add(this.gsn.getData(i));
+		}
+		return d;
+	}
+	
 	public GISpatialNet getGSN() {
 		return gsn;
 	}
@@ -124,7 +137,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
 		if(f.userCancelled()) return;
         try {
-            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetTypeAsInt(), f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSortByColumn(), f.getHasHeader(),f.getSeparator());
+            Vector<DataSet> vds = Reader.loadTxt(theFile, f.getDataSetType(), f.getMatrixFormat(), f.getRowsAsInt(), f.getColumnsAsInt(), f.getSortByColumn(), f.getHasHeader(),f.getSeparator());
 
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
@@ -142,7 +155,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		Reader reader = new Reader();
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
         try {
-            Vector<DataSet> vds = Reader.loadExcel(theFile, MatrixType.fromInt(f.getDataSetTypeAsInt()), MatrixInputType.fromInt(f.getMatrixTypeAsInt()), f.getColumnsAsInt(), f.getSeparator());
+            Vector<DataSet> vds = Reader.loadExcel(theFile, f.getDataSetType(), f.getMatrixFormat(), f.getColumnsAsInt(), f.getSeparator());
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
                 gsn.getDataSets().add(vds.elementAt(i));
@@ -157,7 +170,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
         Vector<DataSet> vds=null;
         try {
-            vds = Reader.loadDL(theFile, f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt());
+            vds = Reader.loadDL(theFile, f.getMatrixFormat(), f.getRowsAsInt(), f.getColumnsAsInt());
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
                 gsn.getDataSets().add(vds.elementAt(i));
@@ -175,7 +188,7 @@ public class DataLister extends JTree implements TreeSelectionListener {
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
         Vector<DataSet> vds=null;
         try {
-            vds = Reader.loadPajek(theFile, f.getMatrixTypeAsInt(), f.getRowsAsInt(), f.getColumnsAsInt());
+            vds = Reader.loadPajek(theFile, f.getMatrixFormat(), f.getRowsAsInt(), f.getColumnsAsInt());
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
                 gsn.getDataSets().add(vds.elementAt(i));
@@ -211,12 +224,18 @@ public class DataLister extends JTree implements TreeSelectionListener {
 	public void valueChanged(TreeSelectionEvent e) {
 		if(this.getLastSelectedPathComponent()==null) return;
 		this.selectedMatrices.clear();
+		this.selectedDataSetIdxs.clear();
 		TreePath[] tp = this.getSelectionPaths();
 		for (TreePath t : tp){
-			DSMTreeNode dt = (DSMTreeNode) t.getPath()[t.getPath().length-1];			
-			Matrix m = dt.getMatrix();
-			if(dt.hasDataSet()){
-				m = util.combine(dt.getDataSet().getX(), util.combine(dt.getDataSet().getY(), util.combine(dt.getDataSet().getAdj(),dt.getDataSet().getAttb())));
+			DSMTreeNode node = (DSMTreeNode) t.getPath()[t.getPath().length-1];			
+			Matrix m = node.getMatrix();
+			//TODO: add index to the list of selected nodes so we can access the selection via gsn[idx]
+			if(node.hasDataSet()){
+				m = util.combine(node.getDataSet().getX(), util.combine(node.getDataSet().getY(), util.combine(node.getDataSet().getAdj(),node.getDataSet().getAttb())));
+				this.selectedDataSetIdxs.add(this.topNode.getIndex(node));
+			}else{
+				this.selectedDataSetIdxs.add(this.topNode.getIndex(node.getParent()));
+				//JOptionPane.showMessageDialog(this, "Selected idx is "+this.topNode.getIndex(node.getParent()));
 			}
 			this.selectedMatrices.add(m);
 		}
@@ -243,4 +262,5 @@ public class DataLister extends JTree implements TreeSelectionListener {
         return JOptionPane.showOptionDialog(this, info, "Options", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE, null, items, items[0]);
         
     }
+    
 }

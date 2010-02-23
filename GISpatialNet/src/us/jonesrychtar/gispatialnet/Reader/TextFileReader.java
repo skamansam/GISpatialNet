@@ -80,9 +80,9 @@ public abstract class TextFileReader {
      * @return Vector of data sets
      * @throws java.lang.Exception
      */
-    public abstract Vector<DataSet> Read(MatrixInputType mit, int rows, int col) throws Exception;
+    public abstract Vector<DataSet> Read(MatrixFormat mit, int rows, int col) throws Exception;
 	
-    public Vector<DataSet> Read(MatrixInputType mit, int rows, int cols, int colSort,boolean hasHeader) throws Exception{
+    public Vector<DataSet> Read(MatrixFormat mit, int rows, int cols, int colSort,boolean hasHeader) throws Exception{
 		this.SortByColumn=colSort;
 		this.hasHeader=hasHeader;
 		return Read(mit, rows, cols);

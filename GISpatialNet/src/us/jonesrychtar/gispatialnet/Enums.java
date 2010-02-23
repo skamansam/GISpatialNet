@@ -9,9 +9,9 @@ package us.jonesrychtar.gispatialnet;
  */
 public class Enums {
 	
-	public static enum MatrixInputType{ 
+	public static enum MatrixFormat{ 
 		FULL, LOWER, UPPER;
-    	public static MatrixInputType fromInt(int num) {
+    	public static MatrixFormat fromInt(int num) {
     		switch (num) {
     			case 0: { return FULL; }
     			case 1: { return LOWER; }
@@ -19,7 +19,7 @@ public class Enums {
     			default: { return null; }
     		}
     	}
-		public static int toInt(MatrixInputType mit) {
+		public static int toInt(MatrixFormat mit) {
 			switch (mit) {
 				case FULL: { return 0; }
 				case LOWER: { return 1; }
@@ -27,7 +27,7 @@ public class Enums {
 				default: { return -1; }
 			}
 		}
-		public static String toString(MatrixInputType mit) {
+		public static String toString(MatrixFormat mit) {
 			switch (mit) {
 				case FULL: { return "FULL"; }
 				case LOWER: { return "LOWER"; }
@@ -35,7 +35,7 @@ public class Enums {
 				default: { return null; }
 			}		
 		}
-		public static MatrixInputType fromString(String str) {
+		public static MatrixFormat fromString(String str) {
 			if (str.toUpperCase().equals("FULL")) return FULL;
 			if (str.toUpperCase().equals("LOWER")) return LOWER;
 			if (str.toUpperCase().equals("UPPER")) return UPPER;
@@ -43,9 +43,9 @@ public class Enums {
 		}
 	}
 	
-    public static enum MatrixType{ 
+    public static enum DataSetMatrixType{ 
     	COORD_ATT, ADJACENCY, COORDINATE, ATTRIBUTE;
-    	public static MatrixType fromInt(int num) {
+    	public static DataSetMatrixType fromInt(int num) {
     		switch (num) {
     			case 0: { return COORD_ATT; }
     			case 1: { return ADJACENCY; }
@@ -54,7 +54,7 @@ public class Enums {
     			default: { return null; }
     		}
     	}
-		public static int toInt(MatrixType mt) {
+		public static int toInt(DataSetMatrixType mt) {
 			switch (mt) {
 				case COORD_ATT: { return 0; }
 				case ADJACENCY: { return 1; }
@@ -63,7 +63,7 @@ public class Enums {
 				default: { return -1; }
 			}
     	}
-		public static String toString(MatrixType mt) {
+		public static String toString(DataSetMatrixType mt) {
 			switch (mt) {
 				case COORD_ATT: { return "COORD_ATT"; }
 				case ADJACENCY: { return "ADJACENCY"; }
@@ -72,7 +72,7 @@ public class Enums {
 				default: { return null; }
 			}		
 		}
-		public static MatrixType fromString(String str) {
+		public static DataSetMatrixType fromString(String str) {
 			if (str.toUpperCase().equals("COORD_ATT")) return COORD_ATT;
 			if (str.toUpperCase().equals("ADJACENCY")) return ADJACENCY;
 			if (str.toUpperCase().equals("COORDINATE")) return COORDINATE;
@@ -125,7 +125,7 @@ public class Enums {
 
     public static enum AlgorithmType{ 
     	QAP, SNB, BORDERS, HILIGHT_EDGES,CONVERSION;
-    	public static AlgorithmType fromInt(int num) {
+       	public static AlgorithmType fromInt(int num) {
     		switch (num) {
     			case 0: { return QAP; }
     			case 1: { return SNB; }

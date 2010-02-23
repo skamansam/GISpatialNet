@@ -27,6 +27,7 @@ import us.jonesrychtar.gispatialnet.Algorithm.QAP;
 import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.Reader.*;
 import us.jonesrychtar.gispatialnet.Writer.*;
+import us.jonesrychtar.gispatialnet.Enums;
 import us.jonesrychtar.gispatialnet.convertKnown;
 import us.jonesrychtar.gispatialnet.convertUnknown;
 import us.jonesrychtar.gispatialnet.util;
@@ -310,7 +311,7 @@ public class TEST {
         ExcelReader er = new ExcelReader("nodes.xls");
         Vector<Matrix> temp = new Vector<Matrix>();
         try {
-            temp = er.read(MatrixInputType.FULL, 10, 2);
+            temp = er.read(MatrixFormat.FULL, 10, 2);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -321,7 +322,7 @@ public class TEST {
       Vector<Matrix> tempa = new Vector<Matrix>();
        ExcelReader era = new ExcelReader("edges.xls");
         try {
-            tempa = era.read(MatrixInputType.LOWER, 10, 10);
+            tempa = era.read(MatrixFormat.LOWER, 10, 10);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -360,7 +361,7 @@ public class TEST {
         PajekReader pr = new PajekReader("Test.net");
         Vector<DataSet> ds= new Vector<DataSet>();
         try {
-            ds = pr.Read(MatrixInputType.fromInt(0), 10, 10);
+            ds = pr.Read(MatrixFormat.fromInt(0), 10, 10);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -377,7 +378,7 @@ public class TEST {
         try {
             //temp = dlr.Read(DLreader.FULL_MATRIX, 5, 5);
             //temp = dlr.Read(DLreader.LOWER_MATRIX, 5, 5);
-            temp = dlr.Read(TextFileReader.UPPER_MATRIX, 5, 5);
+            temp = dlr.Read(Enums.MatrixFormat.UPPER, 5, 5);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }

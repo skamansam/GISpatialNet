@@ -68,7 +68,7 @@ public class CSVFileReader extends TextFileReader{
      */
     @Override
     //TODO: New Output type needs coding
-    public Vector<DataSet> Read(MatrixInputType type, int rows, int cols)
+    public Vector<DataSet> Read(MatrixFormat type, int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 //		matrixReader = new CSVReader(new FileReader(this.getFile()),
@@ -115,7 +115,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(MatrixInputType type,int rows, int cols) throws IOException {
+	public Vector<DataSet> readFullMatrix(MatrixFormat type,int rows, int cols) throws IOException {
 		Matrix m = this.getFileAsMatrix(new File(this.filename),true);
 		//NOTE: add field for ego row. Ego column should be closeness to ties.
 		//TODO: ASK for EGO "chunk by" column. 
@@ -148,7 +148,7 @@ public class CSVFileReader extends TextFileReader{
 		return ret;//theMatrices;
 	}
 
-	public Vector<Matrix> ReadAsMatrices(MatrixInputType type, int rows, int cols) {
+	public Vector<Matrix> ReadAsMatrices(MatrixFormat type, int rows, int cols) {
 		Vector<Matrix> ret = new Vector<Matrix>();			//The return value
 		Matrix theMatrix = MatrixFactory.emptyMatrix();		//the file as a Matrix
 
