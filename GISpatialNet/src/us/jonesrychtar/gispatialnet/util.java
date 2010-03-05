@@ -119,7 +119,7 @@ public class util {
            }
             return temp;
         }else
-            throw new IllegalArgumentException("Matrix Sizes do not match.");
+            throw new IllegalArgumentException("Matrix Sizes do not match. ("+a.getColumnCount()+","+b.getColumnCount()+")");
     }
     /**
      * Splits a big matrix into 3 smaller matricies
@@ -232,7 +232,7 @@ public class util {
 			m.setColumnLabel(i, m.getAsString(rowNum,i));
 		}
 		m=m.deleteRows(Calculation.Ret.NEW, rowNum);
-		System.out.println("__util.readHeader().headers:__");
-		util.printHeaders(m);
+		//System.out.println("__util.readHeader().headers:__");
+		//util.printHeaders(m);
 	}
 }

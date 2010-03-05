@@ -217,7 +217,7 @@ public class CommandLineHelper {
                         gsn.add(ds1);
                         break;
                     case 'P':
-                        ds = Reader.loadPajek(indir+inFiles[j], MatrixFormat.fromInt(Matrix), row, col);
+                        ds = Reader.loadPajek(indir+inFiles[j], MatrixFormat.fromInt(Matrix), DataSetMatrixType.COORDINATE,row, col);
                         for(int k=0; k<ds.size(); k++)
                             gsn.add(ds.elementAt(k));
                         break;

@@ -85,9 +85,9 @@ public class Reader {
      * @return vector of datasets with data from file
      * @throws java.lang.Exception
      */
-    public static Vector<DataSet> loadPajek(String filename, MatrixFormat fmt, int rows, int cols) throws Exception{
+    public static Vector<DataSet> loadPajek(String filename, MatrixFormat fmt,DataSetMatrixType dst, int rows, int cols) throws Exception{
         PajekReader pr = new PajekReader(filename);
-        Vector<DataSet> ds = pr.Read(fmt, rows, cols);
+        Vector<DataSet> ds = pr.Read(fmt,dst, rows, cols);
         for(int i=0; i<ds.size(); i++)
             ds.elementAt(i).addFile(filename);
         return ds;
@@ -189,7 +189,7 @@ public class Reader {
     public static Vector<DataSet> loadTxt(String filename, DataSetMatrixType dst, MatrixFormat fmt, int rows, int col, int colSort,boolean hasHeader,char sep) throws Exception{
         CSVFileReader csvr = new CSVFileReader(filename);
         //cswvr.setSep(sep);
-        Vector<DataSet> DSOut = csvr.Read(fmt,rows, col, colSort,hasHeader);
+        Vector<DataSet> DSOut = csvr.Read(fmt,dst,rows, col, colSort,hasHeader);
         return DSOut;
     }
 /*

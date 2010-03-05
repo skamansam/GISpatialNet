@@ -45,8 +45,9 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	private static final long serialVersionUID = -2749991861366815222L;
 	//int dsType = 0, matrixType = 0, 
 	int rows = 24, cols = 4;
-	Enums.MatrixFormat fmt;
-	Enums.DataSetMatrixType dsType;
+	int xcol=0,ycol=1;
+	Enums.MatrixFormat fmt = Enums.MatrixFormat.FULL;
+	Enums.DataSetMatrixType dsType=Enums.DataSetMatrixType.COORD_ATT;
 	char separator = ',';
 	boolean isPolar = false;
 	boolean hasCancelled = false;
@@ -58,44 +59,24 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	JPanel hasheaderrow = new JPanel();
 	JCheckBox hasHeader = new JCheckBox("First row is a column header row.");
 
+	JPanel haslabelcol = new JPanel();
+	JCheckBox hasLabels = new JCheckBox("First column is an ID column. (put in with attribute data).");
+
 	JPanel colselrow = new JPanel();
 	JLabel colSelectLbl = new JLabel("Split Based On:");
 	JComboBox columnList = new JComboBox(new String[] { "Please select delimiter first."});
 
+	JPanel xcolselrow = new JPanel();
+	JLabel xcolselLbl = new JLabel("X Coordinate Column: ");
+	JComboBox xcolList = new JComboBox(new String[] { "Please select delimiter first."});
+
+	JPanel ycolselrow = new JPanel();
+	JLabel ycolselLbl = new JLabel("Y Coordinate Column: ");
+	JComboBox ycolList = new JComboBox(new String[] { "Please select delimiter first."});
+
 	JPanel useheuristicrow = new JPanel();
 	JCheckBox useHeuristic = new JCheckBox("Import using heuristics.");
 
-	private void setHeuristicControlVisibility(boolean b){
-		dstlbl.setEnabled(b);
-		dst.setEnabled(b);
-		mtlbl.setEnabled(b);
-		mt.setEnabled(b);
-		numrowslbl.setEnabled(b);
-		rowSpinner.setEnabled(b);
-		numcolslbl.setEnabled(b);
-		colSpinner.setEnabled(b);
-		coordtypelbl.setEnabled(b);
-		coord.setEnabled(b);
-	}
-
-	private void fitWindow(){
-		int h = this.getInsets().bottom+this.getInsets().top;
-		h+=seprow.getHeight();
-		h+=hasheaderrow.getHeight();
-		h+=colselrow.getHeight();
-		h+=useheuristicrow.getHeight();
-		h+=dstrow.getHeight();
-		h+=mtrow.getHeight();
-		h+=numrowsrow.getHeight();
-		h+=numcolsrow.getHeight();
-		h+=coordtyperow.getHeight();
-		h+=btnsep.getHeight();
-		h+=btnrow.getHeight()+20;
-		//System.err.println("window control height "+h);
-		if(this.getInsets().bottom-this.getInsets().top<h)
-			this.setBounds(this.getX(), this.getY(), this.getWidth(), h);
-
-	}
 	JPanel dstrow = new JPanel();
 	JLabel dstlbl = new JLabel("Data to read: ");
 	JComboBox dst = new JComboBox(new String[] {
@@ -104,14 +85,14 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 
 	JPanel mtrow = new JPanel();
 	JLabel mtlbl = new JLabel("Type of Matrix: ");
-	JComboBox mt = new JComboBox(new String[] { "Full", "Upper", "Lower" });
+	JComboBox mt = new JComboBox(new String[] { "Full",  "Lower", "Upper" });
 
 	JPanel numrowsrow = new JPanel();
-	JLabel numrowslbl = new JLabel("Rows to read: ");
+	JLabel numrowslbl = new JLabel("Rows to read (split every x rows): ");
 	JSpinner rowSpinner = new JSpinner(new SpinnerNumberModel(25, 0, 999999, 1));
 
 	JPanel numcolsrow = new JPanel();
-	JLabel numcolslbl = new JLabel("Columns to read (split every X rows): ");
+	JLabel numcolslbl = new JLabel("Columns to read: ");
 	JSpinner colSpinner = new JSpinner(new SpinnerNumberModel(4, 0, 999999, 1));
 
 	JPanel coordtyperow = new JPanel();
@@ -139,7 +120,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	private void setupGUI(){
 		this.setTitle("CSV Import Options");
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-		this.setBounds(100, 100, 500, 350);
+		this.setBounds(100, 100, 620, 400);
 
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
@@ -161,12 +142,32 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		hasheaderrow.add(hasHeader);
 		p.add(hasheaderrow);
 
+		//has header? row
+		hasLabels.addActionListener(this);
+		hasLabels.setSelected(true);
+		haslabelcol.add(hasLabels);
+		p.add(haslabelcol);
+
 		//column list
 		columnList.addActionListener(this);
 		columnList.setEditable(false);
 		colselrow.add(colSelectLbl);
 		colselrow.add(columnList);
 		p.add(colselrow);
+
+		//x column list
+		xcolList.addActionListener(this);
+		xcolList.setEditable(false);
+		xcolselrow.add(xcolselLbl);
+		xcolselrow.add(xcolList);
+		p.add(xcolselrow);
+
+		//y column list
+		ycolList.addActionListener(this);
+		ycolList.setEditable(false);
+		ycolselrow.add(ycolselLbl);
+		ycolselrow.add(ycolList);
+		p.add(ycolselrow);
 
 		//use heuristic? row
 		useHeuristic.addActionListener(this);
@@ -224,6 +225,42 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		this.setVisible(true);
 		
 	}
+	
+	private void setHeuristicControlVisibility(boolean b){
+		dstlbl.setEnabled(b);
+		dst.setEnabled(b);
+		mtlbl.setEnabled(b);
+		mt.setEnabled(b);
+		numrowslbl.setEnabled(b);
+		rowSpinner.setEnabled(b);
+		numcolslbl.setEnabled(b);
+		colSpinner.setEnabled(b);
+		coordtypelbl.setEnabled(b);
+		coord.setEnabled(b);
+	}
+
+	private void fitWindow(){
+		int h = this.getInsets().bottom+this.getInsets().top+
+		seprow.getHeight()+
+		hasheaderrow.getHeight()+
+		colselrow.getHeight()+
+		xcolselrow.getHeight()+
+		ycolselrow.getHeight()+
+		colselrow.getHeight()+
+		useheuristicrow.getHeight()+
+		dstrow.getHeight()+
+		mtrow.getHeight()+
+		numrowsrow.getHeight()+
+		numcolsrow.getHeight()+
+		coordtyperow.getHeight()+
+		btnsep.getHeight()+
+		btnrow.getHeight()+20;
+		//System.err.println("window control height "+h);
+		if(this.getInsets().bottom-this.getInsets().top<h)
+			this.setBounds(this.getX(), this.getY(), this.getWidth(), h);
+
+	}
+
 
 	/**
 	 * @param args
@@ -287,10 +324,18 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	public boolean getHasHeader() {
 		return this.hasHeader.isSelected();
 	}
+	public boolean getHasLabels() {
+		return this.hasLabels.isSelected();
+	}
 	public int getSortByColumn() {
 		return this.splitBy;
 	}
-
+	public int getXColumn() {
+		return this.xcol;
+	}
+	public int getYColumn() {
+		return this.ycol;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -305,16 +350,23 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 
 		if(e.getSource().equals(dst))
 			this.dsType = Enums.DataSetMatrixType.fromInt(dst.getSelectedIndex());
-		if(e.getSource().equals(mt))
+		else if(e.getSource().equals(mt)){
+			System.out.println("Seeting DataSet Type to ("+mt.getSelectedIndex()+") "+Enums.MatrixFormat.fromInt(mt.getSelectedIndex()));
 			this.fmt = Enums.MatrixFormat.fromInt(mt.getSelectedIndex());
-		if(e.getSource().equals(coord))
-			this.isPolar = coord.getSelectedIndex()==0?false:true;
-		if(e.getSource().equals(columnList))
-			this.splitBy=columnList.getSelectedIndex()>0?columnList.getSelectedIndex()-1:-1;
-		if(/*e.getSource().equals(columnList) || */e.getSource().equals(hasHeader)){
-			populateColumnList(""+separator);
 		}
-		if(e.getSource().equals(sep)){
+		else if(e.getSource().equals(coord))
+			this.isPolar = coord.getSelectedIndex()==0?false:true;
+		else if(e.getSource().equals(columnList))
+			this.splitBy=columnList.getSelectedIndex()>0?columnList.getSelectedIndex()-1:-1;
+		else if(e.getSource().equals(xcolList))
+			this.xcol=xcolList.getSelectedIndex()>0?xcolList.getSelectedIndex()-1:-1;
+		else if(e.getSource().equals(ycolList))
+			this.ycol=ycolList.getSelectedIndex()>0?ycolList.getSelectedIndex()-1:-1;
+		else if(e.getSource().equals(hasHeader))
+			populateColumnList(""+separator);
+		else if(e.getSource().equals(hasLabels))
+			populateColumnList(""+separator);
+		else if(e.getSource().equals(sep)){
 			String sepVal = (String)(sep.getEditor().getItem());
 			if(sepVal.equals("Tab"))
 				this.separator = '\u0009';
@@ -325,7 +377,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			else
 				this.separator = sepVal.charAt(0);
 		}
-		if(e.getSource().equals(useHeuristic)){
+		else if(e.getSource().equals(useHeuristic)){
 			setHeuristicControlVisibility(!useHeuristic.isSelected());
 		}
 		//printInfo();
@@ -338,14 +390,21 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			Matrix m = new CSVMatrix(this.FName,new String(seperator));
 			columnList.removeAllItems();
 			columnList.addItem("[Use Row number]");
+			rowSpinner.setValue(m.getRowCount());
+			if(this.hasHeader.isSelected())	rowSpinner.setValue(m.getRowCount()-1);
+			colSpinner.setValue(m.getColumnCount());
 			//System.out.println("This stream has "+m.getColumnCount()+" columns with "+(hasHeader.isSelected()?"":"no ")+"header using "+seperator+" seperator.");
 			for(int i=0;i<m.getColumnCount();i++){
 				String theLabel = m.getAsString(0,i);
-				if(hasHeader.isSelected())
+				if(hasHeader.isSelected()){
 					columnList.addItem(theLabel);
-				else
+					xcolList.addItem(theLabel);
+					ycolList.addItem(theLabel);
+				}else{
 					columnList.addItem(""+i+" ["+theLabel+"]");
-				System.out.print(""+theLabel+" ");
+					xcolList.addItem(""+i+" ["+theLabel+"]");
+					ycolList.addItem(""+i+" ["+theLabel+"]");
+				}
 			}
 			System.out.print("\n");
 		} catch (IOException e) {
@@ -381,19 +440,11 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {}
-
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
 	@Override
-	public void windowGainedFocus(WindowEvent e) {
-		fitWindow();
-		
-	}
-
+	public void windowGainedFocus(WindowEvent e) {fitWindow();}
 	@Override
-	public void windowLostFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowLostFocus(WindowEvent e) {}
+	
 }
