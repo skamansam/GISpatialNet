@@ -274,15 +274,22 @@ public class GISpatialNet {
             theData.get(Data).setAdj(theData.elementAt(Data).getAdj().appendHorizontally(a2));
         }
     }
+    private static void handleHeadless(){
+    	if(java.awt.GraphicsEnvironment.isHeadless()){
+    		System.out.println("WARNING: Using headless environment with no options!\n");
+    		PrintUsage();
+    		System.exit(0);
+    	}else{
+    		buildGUI();
+    	}
+    }
 	/**
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
         if((args.length < 1  || args.length > 5) || args[0].charAt(0) != '-'){
-            PrintUsage();
-            System.exit(0);
-        }
-        else{
+        	GISpatialNet.handleHeadless();
+        }else{
             Getopt g = new Getopt("GISpatialNet", args, "cgsbeqhvlC:D:E:K:P:S:");
             int op;
             boolean inputTypeSet = false, 
