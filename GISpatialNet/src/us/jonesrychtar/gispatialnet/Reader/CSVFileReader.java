@@ -36,6 +36,7 @@ public class CSVFileReader extends TextFileReader{
 	private int colSort=-1;
     //formatting for file
     private String seperatorChar=",";
+    private int xcol=0,ycol=1;
     //private char quoteChar='\"';
     //private String commentChars="#";
     //private boolean hideComments = true;
@@ -56,7 +57,14 @@ public class CSVFileReader extends TextFileReader{
      */
     public Vector<DataSet> getMatrices(){return theData;}
     
-    /**
+    
+    public String getSeperatorChar() {
+		return seperatorChar;
+	}
+	public void setSeperatorChar(String seperatorChar) {
+		this.seperatorChar = seperatorChar;
+	}
+	/**
      *
      * @param type
      * @param rows
@@ -68,7 +76,7 @@ public class CSVFileReader extends TextFileReader{
      */
     @Override
     //TODO: New Output type needs coding
-    public Vector<DataSet> Read(MatrixFormat type, int rows, int cols)
+    public Vector<DataSet> Read(MatrixFormat type, DataSetMatrixType dst,int rows, int cols)
 		throws FileNotFoundException, IllegalArgumentException,IOException {
 		//try to read the file
 //		matrixReader = new CSVReader(new FileReader(this.getFile()),
@@ -76,7 +84,7 @@ public class CSVFileReader extends TextFileReader{
 		//return readFullMatrix(matrixReader,rows,cols);
 		switch(type){
 		case FULL:
-			return readFullMatrix(type,rows,cols);
+			return readFullMatrix(dst,rows,cols);
 		case LOWER:
 			//return readLower(matrixReader,rows,cols);
 			break;
@@ -90,7 +98,6 @@ public class CSVFileReader extends TextFileReader{
 			
 		return theData;
 	}
-
 	/**
 	 * @return
 	 */
@@ -115,7 +122,7 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(MatrixFormat type,int rows, int cols) throws IOException {
+	public Vector<DataSet> readFullMatrix(DataSetMatrixType dst,int rows, int cols) throws IOException {
 		Matrix m = this.getFileAsMatrix(new File(this.filename),true);
 		//NOTE: add field for ego row. Ego column should be closeness to ties.
 		//TODO: ASK for EGO "chunk by" column. 
@@ -125,26 +132,53 @@ public class CSVFileReader extends TextFileReader{
 		//Vector<Matrix> ml  = this.ReadAsMatrices(type, rows, cols);
 		Vector<DataSet> ret = new Vector<DataSet>();
 		
-		DataSet ds = new DataSet();
-		ds.addFile(new File(this.filename).getName());
-
-		if(this.hasHeader)
-			util.readHeader(m,0);
-		
-		if(this.SortByColumn!=-1)
-			ret = ds.SplitByColumn(m,1,1);
-		else{
-			ds.addHeuristic(m);
-		}
-		/*for (int i=0;i<ml.size();i++){
+		//System.out.println("Matrix is "+m.getRowCount()+" x "+m.getColumnCount()+" for "+dst);
+		for(int r=0,c=cols-1;r<m.getRowCount();r+=rows){
 			DataSet ds = new DataSet();
-			ds.addFile(this.filename);
-			ds.addHeuristic(ml.elementAt(i));
+			ds.setTitle(ds.getTitle()+" ("+r+"-"+(r+rows)+")");
+			ds.addFile(new File(this.filename).getName());
+			ds.addFile(new File(this.filename).getName());
+			if(this.hasHeader)
+				util.readHeader(m,0);
+			int rowTo=r+rows-1;
+			//is columns wanted is greater than cols available, reset cols to availables cols
+			if(c>=m.getColumnCount()) c=(int)m.getColumnCount()-1;
+			//if rows are greater than rows available, reset rows to available rows
+			if(rowTo>=m.getRowCount())rowTo=(int)m.getRowCount()-r-1;
+			
+			String selString=r+"-"+rowTo+";0-"+c;
+			//String selString="0-"+c+";"+r+"-"+rowTo;
+			System.out.println("getting "+selString+ " rows left: "+(m.getRowCount()-rowTo));
+			Matrix t=m.select(Calculation.Ret.NEW, selString);
+			switch(dst){
+			case ADJACENCY:
+				ds.setAdj(t);
+				break;
+			case ATTRIBUTE:
+				ds.setAttr(t);
+				break;
+			case COORD_ATT:
+				//System.out.println("Removing coords. x:"+xcol+"/"+t.getColumnCount()+", y: "+ycol+"/"+t.getColumnCount());
+				ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
+				ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
+				t=t.deleteColumns(Calculation.Ret.NEW, xcol);
+				t=t.deleteColumns(Calculation.Ret.NEW, ycol-1);
+				ds.setAttr(t);
+				//System.out.println("Now has. x:"+t.getColumnCount());
+				break;
+			case COORDINATE:
+				//System.out.println("Removing coords. x:"+xcol+"/"+t.getColumnCount()+", y: "+ycol+"/"+t.getColumnCount());
+				ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
+				ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
+				t=t.deleteColumns(Calculation.Ret.NEW, xcol);
+				t=t.deleteColumns(Calculation.Ret.NEW, ycol-1);
+				//System.out.println("Now has. x:"+t.getColumnCount());
+			}
 			ret.add(ds);
-		}*/
-		
+			//r=rowTo;
+		}
+				
 		//System.out.println(""+ret.size()+" sets found!");
-		
 		return ret;//theMatrices;
 	}
 
@@ -271,7 +305,7 @@ public class CSVFileReader extends TextFileReader{
 			}
 			//util.printHeaders(m);
 			//delete header row
-			m=m.deleteColumns(Calculation.Ret.NEW, 0);		
+			if(this.hasHeader)	m=m.deleteRows(Calculation.Ret.NEW, 0);		
 		}
 		
 		
@@ -361,6 +395,10 @@ public class CSVFileReader extends TextFileReader{
 		
 		return m;
 	}
+	
+	public void setXCol(int xColumn) {this.xcol=xColumn;}
+	public void setYCol(int yColumn) {this.ycol=yColumn;}
+
 	/**
 	 * @param reader
 	 * @param rows

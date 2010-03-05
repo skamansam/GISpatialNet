@@ -178,7 +178,7 @@ public class cli extends userinterface {
                 int cols = _getPosInt(sc);
                 Vector<DataSet> vds;
                 try {
-                    vds = Reader.loadPajek(fn, MatrixFormat.fromInt(format), rows, cols);
+                    vds = Reader.loadPajek(fn, MatrixFormat.fromInt(format),DataSetMatrixType.COORDINATE, rows, cols);
                     for(int i=0; i<vds.size(); i++)
                         gsn.getDataSets().add(vds.elementAt(i));
                 } catch (Exception ex) {

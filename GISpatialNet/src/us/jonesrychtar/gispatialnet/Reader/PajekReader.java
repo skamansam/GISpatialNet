@@ -44,7 +44,7 @@ public class PajekReader extends TextFileReader {
      */
     @Override
     //TODO: This will now return dataset vector or DataSet depending on if it can read multiple data sets.
-    public Vector<DataSet> Read(MatrixFormat type, int rows, int col) throws Exception{
+    public Vector<DataSet> Read(MatrixFormat type,DataSetMatrixType dst, int rows, int col) throws Exception{
         Vector<DataSet> theData = new Vector<DataSet>();
         theData.add(new DataSet());
     	Scanner theFile = new Scanner(this.file);

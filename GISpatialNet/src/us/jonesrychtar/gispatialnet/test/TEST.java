@@ -361,7 +361,7 @@ public class TEST {
         PajekReader pr = new PajekReader("Test.net");
         Vector<DataSet> ds= new Vector<DataSet>();
         try {
-            ds = pr.Read(MatrixFormat.fromInt(0), 10, 10);
+            ds = pr.Read(MatrixFormat.FULL,DataSetMatrixType.COORDINATE, 10, 10);
         } catch (Exception ex) {
             Logger.getLogger(TEST.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -49,6 +49,20 @@ public abstract class TextFileReader {
     protected File file;
     protected int SortByColumn;
 	protected boolean hasHeader;
+    
+	public boolean getHasHeader() {
+		return hasHeader;
+	}
+	public void setHasHeader(boolean hasHeader) {
+		this.hasHeader = hasHeader;
+	}
+	public int getSortByColumn() {
+		return SortByColumn;
+	}
+	public void setSortByColumn(int sortByColumn) {
+		SortByColumn = sortByColumn;
+	}
+
     /**
      *
      * @return the file
@@ -72,6 +86,7 @@ public abstract class TextFileReader {
         return new File(filename);
     }
     
+    
     /**
      * Reads the file
      * @param type Format of stored data [FULL_MATRIX, LOWER_MATRIX, UPPER_MATRIX]
@@ -80,11 +95,11 @@ public abstract class TextFileReader {
      * @return Vector of data sets
      * @throws java.lang.Exception
      */
-    public abstract Vector<DataSet> Read(MatrixFormat mit, int rows, int col) throws Exception;
+    public abstract Vector<DataSet> Read(MatrixFormat mit, DataSetMatrixType dst,int rows, int col) throws Exception;
 	
-    public Vector<DataSet> Read(MatrixFormat mit, int rows, int cols, int colSort,boolean hasHeader) throws Exception{
+    public Vector<DataSet> Read(MatrixFormat mit,DataSetMatrixType dst, int rows, int cols, int colSort,boolean hasHeader) throws Exception{
 		this.SortByColumn=colSort;
 		this.hasHeader=hasHeader;
-		return Read(mit, rows, cols);
+		return Read(mit, dst,rows, cols);
 	}
 }

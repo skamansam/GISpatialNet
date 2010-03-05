@@ -163,6 +163,13 @@ public class GISpatialNet {
         theData.removeElementAt(DataSet);
     }
     /**
+    *
+    * @param DataSet Index of dataset to remove from storage
+    */
+   public void RemoveAll(int DataSet){
+       theData.removeAllElements();
+   }
+    /**
      * Adds a data set to list
      * @param ds Data to add
      */

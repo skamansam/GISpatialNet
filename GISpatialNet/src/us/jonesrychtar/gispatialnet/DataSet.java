@@ -32,7 +32,8 @@ public class DataSet {
     private Matrix y = MatrixFactory.emptyMatrix(); //vector matrix of y coordinates
     private Matrix adj = MatrixFactory.emptyMatrix(); //matrix of size x by y where if ij >= 1 there is a line connecting (xi,yi) to (xj,yj). Always stored as FULL MATRIX
     private Matrix attb = MatrixFactory.emptyMatrix(); //attributes for node (xi,yi) where i is the row of attb
-
+    private String title="[no title]";
+    private String extraTitle="";
     private Vector<String> loadedFiles = new Vector<String>();
 
     private int Detail=2;
@@ -100,6 +101,7 @@ public class DataSet {
 		
 	}
 	
+
 	/**
 	 * This method generates random values for the x and y matrices.
      * @param nodeCount the number of nodes to generate.
@@ -121,6 +123,27 @@ public class DataSet {
 	 * @param x the x to set
 	 */
 	public void setX(Matrix x) {this.x = x;}
+    /**
+     * Appends data to x using util.combine
+     * @param x Matrix to add to x
+     */
+	/**
+	 * @return the x
+	 */
+	public String getTitle() {return title+(!extraTitle.equals("")?extraTitle:"");}
+
+	public void setExtraTitle(String extraTitle) {
+		this.extraTitle = extraTitle;
+	}
+
+	public String getExtraTitle() {
+		return extraTitle;
+	}
+
+	/**
+	 * @param x the x to set
+	 */
+	public void setTitle(String s) {this.title = s;}
     /**
      * Appends data to x using util.combine
      * @param x Matrix to add to x
@@ -268,6 +291,7 @@ public class DataSet {
      */
     public void addFile(String file){
         loadedFiles.add(file);
+        if(this.title.equals("[no title]")) this.title=file;
     }
     /**
      *
