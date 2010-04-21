@@ -185,6 +185,8 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		mtrow.add(mtlbl);
 		mtrow.add(mt);
 		p.add(mtrow);
+		if(this.FName.contains("lower") || this.FName.contains("bottom")){mt.setSelectedIndex(1);}
+		if(this.FName.contains("upper") || this.FName.contains("top")){mt.setSelectedIndex(2);}
 
 		//number of rows to read
 		rowSpinner.addChangeListener(this);
@@ -203,6 +205,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		coordtyperow.add(coordtypelbl);
 		coordtyperow.add(coord);
 		p.add(coordtyperow);
+		if(this.FName.contains("dist") || this.FName.contains("pol")){coord.setSelectedIndex(1);}
 
 		
 		p.add(btnsep);
