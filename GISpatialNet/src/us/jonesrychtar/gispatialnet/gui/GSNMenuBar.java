@@ -38,7 +38,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 			sa_csv,sa_pajek,sa_shapefile,sa_ucinet,sa_excel,					//save as menu
 			t_flip,t_rotate,t_resize,t_match_best,t_find_duplicate,	//transform menu
 			a_qap,a_snb,a_borders,a_hilite_edges,								//algorithm menu
-			d_find,d_merge,d_seperate,d_add,d_add_ego,				//data menu
+			d_clear,d_find,d_merge,d_seperate,d_add,d_add_ego,				//data menu
 			v_pajek,v_ucinet,v_g_earth,v_g_maps,v_egonet,v_geotools,v_arcgis,				//view in menu
 			h_about,h_help;											//help menu
 	
@@ -75,7 +75,8 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		a_hilite_edges = createMenuItem(algorithmMenu,"Highlight Edges",KeyEvent.VK_H,"Highlight Edges","general","History","algorithm_hilite_edges");
 
 		//dataset menu
-		d_find = createMenuItem(datasetMenu,"Find...",KeyEvent.VK_F,"Find content within data","general","Search","data_find");
+		d_find = createMenuItem(datasetMenu,"Clear",KeyEvent.VK_MINUS,"Clear all data","general","Delete","data_clear");
+		d_clear = createMenuItem(datasetMenu,"Find...",KeyEvent.VK_F,"Find content within data","general","Search","data_find");
 		d_merge = createMenuItem(datasetMenu,"Merge",KeyEvent.VK_M,"Merge this data set with another.","general","Import","data_merge");
 		d_seperate = createMenuItem(datasetMenu,"Seperate",KeyEvent.VK_DIVIDE,"Seperate data set into multiple sets.","table","RowDelete","data_separate");
 		d_add = createMenuItem(datasetMenu,"Add...",KeyEvent.VK_ADD,"Add data to the existing data.","general","Add","data_add");
@@ -137,6 +138,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		a_snb.addActionListener(thePanel);
 		a_borders.addActionListener(thePanel);
 		a_hilite_edges.addActionListener(thePanel);
+		d_clear.addActionListener(thePanel);
 		d_find.addActionListener(thePanel);
 		d_merge.addActionListener(thePanel);
 		d_seperate.addActionListener(thePanel);

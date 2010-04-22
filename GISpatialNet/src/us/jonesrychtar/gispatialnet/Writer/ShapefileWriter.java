@@ -8,7 +8,7 @@
  * 
  */
 package us.jonesrychtar.gispatialnet.Writer;
-
+//TODO: make export tie down to location
 /**
  *
  * @author Charles Bevan

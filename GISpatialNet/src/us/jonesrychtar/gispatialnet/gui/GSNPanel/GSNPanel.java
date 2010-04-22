@@ -3,6 +3,8 @@
  */
 package us.jonesrychtar.gispatialnet.gui.GSNPanel;
 
+//NOTE: when exporting, display shapefile matrix
+
 //import java.awt.Color;
 //import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -98,6 +100,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		if (e.getActionCommand() == "algorithm_hilite_edges"){handleAlgorithm("hilite_edges");}
 		
 		if (e.getActionCommand() == "data_find"){handleFind();}
+		if (e.getActionCommand() == "data_clear"){theList.clearData();}
 		if (e.getActionCommand() == "data_merge"){handleData("merge");}
 		if (e.getActionCommand() == "data_separate"){handleData("separate");}
 		if (e.getActionCommand() == "data_add"){handleData("add");}
@@ -167,13 +170,18 @@ public class GSNPanel extends JPanel implements ActionListener{
 
 	private void handleSaveAs(String type) {
 		if(theList.getSelectedMatrices().size()==0)return;
-		System.out.println("Saving as "+type);
+		//System.out.println("Saving as "+type);
+		
+		//determine type based on string
 		type=type.replace("save_as_", "");
 		Enums.FileType t = Enums.FileType.fromString(type.toUpperCase());
-		JFileChooser c = new JFileChooser();
+		
+		//ask for file to save
+		JFileChooser c = new JFileChooser(type+": Enter filename with no extension.");
 		int d = c.showSaveDialog(this);
 		if (d!=JFileChooser.APPROVE_OPTION) return;
 		File f=c.getSelectedFile();
+		
 		switch(t){
 			case CSV:
 			try {
@@ -211,18 +219,20 @@ public class GSNPanel extends JPanel implements ActionListener{
 	                	String choices[]={"Create XY data", "Write only Edge file"};
 						noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 	                }
-					JFileChooser dlg=new JFileChooser("Select Node File");
-					dlg.setFileFilter(new GSNFileFilter(""));
-					dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
-					if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-					String fnn = dlg.getSelectedFile().getAbsolutePath();
+	                String fnn = f.getAbsolutePath();
+	                String efn = f.getAbsolutePath();
+					//JFileChooser dlg=new JFileChooser("Select Node File");
+					//dlg.setFileFilter(new GSNFileFilter(""));
+					//dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
+					//if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+					//String fnn = dlg.getSelectedFile().getAbsolutePath();
 					//System.err.println("Opening "+theFile);
 
-					JFileChooser dlg2=new JFileChooser("Select Edge File");
-					dlg2.setFileFilter(new GSNFileFilter(""));
-					dlg2.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
-					if(dlg2.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-					String efn = dlg2.getSelectedFile().getAbsolutePath();
+					//JFileChooser dlg2=new JFileChooser("Select Edge File");
+					//dlg2.setFileFilter(new GSNFileFilter(""));
+					//dlg2.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
+					//if(dlg2.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+					//String efn = dlg2.getSelectedFile().getAbsolutePath();
 					//System.err.println("Opening "+theFile);
 
                     if(noXYChoice==0) {
