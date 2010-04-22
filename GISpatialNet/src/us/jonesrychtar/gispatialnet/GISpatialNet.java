@@ -3,7 +3,7 @@
  */
 package us.jonesrychtar.gispatialnet;
 //TODO: Functionality:
-/* Production of shapefiles
+/* 
  * Algorithms - edge length bias (SNB)
  * DLReader: why is it not working? - one fewer columns - (0-23 should be 0-24) should break by rowNum, not just one
  * 
@@ -237,12 +237,27 @@ public class GISpatialNet {
     /**
      * "Router" function. Calls ClearData() on the current DataSet.
      */
-    public void ClearData(){
-        for(int i=0; i<theData.size(); i++){
+    public void ClearData(int i){
+    	if (i == -1)
+            for(int j=0; j<theData.size(); j++){
+                theData.elementAt(j).ClearData();
+            }
+    	else
             theData.elementAt(i).ClearData();
-        }
     }
 
+    /**
+     * "Router" function. Calls ClearData() on the current DataSet.
+     */
+    public void removeData(int i){
+    	System.out.println("Removing "+i);
+    	if (i == -1)
+    		theData.clear();
+    	else
+    		theData.remove(i);
+    	
+    		
+    }
     /**
      * Adds an ego to a data set
      * @param Data Index of data set to add ego to
