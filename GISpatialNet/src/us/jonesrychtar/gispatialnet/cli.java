@@ -109,7 +109,7 @@ public class cli extends userinterface {
                     
                     break;
                 case 6:
-                    gsn.ClearData();
+                    gsn.ClearData(-1);
                     break;
                 case 7:
                     printAbout();
