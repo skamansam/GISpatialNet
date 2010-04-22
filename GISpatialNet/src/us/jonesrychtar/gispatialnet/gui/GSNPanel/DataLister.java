@@ -511,6 +511,10 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
         return JOptionPane.showOptionDialog(this, info, "Options", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE, null, items, items[0]);
         
     }
+    public void clearData(){
+    	System.out.println("Clearing data in DataLister");
+    	gsn.removeData(-1);
+    }
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		// TODO Add handler for menu

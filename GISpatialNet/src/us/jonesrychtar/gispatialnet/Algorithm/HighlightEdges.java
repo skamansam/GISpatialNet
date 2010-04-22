@@ -140,7 +140,7 @@ public class HighlightEdges {
      */
     private void prepareStat() {
         Matrix temp = Adj;
-        temp = Adj.sort(Calculation.Ret.NEW);
+        temp = temp.sortrows(Calculation.Ret.NEW, 0, false);
         int[] rc;
 
         //avg

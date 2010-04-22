@@ -393,11 +393,11 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			Matrix m = new CSVMatrix(this.FName,new String(seperator));
 			columnList.removeAllItems();
 			columnList.addItem("[Use Row number]");
-			rowSpinner.setValue(m.getRowCount());
-			if(this.hasHeader.isSelected())	rowSpinner.setValue(m.getRowCount()-1);
-			colSpinner.setValue(m.getColumnCount());
+			rowSpinner.setValue((int) m.getRowCount());
+			if(this.hasHeader.isSelected())	rowSpinner.setValue((int)m.getRowCount()-1);
+			colSpinner.setValue((int)m.getColumnCount());
 			//System.out.println("This stream has "+m.getColumnCount()+" columns with "+(hasHeader.isSelected()?"":"no ")+"header using "+seperator+" seperator.");
-			for(int i=0;i<m.getColumnCount();i++){
+			for(int i=0;i<(int)m.getColumnCount();i++){
 				String theLabel = m.getAsString(0,i);
 				if(hasHeader.isSelected()){
 					columnList.addItem(theLabel);
