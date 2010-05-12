@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -29,6 +30,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
+import org.ujmp.core.enums.FileFormat;
 import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 
 import us.jonesrychtar.gispatialnet.Enums;
@@ -389,8 +392,10 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 
 	private void populateColumnList(String seperator) {
 		//TODO: get matrix with UJMP and parse headers
+		//System.out.println("Parsing "+this.FName);
 		try {
-			Matrix m = new CSVMatrix(this.FName,new String(seperator));
+			Matrix m = MatrixFactory.linkToFile(FileFormat.CSV, new File(this.FName));
+			//Matrix m = new CSVMatrix(new File(this.FName),new String(seperator));
 			columnList.removeAllItems();
 			columnList.addItem("[Use Row number]");
 			rowSpinner.setValue((int) m.getRowCount());
@@ -410,7 +415,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 				}
 			}
 			System.out.print("\n");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("Error parsing "+this.FName+" with "+(hasHeader.isSelected()?"":"no ")+"header using "+seperator+" seperator.");
 		}
 	}
