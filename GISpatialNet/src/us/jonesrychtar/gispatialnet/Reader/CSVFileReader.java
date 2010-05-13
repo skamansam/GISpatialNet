@@ -13,6 +13,7 @@ import us.jonesrychtar.gispatialnet.Reader.TextFileReader;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
+import org.ujmp.core.enums.FileFormat;
 import org.ujmp.core.enums.ValueType;
 import org.ujmp.core.exceptions.MatrixException;
 import org.ujmp.core.stringmatrix.impl.CSVMatrix;
@@ -291,7 +292,7 @@ public class CSVFileReader extends TextFileReader{
 	public Matrix getFileAsMatrix(File f, boolean hasHeaderRow) throws IOException{
 		
 
-		Matrix m = new CSVMatrix(f.getAbsolutePath(),new String(this.seperatorChar));
+		Matrix m = MatrixFactory.importFromFile(FileFormat.CSV,f.getAbsolutePath(),new String(this.seperatorChar));
 		//Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount(),mFromFile.getColumnCount());
 		int egoCol=-1;
 
@@ -300,12 +301,14 @@ public class CSVFileReader extends TextFileReader{
 			for (int i=0;i<m.getColumnCount();i++){
 				String label=m.getAsString(0,i);
 				m.setColumnLabel(i, label);
+				//System.out.println("Setting "+i+" to "+label);
 				if(label.toLowerCase().contains("ego") && egoCol==-1)
 					egoCol=i;
 			}
 			//util.printHeaders(m);
 			//delete header row
-			if(this.hasHeader)	m=m.deleteRows(Calculation.Ret.NEW, 0);		
+			if(hasHeaderRow)	m=m.deleteRows(Calculation.Ret.NEW, 0);	
+			//util.printHeaders(m);
 		}
 		
 		

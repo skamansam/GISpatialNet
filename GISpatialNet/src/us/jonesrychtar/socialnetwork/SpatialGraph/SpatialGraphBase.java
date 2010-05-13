@@ -10,6 +10,7 @@
 
 package us.jonesrychtar.socialnetwork.SpatialGraph;
 
+import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.socialnetwork.*;
 import java.io.PrintStream;
 
@@ -68,6 +69,13 @@ public class SpatialGraphBase {
 		metricFunction = Metric.EUCLIDEAN; //default to Euclidean
 	}
 	
+	public SpatialGraphBase(DataSet ds) {
+		X = MatrixFactory.copyFromMatrix(ds.getX());
+		Y = MatrixFactory.copyFromMatrix(ds.getY());
+		A = MatrixFactory.copyFromMatrix(ds.getAdj());
+		numVerts = A.getRowCount();
+		metricFunction = Metric.EUCLIDEAN; //default to Euclidean
+	}
 	/**
 	 * Gets the matrix of x-coordinates.
 	 * 

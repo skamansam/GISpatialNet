@@ -12,6 +12,7 @@ import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -34,7 +35,9 @@ import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.enums.FileFormat;
 import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 
+import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.Enums;
+import us.jonesrychtar.gispatialnet.GISpatialNet;
 
 /**
  * @author sam
@@ -54,6 +57,9 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	char separator = ',';
 	boolean isPolar = false;
 	boolean hasCancelled = false;
+	int DSIndex=-1;
+	int addTo=-1;
+	GISpatialNet gsn=null;
 
 	JPanel seprow = new JPanel();
 	JLabel seplbl = new JLabel("Field Delimiter: ");
@@ -64,6 +70,10 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 
 	JPanel haslabelcol = new JPanel();
 	JCheckBox hasLabels = new JCheckBox("First column is an ID column. (put in with attribute data).");
+
+	JPanel addToDSrow = new JPanel();
+	JLabel addToDSLbl = new JLabel("Add to Data Set:");
+	JComboBox addToDSList = new JComboBox(new String[] { "New Data Set" });
 
 	JPanel colselrow = new JPanel();
 	JLabel colSelectLbl = new JLabel("Split Based On:");
@@ -113,6 +123,11 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		this.FName=filename;
 		this.setupGUI();
 	}
+	public CSVOptionsFrame(String filename,GISpatialNet g) {
+		this.FName=filename;
+		this.gsn=g;
+		this.setupGUI();
+	}
 	
 	public CSVOptionsFrame() {
 		this.setupGUI();
@@ -151,6 +166,15 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		haslabelcol.add(hasLabels);
 		p.add(haslabelcol);
 
+		//Data Set list
+		addToDSList.addActionListener(this);
+		addToDSList.setEditable(false);
+		addToDSrow.add(addToDSLbl);
+		addToDSrow.add(addToDSList);
+		p.add(addToDSrow);
+		for(DataSet ds : gsn.getDataSets())
+			addToDSList.addItem(ds.getTitle());
+		
 		//column list
 		columnList.addActionListener(this);
 		columnList.setEditable(false);
@@ -260,6 +284,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		numcolsrow.getHeight()+
 		coordtyperow.getHeight()+
 		btnsep.getHeight()+
+		addToDSrow.getHeight()+
 		btnrow.getHeight()+20;
 		//System.err.println("window control height "+h);
 		if(this.getInsets().bottom-this.getInsets().top<h)
@@ -342,6 +367,20 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	public int getYColumn() {
 		return this.ycol;
 	}
+	public int getAddTo() {
+		return addTo;
+	}
+	public void setAddTo(int addTo) {
+		this.addTo = addTo;
+	}
+
+	public int getDataSetIndex() {
+		return this.DSIndex;
+	}
+	public void setDataSet(int idx) {
+		this.DSIndex = idx;
+		this.addToDSList.setSelectedIndex(idx+1);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -364,6 +403,8 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			this.isPolar = coord.getSelectedIndex()==0?false:true;
 		else if(e.getSource().equals(columnList))
 			this.splitBy=columnList.getSelectedIndex()>0?columnList.getSelectedIndex()-1:-1;
+		else if(e.getSource().equals(this.addToDSList))
+				this.DSIndex=addToDSList.getSelectedIndex()>0?addToDSList.getSelectedIndex()-1:-1;
 		else if(e.getSource().equals(xcolList))
 			this.xcol=xcolList.getSelectedIndex()>0?xcolList.getSelectedIndex()-1:-1;
 		else if(e.getSource().equals(ycolList))
@@ -394,8 +435,8 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		//TODO: get matrix with UJMP and parse headers
 		//System.out.println("Parsing "+this.FName);
 		try {
-			Matrix m = MatrixFactory.linkToFile(FileFormat.CSV, new File(this.FName));
-			//Matrix m = new CSVMatrix(new File(this.FName),new String(seperator));
+			Matrix m = MatrixFactory.importFromFile(FileFormat.CSV, new File(this.FName),new String(seperator));
+			//Matrix m = new CSVMatrix(this.FName,new String(seperator));
 			columnList.removeAllItems();
 			columnList.addItem("[Use Row number]");
 			rowSpinner.setValue((int) m.getRowCount());
@@ -416,7 +457,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			}
 			System.out.print("\n");
 		} catch (Exception e) {
-			System.out.println("Error parsing "+this.FName+" with "+(hasHeader.isSelected()?"":"no ")+"header using "+seperator+" seperator.");
+			System.out.println("Error parsing "+this.FName+" with "+(hasHeader.isSelected()?"":"no ")+"header using "+seperator+" seperator.\nError: "+e.getMessage()+"\n"+e.getStackTrace());
 		}
 	}
 

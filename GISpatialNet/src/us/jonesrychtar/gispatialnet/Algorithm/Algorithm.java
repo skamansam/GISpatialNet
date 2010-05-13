@@ -114,4 +114,14 @@ public class Algorithm {
     	ds.setY(sg.getY());
     	//return sg;
     }
+    public static DataSet SNB(DataSet ds, double bias,boolean b){
+    	DataSet d=new DataSet(ds);
+    	SpatialGraphBase sg=new SpatialGraphBase(d);
+    	sg.setBias(bias);
+    	sg.calculateBiasAndEstimates();
+    	d.setAdj(sg.getA());
+    	d.setX(sg.getX());
+    	d.setY(sg.getY());
+    	return d;
+    }
 }
