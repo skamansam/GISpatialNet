@@ -38,6 +38,7 @@ import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.Enums;
 import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
+import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Writer.CSVwriter;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
 import us.jonesrychtar.gispatialnet.gui.GSNFileFilter;
@@ -144,6 +145,9 @@ public class GSNPanel extends JPanel implements ActionListener{
 	}
 
 	private void handleAlgorithm(String algorithm) {
+		if(theList.getSelectedMatrices().size()<1){
+			JOptionPane.showMessageDialog(this, "Please select a matrix first!", "Select matrix", JOptionPane.ERROR_MESSAGE);
+		}
 		if(algorithm.equals("qap")){
 			Matrix m=theList.getSelectedMatrices().elementAt(0);
 			String[] options  = new String[]{"Simple Mantel Test", "SMT with exact permutation",
@@ -155,6 +159,13 @@ public class GSNPanel extends JPanel implements ActionListener{
 			System.out.println("Running QAP as "+theChoice+"...");
 			if(theList.getSelectionRows().length!=2){ JOptionPane.showMessageDialog(this, "You must select two matrices in order to run this algorithm.");return;}
 			
+		}else if(algorithm.equals("snb")){
+            String s = (String)JOptionPane.showInputDialog(
+                    this,"Enter a bias:","SNB Parameter",JOptionPane.INFORMATION_MESSAGE,
+                    null,null,"0.5");
+            double bias=new Double(s);
+            theList.getGSN().add(Algorithm.SNB(theList.getSelectedDataSets().firstElement(), bias,true));
+            theList.refresh();
 		}else
 		JOptionPane.showMessageDialog(this, "Sorry!\nThe "+algorithm+" algorithm is not implemented yet!", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
 	}

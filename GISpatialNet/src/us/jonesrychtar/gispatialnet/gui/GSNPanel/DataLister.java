@@ -347,6 +347,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	        new TreeDropTargetListener());
 */
 		}
+	public void refresh(){reloadData();}
 	private void reloadData(){
 		System.out.println(""+gsn.getDataSets().size()+" datasets are loaded!");
 		//TreeModel tm = this.getModel();
@@ -377,7 +378,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	
 	public void addCSV(String theFile){
         CSVFileReader csvr = new CSVFileReader(theFile);
-		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile,gsn);
 		if(f.userCancelled()) return;
         csvr.setXCol(f.getXColumn());
         csvr.setYCol(f.getYColumn());

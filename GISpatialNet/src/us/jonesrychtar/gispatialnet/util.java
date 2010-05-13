@@ -104,20 +104,35 @@ public class util {
         	return MatrixFactory.copyFromMatrix(a);
     	if (!b.isEmpty() && a.isEmpty())
         	return MatrixFactory.copyFromMatrix(b);
-    	
+
+		/*System.out.print("util.combine Headers:\nA:");
+    	for(long i =0;i<a.getColumnCount();i++)
+    		System.out.print(a.getColumnLabel(i)+" , ");
+		System.out.print("\nB:");
+    	for(long i =0;i<b.getColumnCount();i++)
+    		System.out.print(b.getColumnLabel(i)+" , ");
+    	*/
+    	/*System.out.println("Matrix a Headers:");
+    	printHeaders(a);
+    	System.out.println("Matrix b Headers:");
+    	printHeaders(b);*/
     	if(a.getRowCount() == b.getRowCount()){
            Matrix temp = a.appendHorizontally(b);
+           //Matrix temp = MatrixFactory.horCat(a,b);
            //set headers
-           int col=0;
-           while(col<a.getColumnCount()){
-               temp.setColumnLabel(col, a.getColumnLabel(col));
-               col++;
-           }
-           while(col< a.getColumnCount()+b.getColumnCount()){
-               temp.setColumnLabel(col, b.getColumnLabel(col-a.getColumnCount()));
-               col++;
-           }
-            return temp;
+           /*for(int col=0;col < temp.getColumnCount();col++){
+        	   String lbl="";
+        	   long bcol=col-a.getColumnCount();
+        	   if (bcol<0 && a.getColumnLabel(col)!=null)
+        		   lbl=a.getColumnLabel(col);
+        	   else if(b.getColumnLabel(bcol)!=null)
+        		   lbl=b.getColumnLabel(bcol);
+        	   System.out.println("Setting label '"+lbl+"' for column "+col);
+			   temp.setColumnLabel(col, lbl);
+           }*/
+       		System.out.println("Matrix ret Headers:");
+       		printHeaders(temp);
+          return temp;
         }else
             throw new IllegalArgumentException("Matrix Sizes do not match. ("+a.getColumnCount()+","+b.getColumnCount()+")");
     }
@@ -217,12 +232,12 @@ public class util {
     	to.appendVertically(m);
     }
     public static void printHeaders(Matrix m){
-		if(m.getColumnLabel(0).equals(null) || m.getColumnLabel(0).equals("") || m.getColumnLabel(0).equals(" ") ){
+		/*if(m.getColumnLabel(0).equals(null) || m.getColumnLabel(0).equals("") || m.getColumnLabel(0).equals(" ") ){
 			System.out.println("No header found for "+m.getLabel());return;
-		}
-    	System.out.print("Header: ");
+		}*/
+    	//System.out.print("Header: ");
 		for (int i=0;i<m.getColumnCount();i++){
-			System.out.print(""+m.getColumnLabel(i)+" ");
+			System.out.print("'"+m.getColumnLabel(i)+"', ");
 		}			
 		System.out.print("\n");
     }
