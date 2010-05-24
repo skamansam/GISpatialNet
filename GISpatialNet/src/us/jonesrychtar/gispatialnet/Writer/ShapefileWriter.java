@@ -11,15 +11,20 @@ package us.jonesrychtar.gispatialnet.Writer;
 //TODO: make export tie down to location
 /**
  *
- * @author Charles Bevan
- * @date September 10, 2009
- * @version 0.0.1
+ * @author Charles Bevan, Samuel Tyler
+ * @date September 10, 2009, May 24, 2010
+ * @version 0.0.2
  */
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
@@ -33,6 +38,12 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.simple.SimpleFeature;
+import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
+
+import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.convertKnown;
+import us.jonesrychtar.gispatialnet.convertUnknown;
 
 /**
  *
@@ -44,6 +55,9 @@ public class ShapefileWriter {
     private DataStore myData;
     private FeatureStore<SimpleFeatureType, SimpleFeature> store;
     private FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
+    private String scheme;
+    private DataSet ds=new DataSet();	//pointer to the dataset we want to work with
+    String filename="shapefile";
 
     /**
      * Default constructor, used for testing
@@ -104,6 +118,7 @@ public class ShapefileWriter {
         write();
     }
 
+    public void setFilename(String fn){this.filename=fn;}
     /**
      * Writes data to shapefile
      */
@@ -124,4 +139,8 @@ public class ShapefileWriter {
 
         transaction.close();
     }
+    
+    public void writeEdges(String filename) throws IOException{}
+    public void writeNodes(String filename) throws IOException{}
+    
 }
