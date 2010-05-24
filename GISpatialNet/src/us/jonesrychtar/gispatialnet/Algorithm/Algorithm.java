@@ -7,13 +7,21 @@
  */
 package us.jonesrychtar.gispatialnet.Algorithm;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.naming.CannotProceedException;
 import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
+import org.ujmp.core.MatrixFactory;
 
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.convertKnown;
+import us.jonesrychtar.gispatialnet.convertUnknown;
 import us.jonesrychtar.gispatialnet.Writer.ShapefileNodeWriter;
 import us.jonesrychtar.socialnetwork.SpatialGraph.SpatialGraphBase;
 
@@ -124,4 +132,78 @@ public class Algorithm {
     	d.setY(sg.getY());
     	return d;
     }
+    
+    /**
+    *
+    * @param dim diminsion of total graph
+    */
+   public static void CalculateUnknownCoordinates(DataSet ds,Dimension dim){
+       if(!ds.hasAdj()){
+    	   System.err.println("Cannot convert unknown coordinates without a valid adjacency matrix.");
+    	   return;
+       }
+
+	   
+	   //http://egonet.svn.sourceforge.net/viewvc/egonet/trunk/src/com/endlessloopsoftware/ego/client/graph/ELSFRLayout2.java?view=markup
+       Dimension d = dim;
+       Random rand = new Random();
+       Matrix x=ds.getX();
+       Matrix y = ds.getY();
+       Matrix adj=ds.getAdj();
+       
+       int xIsolate=25,yIsolate=0;
+       for(int i=0; i<adj.getRowCount(); i++){
+           if (_getIncidentEdges(adj,i) != 0) {
+               //lock(v,true);
+
+               // can expand to the right
+               if (yIsolate + 25 > d.height && xIsolate + 25 <= d.width) {
+                   // hit bottom, new column
+                   yIsolate = 0;
+                   xIsolate += 25;
+               } // can't expand down or to the right
+               else if (yIsolate + 25 > d.height && xIsolate + 25 > d.width) {
+                   // reset entire thing
+                   yIsolate = 0;
+                   xIsolate = 0;
+               } // just go downward first
+               else {
+                   yIsolate += 25;
+               }
+               
+               //set x,y
+               x.setAsDouble(xIsolate, i, 0);
+               y.setAsDouble(yIsolate, i, 0);
+           } else {
+               double xt, yt;
+               xt = rand.nextDouble() * d.width;
+               yt = rand.nextDouble() * d.height;
+               
+               //set x,y
+               x.setAsDouble(xt, i, 0);
+               y.setAsDouble(yt, i, 0);
+           }
+       }
+
+       //just make sure we set the right ones
+       ds.setX(x);
+       ds.setY(y);
+       ds.setAdj(adj);
+   }
+
+   /**
+    * Get the number of edges attached to node
+    * @param vertex node in graph
+    * @return number of edges connected to node
+    */
+   private static int _getIncidentEdges(Matrix adj,int vertex){
+       int out = 0;
+       for(int col=0; col<adj.getColumnCount(); col++){
+           if(adj.getAsDouble(vertex,col) > 0){
+               out++;
+           }
+       }
+       return out;
+   }
+
 }

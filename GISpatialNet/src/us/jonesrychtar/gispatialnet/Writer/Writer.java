@@ -38,11 +38,10 @@ public class Writer {
      * @throws IOException
      */
     public static void saveShapefile(String Edgefilename, String Nodefilename, DataSet ds) throws IllegalArgumentException, MalformedURLException, IOException, SchemaException{
-            if (!(ds.hasAttb())) {
-                new convertKnown(Edgefilename, Nodefilename, ds.getX(),ds.getY(), ds.getAdj(), ds.getAttb());
-            } else {
-                new convertKnown(Edgefilename, Nodefilename, ds.getX(),ds.getY(), ds.getAdj());
-            }
+    	ShapefileEdgeWriter sfew = new ShapefileEdgeWriter(Edgefilename, ds);
+    	ShapefileNodeWriter sfnw = new ShapefileNodeWriter(Nodefilename, ds);
+    	sfew.write();
+    	sfnw.write();
     }
     /**
      * Saves to 2 shapefiles, one with nodes, one with edges

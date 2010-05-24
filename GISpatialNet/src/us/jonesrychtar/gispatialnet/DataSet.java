@@ -6,13 +6,21 @@
  */
 package us.jonesrychtar.gispatialnet;
 
+import java.awt.Dimension;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
+import org.geotools.feature.SchemaException;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
 import org.ujmp.core.calculation.Calculation;
+
+import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 
 
 /**
@@ -726,6 +734,13 @@ public class DataSet {
 		from = from.deleteRows(Calculation.Ret.NEW, row);
 		return from;
 		
+	}
+
+	public void convertUnknownCoords(int alg, Dimension args) {
+		// set x, y
+		x=(MatrixFactory.zeros(adj.getRowCount(), 1));
+		y=(MatrixFactory.zeros(adj.getRowCount(), 1));
+		Algorithm.CalculateUnknownCoordinates(this,args);
 	}
 }
 
