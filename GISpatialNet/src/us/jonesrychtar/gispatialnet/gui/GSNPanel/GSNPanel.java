@@ -40,6 +40,7 @@ import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Algorithm.Algorithm;
 import us.jonesrychtar.gispatialnet.Writer.CSVwriter;
+import us.jonesrychtar.gispatialnet.Writer.SimpleShapefileWriter;
 import us.jonesrychtar.gispatialnet.Writer.Writer;
 import us.jonesrychtar.gispatialnet.gui.GSNFileFilter;
 import us.jonesrychtar.gispatialnet.gui.GSNStatusBarInterface;
@@ -223,57 +224,70 @@ public class GSNPanel extends JPanel implements ActionListener{
 					//}
 					for(int curSelectedIdx=0;curSelectedIdx<theList.getSelectedMatrices().size();curSelectedIdx++){
 						
-					DataSet tmp = theList.getSelectedDataSets().elementAt(curSelectedIdx);
-					int noXYChoice=-1;
-	                if (!(tmp.hasX() && tmp.hasY())) {
-						//TODO: get this to work!
-	                	String choices[]={"Create XY data", "Write only Edge file"};
-						noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+						DataSet tmp = theList.getSelectedDataSets().elementAt(curSelectedIdx);
+						int noXYChoice=-1;
+		                if ( !tmp.hasXY() ) {
+							//TODO: get this to work!
+		                	String choices[]={"Create XY data", "Write only Edge file"};
+							noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+		                }
+		                String nodeFile = f.getAbsolutePath();
+		                String edgeFile = f.getAbsolutePath();
+		                
+		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(f,tmp);
+		                ssw.write();
+
+					/*
+						int noXYChoice=-1;
+		                if (!(tmp.hasX() && tmp.hasY())) {
+							//TODO: get this to work!
+		                	String choices[]={"Create XY data", "Write only Edge file"};
+							noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+		                }
+		                String fnn = f.getAbsolutePath();
+		                String efn = f.getAbsolutePath();
+						//JFileChooser dlg=new JFileChooser("Select Node File");
+						//dlg.setFileFilter(new GSNFileFilter(""));
+						//dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
+						//if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+						//String fnn = dlg.getSelectedFile().getAbsolutePath();
+						//System.err.println("Opening "+theFile);
+	
+						//JFileChooser dlg2=new JFileChooser("Select Edge File");
+						//dlg2.setFileFilter(new GSNFileFilter(""));
+						//dlg2.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
+						//if(dlg2.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+						//String efn = dlg2.getSelectedFile().getAbsolutePath();
+						//System.err.println("Opening "+theFile);
+
+	                    if(noXYChoice==0) {
+	                    	int ht = new Integer(JOptionPane.showInputDialog("Enter max height of network (usually 10xNumber of rows): "));
+	                        int wd = new Integer(JOptionPane.showInputDialog("Enter max width of network (usually 10xNumber of columns): "));
+	                        try {
+	                        	Writer.saveShapefileUnknown(fnn, efn, 1, ht, wd, tmp);
+	                        } catch (IllegalArgumentException ex) {
+	                            System.out.println(ex.getMessage());
+	                        } catch (MalformedURLException ex) {
+	                            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+	                        } catch (IOException ex) {
+	                            System.out.println(ex.getMessage());
+	                        } catch (SchemaException ex) {
+	                            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+	                        }
+	                    }else{
+							try {
+								Writer.saveShapefile(fnn, efn, tmp);
+							} catch (IllegalArgumentException ex) {
+							    System.out.println(ex.getMessage());
+							} catch (MalformedURLException ex) {
+							    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+							} catch (IOException ex) {
+							    System.out.println(ex.getMessage());
+							} catch (SchemaException ex) {
+							    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
+							}
+	                    }*/
 	                }
-	                String fnn = f.getAbsolutePath();
-	                String efn = f.getAbsolutePath();
-					//JFileChooser dlg=new JFileChooser("Select Node File");
-					//dlg.setFileFilter(new GSNFileFilter(""));
-					//dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
-					//if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-					//String fnn = dlg.getSelectedFile().getAbsolutePath();
-					//System.err.println("Opening "+theFile);
-
-					//JFileChooser dlg2=new JFileChooser("Select Edge File");
-					//dlg2.setFileFilter(new GSNFileFilter(""));
-					//dlg2.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
-					//if(dlg2.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-					//String efn = dlg2.getSelectedFile().getAbsolutePath();
-					//System.err.println("Opening "+theFile);
-
-                    if(noXYChoice==0) {
-                    	int ht = new Integer(JOptionPane.showInputDialog("Enter max height of network (usually 10xNumber of rows): "));
-                        int wd = new Integer(JOptionPane.showInputDialog("Enter max width of network (usually 10xNumber of columns): "));
-                        try {
-                        	Writer.saveShapefileUnknown(fnn, efn, 1, ht, wd, tmp);
-                        } catch (IllegalArgumentException ex) {
-                            System.out.println(ex.getMessage());
-                        } catch (MalformedURLException ex) {
-                            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            System.out.println(ex.getMessage());
-                        } catch (SchemaException ex) {
-                            Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }else{
-						try {
-							Writer.saveShapefile(fnn, efn, tmp);
-						} catch (IllegalArgumentException ex) {
-						    System.out.println(ex.getMessage());
-						} catch (MalformedURLException ex) {
-						    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-						} catch (IOException ex) {
-						    System.out.println(ex.getMessage());
-						} catch (SchemaException ex) {
-						    Logger.getLogger(cli.class.getName()).log(Level.SEVERE, null, ex);
-						}
-                        }
-                    }
 				}
 				
 				//JOptionPane.showMessageDialog(this, "Save As Shapefile has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
