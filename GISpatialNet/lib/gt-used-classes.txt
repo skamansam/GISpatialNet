@@ -1,0 +1,31 @@
+org.geotools.feature.SchemaException
+	us.jonesrychtar.gispatialnet.Algorithm.Algorithm.java
+	us.jonesrychtar.gispatialnet.Algorithm.Borders.java
+	us.jonesrychtar.gispatialnet.Algorithm.HighlightEdges.java
+	us.jonesrychtar.gispatialnet.Algorithm.HighlightEdgesByVal.java
+	us.jonesrychtar.gispatialnet.gui.GSNPanel.GSNPanel.java
+	us.jonesrychtar.gispatialnet.test.TEST.java
+	us.jonesrychtar.gispatialnet.Writer.ShapefileEdgeWriter.java
+	us.jonesrychtar.gispatialnet.Writer.ShapefileNodeWriter.java
+	us.jonesrychtar.gispatialnet.Writer.Writer.java
+	us.jonesrychtar.gispatialnet.cli.java
+	us.jonesrychtar.gispatialnet.convertKnown.java
+	us.jonesrychtar.gispatialnet.convertUnknown.java
+	us.jonesrychtar.gispatialnet.DataSet.java
+	
+org.geotools.data.FeatureSource
+org.geotools.data.shapefile.ShapefileDataStore
+org.geotools.feature.FeatureCollection
+org.geotools.feature.FeatureIterator
+	us.jonesrychtar.gispatialnet.Reader.ShapeFileReader.java
+
+org.geotools.data.DataStore
+org.geotools.data.DefaultTransaction
+org.geotools.data.DataUtilities
+org.geotools.data.FeatureStore
+org.geotools.data.FileDataStoreFactorySpi
+org.geotools.data.shapefile.ShapefileDataStoreFactory
+org.geotools.feature.FeatureCollections
+org.geotools.feature.SchemaException
+org.geotools.feature.simple.SimpleFeatureBuilder
+	us.jonesrychtar.gispatialnet.Writer.ShapefileWriter.java
