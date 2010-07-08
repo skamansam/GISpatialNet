@@ -4,6 +4,7 @@
 package us.jonesrychtar.gispatialnet.Writer;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class SimpleShapefileWriter {
 		this.edgeFile = edgeFile;
 		this.ds = ds;
 	}
-	private void write(){
+	public void write(){
 		try {
 			SimpleFeatureType PersonWithIDType = DataUtilities.createType("PersonWithID", // <- the  name for our feature type
 					"location:Point:srid=4326," + // <- the geometry attribute: Point type
@@ -70,9 +71,9 @@ public class SimpleShapefileWriter {
 			featureBuilder = new SimpleFeatureBuilder(PersonWithIDType);
 			for(int i=0;i<ds.getX().getRowCount();i++){
 				//storing points
-				double x=ds.getX().getAsDouble(0,i);
-				double y=ds.getY().getAsDouble(0,i);
-				String id=ds.getAttb().getAsString(0,i);
+				double x=ds.getX().getAsDouble(i,0);
+				double y=ds.getY().getAsDouble(i,0);
+				String id=ds.getAttb().getAsString(i,0);
 				Point point = geometryFactory.createPoint(new Coordinate(x, y));
 				featureBuilder.add(point);
 				featureBuilder.add(id);
@@ -80,11 +81,51 @@ public class SimpleShapefileWriter {
 				collection.add(feature);
 
 			}
+		
+			DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
+	
+			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put("url", nodeFile.toURI().toURL());
+			params.put("create spatial index", Boolean.TRUE);
+	
+			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
+					.createNewDataStore(params);
+			newDataStore.createSchema(PersonWithIDType);
+	
+			/*
+			 * You can comment out this line if you are using the createFeatureType
+			 * method (at end of class file) rather than DataUtilities.createType
+			 */
+			//newDataStore.forceSchemaCRS(DefaultGeographicCRS. .WGS84);
+			/*
+			 * Write the features to the shapefile
+			 */
+			Transaction transaction = new DefaultTransaction("create");
+	
+			String typeName = newDataStore.getTypeNames()[0];
+			FeatureSource featureSource = newDataStore.getFeatureSource(typeName);
+	
+			if (featureSource instanceof FeatureStore) {
+				FeatureStore featureStore = (FeatureStore) featureSource;
+	
+				featureStore.setTransaction(transaction);
+				try {
+					featureStore.addFeatures(collection);
+					transaction.commit();
+	
+				} catch (Exception problem) {
+					problem.printStackTrace();
+					transaction.rollback();
+	
+				} finally {
+					transaction.close();
+				}
+			}
 		} catch (SchemaException e) {
-			System.err.println("Sorry! Invalis schema specified!");
-		}finally{
-			
-		}
+			System.err.println("Sorry! Invalid schema specified!");
+		} catch (IOException e) {
+			System.err.println("Sorry! Cannot save file: "+nodeFile);
+		}finally{}
 
 	}
 	/**
