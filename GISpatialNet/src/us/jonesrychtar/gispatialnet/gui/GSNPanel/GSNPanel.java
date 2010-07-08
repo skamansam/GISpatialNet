@@ -231,8 +231,8 @@ public class GSNPanel extends JPanel implements ActionListener{
 		                	String choices[]={"Create XY data", "Write only Edge file"};
 							noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 		                }
-		                String nodeFile = f.getAbsolutePath();
-		                String edgeFile = f.getAbsolutePath();
+		                String nodeFile = f.getAbsolutePath()+".shp";
+		                String edgeFile = f.getAbsolutePath()+".shp";
 		                
 		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(f,tmp);
 		                ssw.write();
