@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DataStoreFactorySpi;
@@ -47,6 +48,10 @@ public class SimpleShapefileWriter {
 	private GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	private SimpleFeatureBuilder featureBuilder;
 
+	private List<Integer> attList;
+	private int attCount=1; 		//should always be attList.length()+1
+	private int idCol=0;			//the index of the column that contains the ID
+	
 	/**
 	 * @param nodeFile
 	 * @param edgeFile
@@ -56,12 +61,68 @@ public class SimpleShapefileWriter {
 		this.nodeFile = simpleFile;
 		this.edgeFile = simpleFile;
 		this.ds = ds;
+		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
 	}
 	public SimpleShapefileWriter(File nodeFile, File edgeFile, DataSet ds) {
 		this.nodeFile = nodeFile;
 		this.edgeFile = edgeFile;
 		this.ds = ds;
+		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
 	}
+	
+	/**
+	 * @return the attList
+	 */
+	public List<Integer> getAttList() {return attList;}
+	/**
+	 * @param attList the attList to set
+	 */
+	public void setAttList(List<Integer> attList) {this.attList = attList;}
+	/**
+	 * @return the attCount
+	 */
+	public int getAttCount() {return attCount;}
+	/**
+	 * @param attCount the attCount to set
+	 */
+	public void setAttCount(int attCount) {this.attCount = attCount;}
+	/**
+	 * @return the nodeFile
+	 */
+	public File getNodeFile() {return nodeFile;}
+	/**
+	 * @param nodeFile the nodeFile to set
+	 */
+	public void setNodeFile(File nodeFile) {this.nodeFile = nodeFile;}
+	/**
+	 * @return the edgeFile
+	 */
+	public File getEdgeFile() {return edgeFile;}
+	/**
+	 * @param edgeFile the edgeFile to set
+	 */
+	public void setEdgeFile(File edgeFile) {this.edgeFile = edgeFile;}
+	/**
+	 * @return the ds
+	 */
+	public DataSet getData() {return ds;}
+	/**
+	 * @param ds the ds to set
+	 */
+	public void setData(DataSet ds) {this.ds = ds;}
+	/**
+	 * @return the schema
+	 */
+	public SimpleFeatureType getSchema() {return schema;}
+	/**
+	 * @param schema the schema to set
+	 */
+	public void setSchema(SimpleFeatureType schema) {this.schema = schema;}
+
+	public void writeNodes(){}
+	public void writeEdges(){}
+	public void writeAttributes(){}
+	
 	public void write(){
 		try {
 			SimpleFeatureType PersonWithIDType = DataUtilities.createType("PersonWithID", // <- the  name for our feature type
