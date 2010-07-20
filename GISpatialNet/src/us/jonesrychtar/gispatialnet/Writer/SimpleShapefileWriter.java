@@ -43,7 +43,7 @@ public class SimpleShapefileWriter {
 	private File nodeFile=new File("nodes.shp");
 	private File edgeFile=new File("edges.shp");
 	private DataSet ds;
-	private SimpleFeatureType schema;
+	private SimpleFeatureType myFeatureType;
 	private FeatureCollection collection = FeatureCollections.newCollection();
 	private GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	private SimpleFeatureBuilder featureBuilder;
@@ -62,12 +62,14 @@ public class SimpleShapefileWriter {
 		this.edgeFile = simpleFile;
 		this.ds = ds;
 		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
+		makeFeatureType();
 	}
 	public SimpleShapefileWriter(File nodeFile, File edgeFile, DataSet ds) {
 		this.nodeFile = nodeFile;
 		this.edgeFile = edgeFile;
 		this.ds = ds;
 		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
+		makeFeatureType();
 	}
 	
 	/**
@@ -77,7 +79,7 @@ public class SimpleShapefileWriter {
 	/**
 	 * @param attList the attList to set
 	 */
-	public void setAttList(List<Integer> attList) {this.attList = attList;}
+	public void setAttList(List<Integer> attList) {this.attList = attList;makeFeatureType();}
 	/**
 	 * @return the attCount
 	 */
@@ -113,35 +115,54 @@ public class SimpleShapefileWriter {
 	/**
 	 * @return the schema
 	 */
-	public SimpleFeatureType getSchema() {return schema;}
+	public SimpleFeatureType getSchema() {return myFeatureType;}
 	/**
 	 * @param schema the schema to set
 	 */
-	public void setSchema(SimpleFeatureType schema) {this.schema = schema;}
+	public void setSchema(SimpleFeatureType schema) {this.myFeatureType = schema;makeFeatureType();}
 
-	public void writeNodes(){}
+	public void makeFeatureType() {
+		//main schema
+		String schemaString="location:Point:srid=4326,id:String";					
+		String schemaName="PersonWithID";
+		//add more if applicable
+		if(this.attCount>1){
+			schemaName="PersonWithAttributes";
+			for(int i=0;i<this.attList.size();i++)
+				if(i!=this.idCol)
+					schemaString+=","+ds.getAttr().getColumnLabel(i)+":String";
+			
+		}
+		try {
+			myFeatureType = DataUtilities.createType(schemaName,schemaString);
+			featureBuilder = new SimpleFeatureBuilder(myFeatureType);
+
+		} catch (SchemaException e) {
+			System.err.println("Sorry! Invalid schema specified!");
+		}
+	}
+	
+	public void writeNodes(){
+		makeFeatureType();
+		for(int i=0;i<ds.getX().getRowCount();i++){
+			//storing points
+			double x=ds.getX().getAsDouble(i,0);
+			double y=ds.getY().getAsDouble(i,0);
+			String id=ds.getAttb().getAsString(i,this.idCol);
+			Point point = geometryFactory.createPoint(new Coordinate(x, y));
+			featureBuilder.add(point);
+			featureBuilder.add(id);
+			SimpleFeature feature = featureBuilder.buildFeature(null);
+			collection.add(feature);
+
+		}
+	}
 	public void writeEdges(){}
 	public void writeAttributes(){}
 	
 	public void write(){
+		makeFeatureType();
 		try {
-			SimpleFeatureType PersonWithIDType = DataUtilities.createType("PersonWithID", // <- the  name for our feature type
-					"location:Point:srid=4326," + // <- the geometry attribute: Point type
-							"id:String" // <- a String attribute
-			);
-			featureBuilder = new SimpleFeatureBuilder(PersonWithIDType);
-			for(int i=0;i<ds.getX().getRowCount();i++){
-				//storing points
-				double x=ds.getX().getAsDouble(i,0);
-				double y=ds.getY().getAsDouble(i,0);
-				String id=ds.getAttb().getAsString(i,0);
-				Point point = geometryFactory.createPoint(new Coordinate(x, y));
-				featureBuilder.add(point);
-				featureBuilder.add(id);
-				SimpleFeature feature = featureBuilder.buildFeature(null);
-				collection.add(feature);
-
-			}
 		
 			DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
 	
@@ -149,15 +170,9 @@ public class SimpleShapefileWriter {
 			params.put("url", nodeFile.toURI().toURL());
 			params.put("create spatial index", Boolean.TRUE);
 	
-			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
-					.createNewDataStore(params);
-			newDataStore.createSchema(PersonWithIDType);
+			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
+			newDataStore.createSchema(myFeatureType);
 	
-			/*
-			 * You can comment out this line if you are using the createFeatureType
-			 * method (at end of class file) rather than DataUtilities.createType
-			 */
-			//newDataStore.forceSchemaCRS(DefaultGeographicCRS. .WGS84);
 			/*
 			 * Write the features to the shapefile
 			 */
@@ -182,13 +197,12 @@ public class SimpleShapefileWriter {
 					transaction.close();
 				}
 			}
-		} catch (SchemaException e) {
-			System.err.println("Sorry! Invalid schema specified!");
 		} catch (IOException e) {
 			System.err.println("Sorry! Cannot save file: "+nodeFile);
 		}finally{}
 
 	}
+	
 	/**
 	 * @param args
 	 */
