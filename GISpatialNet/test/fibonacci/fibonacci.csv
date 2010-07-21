@@ -1,0 +1,11 @@
+ID,Xcoord,Ycoord,Name,Ego_ID
+0,0,1,One,1
+1,1,2,Two,2
+2,3,5,Three,2
+3,8,13,Four,3
+4,21,34,Five,3
+5,55,89,Six,3
+6,144,233,Seven,4
+7,377,610,Eight,4
+8,987,1597,Nine,4
+9,2584,4181,Ten,4
