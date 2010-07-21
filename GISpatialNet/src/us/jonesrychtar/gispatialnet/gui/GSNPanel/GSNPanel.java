@@ -235,7 +235,8 @@ public class GSNPanel extends JPanel implements ActionListener{
 		                String edgeFile = f.getAbsolutePath()+".shp";
 		                
 		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(f,tmp);
-		                ssw.write();
+		                ssw.writeNodes();
+		                ssw.writeEdges();
 
 					/*
 						int noXYChoice=-1;

@@ -387,7 +387,13 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
         csvr.setSeperatorChar(f.getSeparatorAsString());
         try {
             Vector<DataSet> vds = csvr.Read( f.getMatrixFormat(),f.getDataSetType(), f.getRowsAsInt(), f.getColumnsAsInt());
-
+            
+            //TODO: add import and append to DataSet. gsn[] idx = f.getDataSetIndex()-1;
+            if(f.getDataSetIndex()>0){
+            	
+            }
+            
+            	
             for (int i = 0; i < vds.size(); i++) {
                 if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
                 gsn.getDataSets().add(vds.elementAt(i));
@@ -401,7 +407,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	}
 	
 	public void addExcel(String theFile) {
-		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile,this.gsn);
         try {
             Vector<DataSet> vds = Reader.loadExcel(theFile, f.getDataSetType(), f.getMatrixFormat(), f.getColumnsAsInt(), f.getSeparator());
             for (int i = 0; i < vds.size(); i++) {
@@ -415,7 +421,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	}
 
 	public void addUCINet(String theFile) {
-		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile,this.gsn);
         Vector<DataSet> vds=null;
         System.out.println("Data Set Type returned: "+f.getDataSetType());
         System.out.println("Matrix Format returned: "+f.getMatrixFormat());
@@ -435,7 +441,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	}
 
 	public void addPajek(String theFile) {
-		CSVOptionsFrame f = new CSVOptionsFrame(theFile);
+		CSVOptionsFrame f = new CSVOptionsFrame(theFile,this.gsn);
         Vector<DataSet> vds=null;
         try {
             vds = Reader.loadPajek(theFile, f.getMatrixFormat(), f.getDataSetType(), f.getRowsAsInt(), f.getColumnsAsInt());
