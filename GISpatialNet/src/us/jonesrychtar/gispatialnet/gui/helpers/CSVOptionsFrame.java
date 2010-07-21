@@ -118,20 +118,21 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 	String FName = "[not specified]";
 	int splitBy;
 	ArrayList<Object> noHeuristicCtrlGroup=new ArrayList<Object>();
+
 	
-	public CSVOptionsFrame(String filename) {
+	/*public CSVOptionsFrame(String filename) {
 		this.FName=filename;
 		this.setupGUI();
-	}
+	}*/
 	public CSVOptionsFrame(String filename,GISpatialNet g) {
 		this.FName=filename;
 		this.gsn=g;
 		this.setupGUI();
 	}
 	
-	public CSVOptionsFrame() {
+	/*public CSVOptionsFrame() {
 		this.setupGUI();
-	}
+	}*/
 
 	public boolean userCancelled(){return this.hasCancelled;}
 	
@@ -233,7 +234,6 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		coordtyperow.add(coord);
 		p.add(coordtyperow);
 		if(this.FName.contains("dist") || this.FName.contains("pol")){coord.setSelectedIndex(1);}
-
 		
 		p.add(btnsep);
 
