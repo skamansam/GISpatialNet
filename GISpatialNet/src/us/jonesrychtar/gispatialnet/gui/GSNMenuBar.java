@@ -46,11 +46,11 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 	
 	public GSNMenuBar(){
 		//file menu
-		f_open = createMenuItem(fileMenu,"Open...",KeyEvent.VK_O,"Open a file.","general","Open","open");
-		f_save = createMenuItem(fileMenu,"Save...",KeyEvent.VK_S,"Save currently selected data set.","general","Save","save");
-		//f_save_as = createMenuItem(fileMenu,"Save As...",KeyEvent.VK_SHIFT+KeyEvent.VK_S,"Save as a different file.","general","SaveAs","save_as");
+		f_open = createMenuItem(fileMenu,"Open...",KeyEvent.VK_O,"Open a file.","actions","document-open","open");
+		f_save = createMenuItem(fileMenu,"Save...",KeyEvent.VK_S,"Save currently selected data set.","actions","document-save","save");
+		//f_save_as = createMenuItem(fileMenu,"Save As...",KeyEvent.VK_SHIFT+KeyEvent.VK_S,"Save as a different file.","general","document-save-as","save_as");
 		fileMenu.add(f_save_as);
-		f_save_all = createMenuItem(fileMenu,"Save All",KeyEvent.VK_SHIFT+KeyEvent.VK_A,"Save all data sets.","general","SaveAll","save_all");
+		f_save_all = createMenuItem(fileMenu,"Save All",KeyEvent.VK_SHIFT+KeyEvent.VK_A,"Save all data sets.","actions","document-save-all","save_all");
 		fileMenu.addSeparator();
 		f_quit = createMenuItem(fileMenu,"Quit",KeyEvent.VK_Q,"Exit Program","general","Stop","exit");
 
@@ -159,7 +159,7 @@ public class GSNMenuBar extends JMenuBar implements MouseListener{
 		JMenuItem tmp = new JMenuItem(label);
 		tmp.setMnemonic(mnemonic);
 		tmp.getAccessibleContext().setAccessibleDescription(desc);
-		tmp.setIcon(GUIutil.getIcon(iconCat,iconName,16));
+		tmp.setIcon(GUIutil.getTangoIcon(iconCat,iconName,16));
 		tmp.setActionCommand(actionCommand);
 		tmp.addMouseListener(this);
 		parent.add(tmp);
