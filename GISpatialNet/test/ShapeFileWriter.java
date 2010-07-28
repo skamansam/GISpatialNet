@@ -38,6 +38,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import us.jonesrychtar.gispatialnet.DataSet;
+
 /**
  * from: http://docs.geotools.org/stable/userguide/examples/csv2shp.html
  * 
@@ -53,7 +55,10 @@ import com.vividsolutions.jts.geom.Point;
  *         /java/org/geotools /demo/Csv2Shape.java $
  */
 public class ShapeFileWriter {
-
+	private nodeFile=new File('nodes.shp');
+	private edgeFile=new File('edges.shp');
+	private DataSet ds;
+	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws Exception {
 
@@ -70,16 +75,9 @@ public class ShapeFileWriter {
 		 * flexible approach.
 		 */
 
-		final SimpleFeatureType TYPE = DataUtilities.createType("Location", // <-
-																			// the
-																			// name
-																			// for
-																			// our
-																			// feature
-																			// type
-				"location:Point:srid=4326," + // <- the geometry attribute:
-												// Point type
-						"name:String" // <- a String attribute
+		final SimpleFeatureType TYPE = DataUtilities.createType("Location", // <- the  name for our feature type
+				"location:Point:srid=4326," + // <- the geometry attribute: Point type
+						"id:String" // <- a String attribute
 		);
 		/*
 		 * We create a FeatureCollection into which we will put each Feature
@@ -209,5 +207,28 @@ public class ShapeFileWriter {
 
 		return newFile;
 	}
+	/**
+     * Here is how you can use a SimpleFeatureType builder to create the schema for your shapefile
+     * dynamically.
+     * <p>
+     * This method is an improvement on the code used in the main method above (where we used
+     * DataUtilities.createFeatureType) because we can set a Coordinate Reference System for the
+     * FeatureType and a a maximum field length for the 'name' field dddd
+     */
+    private static SimpleFeatureType createFeatureType() {
+
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName("Location");
+        builder.setCRS(DefaultGeographicCRS.WGS84); // <- Coordinate reference system
+
+        // add attributes in order
+        builder.add("Location", Point.class);
+        builder.length(15).add("Name", String.class); // <- 15 chars width for name field
+
+        // build the type
+        final SimpleFeatureType LOCATION = builder.buildFeatureType();
+
+        return LOCATION;
+    }
 
 }

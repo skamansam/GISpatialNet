@@ -6,6 +6,8 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.freedesktop.tango.icons.IconFactory;
+
 //import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
@@ -31,7 +33,6 @@ public class GUIutil {
 	public static ImageIcon getTableIcon(String iconName){return getIcon("table",iconName,24);}
 	public static ImageIcon getTextSmallIcon(String iconName){return getIcon("text",iconName,16);}
 	public static ImageIcon getTextIcon(String iconName){return getIcon("text",iconName,24);}
-
 	
 	/**Retrieves icons from the jlfgr-1_0.jar file. There are several convenience methods for this function.
 	 * They are in the form of getXXXIcon(iconName), where XXX is the category name (folder name)
@@ -45,7 +46,7 @@ public class GUIutil {
 	 * @param size whether we want 16x16 (size=16) or 24x24 (size=24) icons
 	 * @return an ImageIcon which represents the given parameters
 	 */
-	public static ImageIcon getIcon(String category, String iconName, int size){
+	public static ImageIcon getIcon(String category, String iconName, int size){ 
 		URL url=GUIutil.class.getResource("/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
 		if(url != null){
 				return new ImageIcon(url);
@@ -53,6 +54,16 @@ public class GUIutil {
 			//System.err.println("Could not find icon "+"/toolbarButtonGraphics/"+category+"/"+iconName+size+".gif");
 			return null;
 		}
+	}
+	public static ImageIcon getTangoIcon(String category, String iconName, int size){ 
+		ImageIcon theIcon;
+		if(size<18)size=16;
+		else if(size<26)size=22;
+		else size=32;
+		
+		IconFactory f = new IconFactory();
+		theIcon=f.getIcon(category,iconName,size);
+		return theIcon;
 	}
 
 	/** Creates and adds a toolbar button to the specified JToolBar.
