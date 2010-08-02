@@ -2,6 +2,8 @@ package us.jonesrychtar.gispatialnet.gui.helpers;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -45,6 +47,10 @@ public class FieldSelectionDialog extends javax.swing.JDialog {
 		});
 	}
 
+	public FieldSelectionDialog(JFrame frame) {
+		super(frame);
+		initGUI();
+	}
 	public FieldSelectionDialog(JFrame frame,ArrayList<Object> theData) {
 		super(frame);
 		initGUI();
