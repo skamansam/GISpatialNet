@@ -379,6 +379,9 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
 	public void addCSV(String theFile){
         CSVFileReader csvr = new CSVFileReader(theFile);
 		CSVOptionsFrame f = new CSVOptionsFrame(theFile,gsn);
+		f.setVisible(true);
+		
+		
 		if(f.userCancelled()) return;
         csvr.setXCol(f.getXColumn());
         csvr.setYCol(f.getYColumn());
@@ -386,6 +389,7 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
         csvr.setHasLabels(f.getHasLabels());
         csvr.setSortByColumn(f.getSortByColumn());
         csvr.setSeperatorChar(f.getSeparatorAsString());
+        
         int addToIdx=f.getDataSetIndex();
         try {
             Vector<DataSet> vds = csvr.Read( f.getMatrixFormat(),f.getDataSetType(), f.getRowsAsInt(), f.getColumnsAsInt());
