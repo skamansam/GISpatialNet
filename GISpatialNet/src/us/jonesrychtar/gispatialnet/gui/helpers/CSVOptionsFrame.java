@@ -161,7 +161,7 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		hasheaderrow.add(hasHeader);
 		p.add(hasheaderrow);
 
-		//has header? row
+		//has labels? row
 		hasLabels.addActionListener(this);
 		hasLabels.setSelected(true);
 		haslabelcol.add(hasLabels);
@@ -207,14 +207,17 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		dstrow.add(dstlbl);
 		dstrow.add(dst);
 		p.add(dstrow);
+		if(this.FName.toLowerCase().contains("adj")){dst.setSelectedIndex(1);}
+		if(this.FName.toLowerCase().contains("coord") || this.FName.toLowerCase().contains("node")){dst.setSelectedIndex(2);}
+		if(this.FName.toLowerCase().contains("attb") || this.FName.toLowerCase().contains("attr")){dst.setSelectedIndex(3);}
 		
 		//matrix type [full, half, etc.]
 		mt.addActionListener(this);
 		mtrow.add(mtlbl);
 		mtrow.add(mt);
 		p.add(mtrow);
-		if(this.FName.contains("lower") || this.FName.contains("bottom")){mt.setSelectedIndex(1);}
-		if(this.FName.contains("upper") || this.FName.contains("top")){mt.setSelectedIndex(2);}
+		if(this.FName.toLowerCase().contains("lower") || this.FName.toLowerCase().contains("bottom")){mt.setSelectedIndex(1);}
+		if(this.FName.toLowerCase().contains("upper") || this.FName.toLowerCase().contains("top")){mt.setSelectedIndex(2);}
 
 		//number of rows to read
 		rowSpinner.addChangeListener(this);
@@ -252,7 +255,6 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 		this.addWindowFocusListener(this);
 		//this.setAlwaysOnTop(true);
 		this.setModal(true);
-		this.setVisible(true);
 		
 	}
 	

@@ -238,7 +238,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		                
 		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(nodeFile,edgeFile,tmp);
 		                ssw.writeNodes();
-		                //ssw.writeEdges();
+		                ssw.writeEdges();
 
 					/*
 						int noXYChoice=-1;
@@ -328,7 +328,7 @@ public class GSNPanel extends JPanel implements ActionListener{
 		String theFile="";
 		dlg.setCurrentDirectory(new File(prefs.get("LAST_OPEN_DIR", ".")));
 		if(dlg.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
-		prefs.put("LAST_OPEN_DIR", dlg.getSelectedFile().getAbsolutePath());
+		prefs.put("LAST_OPEN_DIR", dlg.getSelectedFile().getParent());
 		theFile = dlg.getSelectedFile().getAbsolutePath();
 		System.err.println("Opening "+theFile);
 
