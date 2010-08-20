@@ -7,6 +7,8 @@ package us.jonesrychtar.gispatialnet.Algorithm;
 import java.util.Vector;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
+import org.ujmp.core.calculation.Calculation;
+
 import us.jonesrychtar.gispatialnet.DataSet;
 import us.jonesrychtar.gispatialnet.util;
 
@@ -131,8 +133,14 @@ public class SimpleMerge {
                 }
             Adj = adjTemp;
        }
-        X = X.reshape(Adj.getRowCount(),1);
-        Y = Y.reshape(Adj.getRowCount(),1);
+
+       //for ujmp <=2.3
+       X = X.deleteColumns(Calculation.Ret.NEW,1,Adj.getRowCount());
+       Y = Y.deleteColumns(Calculation.Ret.NEW,1,Adj.getRowCount());
+
+       //for ujmp >2.3
+        //X = X.reshape(Calculation.Ret.NEW,Adj.getRowCount(),1);
+        //Y = Y.reshape(Calculation.Ret.NEW,Adj.getRowCount(),1);
         DataSet ret = new DataSet(X,Y,Adj,MatrixFactory.emptyMatrix());
 
         //copy loaded files from each

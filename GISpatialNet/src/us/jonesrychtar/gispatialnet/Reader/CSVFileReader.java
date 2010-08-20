@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import us.jonesrychtar.gispatialnet.Reader.TextFileReader;
+import us.jonesrychtar.gispatialnet.gui.helpers.CSVOptionsFrame;
 
 import org.ujmp.core.Matrix;
 import org.ujmp.core.MatrixFactory;
@@ -19,8 +20,14 @@ import org.ujmp.core.exceptions.MatrixException;
 import org.ujmp.core.stringmatrix.impl.CSVMatrix;
 
 import com.mindprod.csv.CSVReader;
+
+import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import us.jonesrychtar.gispatialnet.GISpatialNet;
 import us.jonesrychtar.gispatialnet.DataSet;
+import us.jonesrychtar.gispatialnet.cli;
 import us.jonesrychtar.gispatialnet.util;
 import us.jonesrychtar.gispatialnet.Enums.*;
 
@@ -38,6 +45,8 @@ public class CSVFileReader extends TextFileReader{
     //formatting for file
     private String seperatorChar=",";
     private int xcol=0,ycol=1;
+    private int labelRow=-1;
+    private boolean hasLabels=false;
     //private char quoteChar='\"';
     //private String commentChars="#";
     //private boolean hideComments = true;
@@ -65,6 +74,10 @@ public class CSVFileReader extends TextFileReader{
 	public void setSeperatorChar(String seperatorChar) {
 		this.seperatorChar = seperatorChar;
 	}
+	
+	public void setHasLabels(boolean b){this.hasLabels=b;}
+	public boolean setHasLabels(){return this.hasLabels;}
+	
 	/**
      *
      * @param type
@@ -123,8 +136,8 @@ public class CSVFileReader extends TextFileReader{
 	 * @return
 	 * @throws IOException 
 	 */
-	public Vector<DataSet> readFullMatrix(DataSetMatrixType dst,int rows, int cols) throws IOException {
-		Matrix m = this.getFileAsMatrix(new File(this.filename),true);
+	public Vector<DataSet> readFullMatrix(DataSetMatrixType dst,int numRows, int numCols) throws IOException {
+		Matrix m = this.getFileAsMatrix(new File(this.filename),this.hasHeader,this.hasLabels);
 		//NOTE: add field for ego row. Ego column should be closeness to ties.
 		//TODO: ASK for EGO "chunk by" column. 
 		//TODO: Add extra row for ego in output. ask user.
@@ -132,49 +145,83 @@ public class CSVFileReader extends TextFileReader{
 		//TODO: add button for turning on/off egos "layers"
 		//Vector<Matrix> ml  = this.ReadAsMatrices(type, rows, cols);
 		Vector<DataSet> ret = new Vector<DataSet>();
+
 		
+		//System.out.println("readFullMatrix():");
+		//util.printMatrix(m);
+		
+		Matrix theLabels = null;
+		Matrix theHeaders = null;
+
+
 		//System.out.println("Matrix is "+m.getRowCount()+" x "+m.getColumnCount()+" for "+dst);
-		for(int r=0,c=cols-1;r<m.getRowCount();r+=rows){
+		for(int rowstart=0,colend=numCols;rowstart<m.getRowCount();rowstart+=numRows){
 			DataSet ds = new DataSet();
-			ds.setTitle(ds.getTitle()+" ("+r+"-"+(r+rows)+")");
 			ds.addFile(new File(this.filename).getName());
-			ds.addFile(new File(this.filename).getName());
-			if(this.hasHeader)
-				util.readHeader(m,0);
-			int rowTo=r+rows-1;
+			ds.setTitle(ds.getTitle()+" ("+rowstart+"-"+(rowstart+numRows)+")");
+
+			int rowend=rowstart+numRows-1;
 			//is columns wanted is greater than cols available, reset cols to availables cols
-			if(c>=m.getColumnCount()) c=(int)m.getColumnCount()-1;
+			if(colend>m.getColumnCount()) colend=(int)m.getColumnCount()-1;
 			//if rows are greater than rows available, reset rows to available rows
-			if(rowTo>=m.getRowCount())rowTo=(int)m.getRowCount()-r-1;
+			if(rowend>m.getRowCount()) rowend=(int)m.getRowCount()-rowstart-1;
 			
-			String selString=r+"-"+rowTo+";0-"+c;
+			String selString=rowstart+"-"+rowend+";0-"+colend;
 			//String selString="0-"+c+";"+r+"-"+rowTo;
-			System.out.println("getting "+selString+ " rows left: "+(m.getRowCount()-rowTo));
+			//System.out.println("getting "+selString+ " rows left: "+(m.getRowCount()-rowTo));
 			Matrix t=m.select(Calculation.Ret.NEW, selString);
+
+			//set labels
+			for (int row=rowstart;row<=rowend;row++)
+				t.setRowLabel(row-rowstart, m.getRowLabel(row));
+			
+			//set headers
+			for (int col=0;col<=colend;col++)
+				t.setColumnLabel(col, m.getColumnLabel(col));
+			
 			switch(dst){
-			case ADJACENCY:
-				ds.setAdj(t);
-				break;
-			case ATTRIBUTE:
-				ds.setAttr(t);
-				break;
-			case COORD_ATT:
-				//System.out.println("Removing coords. x:"+xcol+"/"+t.getColumnCount()+", y: "+ycol+"/"+t.getColumnCount());
-				ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
-				ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
-				t=t.deleteColumns(Calculation.Ret.NEW, xcol);
-				t=t.deleteColumns(Calculation.Ret.NEW, ycol-1);
-				ds.setAttr(t);
-				//System.out.println("Now has. x:"+t.getColumnCount());
-				break;
-			case COORDINATE:
-				//System.out.println("Removing coords. x:"+xcol+"/"+t.getColumnCount()+", y: "+ycol+"/"+t.getColumnCount());
-				ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
-				ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
-				t=t.deleteColumns(Calculation.Ret.NEW, xcol);
-				t=t.deleteColumns(Calculation.Ret.NEW, ycol-1);
-				//System.out.println("Now has. x:"+t.getColumnCount());
+				case ADJACENCY:
+					ds.setAdj(t);
+					break;
+				case ATTRIBUTE:
+					ds.setAttr(t);
+					break;
+				case COORD_ATT:
+					//set the coords
+					ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
+					ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
+
+					//copy the row and column labels
+					util.copyLabels(m, ds.getX());
+					util.copyLabels(m, ds.getY());
+					ds.getX().setColumnLabel(0,t.getColumnLabel(xcol));
+					ds.getY().setColumnLabel(0,t.getColumnLabel(ycol));
+					
+					//remove the columns
+					t=util.deleteColumns(t,Calculation.Ret.NEW, xcol);
+					t=util.deleteColumns(t,Calculation.Ret.NEW, ycol-1);
+					util.copyLabels(m, t);
+					ds.setAttr(t);
+					break;
+				case COORDINATE:
+					//System.out.println("Removing coords. x:"+xcol+"/"+t.getColumnCount()+", y: "+ycol+"/"+t.getColumnCount());
+					ds.setX(t.selectColumns(Calculation.Ret.NEW, this.xcol));
+					ds.setY(t.selectColumns(Calculation.Ret.NEW, this.ycol));
+					ds.getX().setColumnLabel(0,t.getColumnLabel(xcol));
+					ds.getY().setColumnLabel(0,t.getColumnLabel(ycol));
+					t=t.deleteColumns(Calculation.Ret.NEW, xcol);
+					t=t.deleteColumns(Calculation.Ret.NEW, (xcol<ycol)?ycol-1:ycol);
+					//System.out.println("Now has. x:"+t.getColumnCount());
 			}
+/*			if(this.hasLabels){
+				theLabels=theLabels.appendHorizontally(ds.getAttr());
+				ds.setAttr(theLabels);
+			}
+			util.printHeaders(ds.getX());
+			util.printHeaders(ds.getY());
+			util.printHeaders(ds.getAdj());
+			util.printHeaders(ds.getAttb());
+*/
 			ret.add(ds);
 			//r=rowTo;
 		}
@@ -182,14 +229,14 @@ public class CSVFileReader extends TextFileReader{
 		//System.out.println(""+ret.size()+" sets found!");
 		return ret;//theMatrices;
 	}
-
+	
 	public Vector<Matrix> ReadAsMatrices(MatrixFormat type, int rows, int cols) {
 		Vector<Matrix> ret = new Vector<Matrix>();			//The return value
 		Matrix theMatrix = MatrixFactory.emptyMatrix();		//the file as a Matrix
 
 		//read in Matrix from CSV file
 		try {
-			theMatrix = this.getFileAsMatrix(this.file,true);
+			theMatrix = this.getFileAsMatrix(this.file,this.hasHeader,this.hasLabels);
 		} catch (IOException e) {
 			System.err.println("An error occurred while reading data from "+this.file.getAbsolutePath());
 		}
@@ -289,12 +336,54 @@ public class CSVFileReader extends TextFileReader{
 	 * @return the Matrix which represents this file
 	 * @throws IOException if the File cannot be accessed
 	 */
-	public Matrix getFileAsMatrix(File f, boolean hasHeaderRow) throws IOException{
+	public Matrix getFileAsMatrix(File f, boolean hasHeaderRow,boolean hasLabels) throws IOException{
 		
 
 		Matrix m = MatrixFactory.importFromFile(FileFormat.CSV,f.getAbsolutePath(),new String(this.seperatorChar));
 		//Matrix mNew = MatrixFactory.zeros(ValueType.DOUBLE, mFromFile.getRowCount(),mFromFile.getColumnCount());
-		int egoCol=-1;
+		
+		if(hasLabels && hasHeaderRow){
+			
+			Matrix tmp=m.deleteColumns(Calculation.Ret.NEW, 0);	
+			tmp=tmp.deleteRows(Calculation.Ret.NEW, 0);	
+			
+			//set labels first
+			for (int i=1;i<m.getRowCount();i++){
+				String label=m.getAsString(i,0);
+				tmp.setRowLabel(i-1, label);
+			}
+			for (int i=1;i<m.getColumnCount();i++){
+				String label=m.getAsString(0,i);
+				tmp.setColumnLabel(i-1, label);
+			}
+			m=MatrixFactory.copyFromMatrix(tmp);
+
+		
+		}else if(hasHeaderRow && !hasLabels){
+			Matrix tmp=m.deleteRows(Calculation.Ret.NEW, 0);	
+			for (int i=0;i<m.getColumnCount();i++){
+				String label=m.getAsString(0,i);
+				tmp.setColumnLabel(i, label);
+			}
+			m=MatrixFactory.copyFromMatrix(tmp);
+			
+		}else if(!hasHeaderRow && hasLabels){
+			Matrix tmp=m.deleteColumns(Calculation.Ret.NEW, 0);	
+			for (int i=0;i<m.getRowCount();i++){
+				String label=m.getAsString(i,0);
+				tmp.setRowLabel(i, label);
+			}
+			m=MatrixFactory.copyFromMatrix(tmp);
+
+		}else{}
+
+		//System.out.println("getFileAsMatrix():");
+		//util.printHeaders(m);
+		//util.printLabels(m);
+		//System.out.println(m);
+
+		
+		/*		int egoCol=-1;
 
 		//set header labels
 		if(hasHeaderRow){
@@ -307,7 +396,7 @@ public class CSVFileReader extends TextFileReader{
 			}
 			//util.printHeaders(m);
 			//delete header row
-			if(hasHeaderRow)	m=m.deleteRows(Calculation.Ret.NEW, 0);	
+			m=m.deleteRows(Calculation.Ret.NEW, 0);	
 			//util.printHeaders(m);
 		}
 		
@@ -323,7 +412,7 @@ public class CSVFileReader extends TextFileReader{
 				m.setRowLabel(row, m.getAsString(row,0));
 			}
 			
-		}
+		}*/
 		
 		
 		//m = m.toDoubleMatrix();
@@ -365,25 +454,17 @@ public class CSVFileReader extends TextFileReader{
 			System.out.println("Please specify file!");
 			return;
 		}
-		CSVFileReader theReader = new CSVFileReader(args[0]);
-		Matrix n = theReader.getFileAsMatrix(new File(args[0]),true);
 		
-		Vector<Matrix> t = CSVFileReader.SplitMatrixAtNaN(n);
-		for(int i=0;i<t.size();i++){
-			System.out.println("MATRIX "+i+":");
-			System.out.print(t.elementAt(i).toString());
-		}
-		//System.out.print(n.toString());
-
-	
+		CSVFileReader theReader = new CSVFileReader(args[0]);
+		theReader.setHasLabels(true);
+		theReader.setHasHeader(true);
+		Vector<DataSet> dsm = theReader.Read(MatrixFormat.FULL, DataSetMatrixType.COORD_ATT, 10, 5);
+		DataSet ds = dsm.get(0);
+		
+		System.out.println("Imported:");
+		System.out.println(ds);
 	}
 
-	public void printHeaders(Matrix m){
-		System.out.print("Headers: \n");
-		for (int j=0;j<m.getColumnCount();j++){
-			System.out.print("\t"+j+": "+m.getColumnLabel(j)+"\n");	
-		}
-	}
 	public Matrix getNextMatrix(CSVReader csv, int rows, int cols) throws MatrixException, NumberFormatException, IOException{
 		Matrix m = MatrixFactory.emptyMatrix();
 
