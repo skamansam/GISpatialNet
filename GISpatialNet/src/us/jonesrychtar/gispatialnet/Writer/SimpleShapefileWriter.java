@@ -48,7 +48,8 @@ public class SimpleShapefileWriter {
 	//private GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	//private SimpleFeatureBuilder featureBuilder;
 
-	private String nodeSchemaString = "location:Point:srid=4326,id:String";
+	private String nodeSchemaString = "location:Point:srid=4326,Node_ID:String";
+//	private String nodeSchemaString = "location:Point:srid=15498,id:String";
 	private String nodeSchemaName = "PersonWithID";
 	
 	private String edgeSchemaString = "edge:Line,From:String,To:String";
@@ -73,6 +74,20 @@ public class SimpleShapefileWriter {
 	public SimpleShapefileWriter(File nodeFile, File edgeFile, DataSet ds) {
 		this.nodeFile = nodeFile;
 		this.edgeFile = edgeFile;
+		this.ds = ds;
+		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
+
+	}
+	public SimpleShapefileWriter(String filenames, DataSet ds) {
+		this.nodeFile = new File(filenames+".shp");
+		this.edgeFile = new File(filenames+"_edges.shp");
+		this.ds = ds;
+		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
+
+	}
+	public SimpleShapefileWriter(String nodeFile, String edgeFile,DataSet ds) {
+		this.nodeFile = new File(nodeFile+".shp");
+		this.edgeFile = new File(edgeFile+".shp");
 		this.ds = ds;
 		this.attCount=(int) (ds.getAttb().getColumnCount()+1);
 
@@ -217,7 +232,7 @@ public class SimpleShapefileWriter {
 			Point point = geometryFactory.createPoint(new Coordinate(x, y));
 			featureBuilder.add(point);
 			featureBuilder.add(id);
-			for (int col = 0; col < this.attList.size(); col++)
+			for (int col = 0; col < this.ds.getAttb().getColumnCount(); col++)
 				if (col != this.idCol)
 					featureBuilder.add(ds.getAttb().getAsString(row, col));
 			SimpleFeature feature = featureBuilder.buildFeature(null);
@@ -228,23 +243,29 @@ public class SimpleShapefileWriter {
 	}
 	private SimpleFeatureType calculateNodeFeatureType(){
 		SimpleFeatureType NodeFeatureType = null;
-		
+		//the number of attributes set to 1 for testing.
+		//this.attCount=1;
 		// add more info if applicable
-		if (this.attCount > 1) {
+		if (this.ds.getAttb().getColumnCount() > 1) {
 			nodeSchemaName = "PersonWithAttributes";
-			for (int i = 0; i < this.attList.size(); i++)
-				if (i != this.idCol)
-					nodeSchemaString += "," + ds.getAttr().getColumnLabel(i) + ":String";
+			for (int i = 0; i < this.ds.getAttb().getColumnCount(); i++)
+				if (i != this.idCol){
+					String lbl=ds.getAttr().getColumnLabel(i);
+					if (lbl==null) lbl="Att"+i;
+					nodeSchemaString += "," + lbl + ":String";
+				}
 		}
+		System.out.println("Creating Schema:\n\t"+nodeSchemaString);
 		try{
 			NodeFeatureType = DataUtilities.createType(nodeSchemaName,nodeSchemaString);
 		} catch (SchemaException e) {
 			System.err.println("Sorry! Invalid node schema specified!");
+			System.err.println(e.toString());
 		}
 		return NodeFeatureType;
 	}
 
-	public void writeNodes() {
+	public void writeNodes_old() {
 		SimpleFeatureBuilder nodeFeatures=new SimpleFeatureBuilder(calculateNodeFeatureType());
 		
 		// add more info if applicable
@@ -316,6 +337,85 @@ public class SimpleShapefileWriter {
 		} finally {
 		}
 
+	}
+
+	public void writeNodes() {
+
+        try {
+    		final SimpleFeatureType TYPE = DataUtilities.createType(this.nodeSchemaName, this.nodeSchemaString);
+    		
+    		/*
+             * We create a FeatureCollection into which we will put each Feature created from a record
+             * in the input csv data file
+             */
+            FeatureCollection collection = FeatureCollections.newCollection();
+
+            /*
+             * GeometryFactory will be used to create the geometry attribute of each feature (a Point
+             * object for the location)
+             */
+            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+
+            SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
+
+            for (int row=0;row<this.ds.getX().getRowCount();row++) {
+                    double xcoord = this.ds.getX().getAsDouble(row,0);
+                    double ycoord = this.ds.getY().getAsDouble(row,0);
+                    String name = this.ds.getAttb().getAsString(row,0);
+
+                    /* Longitude (= x coord) first ! */
+                    Point point = geometryFactory.createPoint(new Coordinate(xcoord, ycoord));
+
+                    featureBuilder.add(point);
+                    featureBuilder.add(name);
+                    SimpleFeature feature = featureBuilder.buildFeature(null);
+                    collection.add(feature);
+            }
+            DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
+
+            Map<String, Serializable> params = new HashMap<String, Serializable>();
+            params.put("url", nodeFile.toURI().toURL());
+            params.put("create spatial index", Boolean.TRUE);
+
+            ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
+                    .createNewDataStore(params);
+            newDataStore.createSchema(TYPE);
+
+            /*
+             * You can comment out this line if you are using the createFeatureType
+             * method (at end of class file) rather than DataUtilities.createType
+             */
+            newDataStore.forceSchemaCRS(DefaultGeographicCRS.WGS84);
+
+            /*
+             * Write the features to the shapefile
+             */
+            Transaction transaction = new DefaultTransaction("create");
+
+            String typeName = newDataStore.getTypeNames()[0];
+            FeatureSource featureSource = newDataStore.getFeatureSource(typeName);
+
+            if (featureSource instanceof FeatureStore) {
+                FeatureStore featureStore = (FeatureStore) featureSource;
+
+                featureStore.setTransaction(transaction);
+                try {
+                    featureStore.addFeatures(collection);
+                    transaction.commit();
+
+                } catch (Exception problem) {
+                    problem.printStackTrace();
+                    transaction.rollback();
+
+                } finally {
+                    transaction.close();
+                }
+            } else {
+                System.out.println(typeName + " does not support read/write access");
+            }
+        }catch(Exception e){
+        	System.out.println("Cannot create features!\n"+e.getMessage());
+        }
 	}
 	
 	/**

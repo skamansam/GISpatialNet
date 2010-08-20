@@ -338,65 +338,69 @@ public class DataSet {
             out+="\n";
         }
         if(!x.isEmpty()){
-            out+="X: ["+x.getRowCount()+","+x.getColumnCount()+"] \n";
-            if(Detail>=1){
-                //print headers
-                for(int i=0; i<x.getColumnCount(); i++)
-                    out+=x.getColumnLabel(i)+" ";
-                out+="\n";
-            }
-            if(Detail>=2){
-                //print matrix
-                out+= x.toString()+"\n";
-            }
+            out+="X: \n";
+            out+=util.matrixToString(x);
+//            if(Detail>=1){
+//                //print headers
+//                for(int i=0; i<x.getColumnCount(); i++)
+//                    out+=x.getColumnLabel(i)+" ";
+//                out+="\n";
+//            }
+//            if(Detail>=2){
+//                //print matrix
+//                out+= x.toString()+"\n";
+//            }
         }else{
         	out+="There are no X values loaded!\n";
         }
         //add y attributes
         if(!y.isEmpty()){
-            out+="Y: ["+y.getRowCount()+","+y.getColumnCount()+"] \n";
-            if(Detail>=1){
-                //print headers
-                for(int i=0; i<y.getColumnCount(); i++)
-                    out+=y.getColumnLabel(i)+" ";
-                out+="\n";
-            }
-            if(Detail>=2){
-                //print matrix
-                out+= y.toString()+"\n";
-            }
+            out+="Y: \n";
+            out+=util.matrixToString(y);
+//            if(Detail>=1){
+//                //print headers
+//                for(int i=0; i<y.getColumnCount(); i++)
+//                    out+=y.getColumnLabel(i)+" ";
+//                out+="\n";
+//            }
+//            if(Detail>=2){
+//                //print matrix
+//                out+= y.toString()+"\n";
+//            }
         }else{
         	out+="There are no Y values loaded!\n";
         }
         //add adj attributes
         if(!adj.isEmpty()){
-            out+="Edges: ["+adj.getRowCount()+","+adj.getColumnCount()+"] \n";
-            if(Detail>=1){
-                //print headers
-                for(int i=0; i<adj.getColumnCount(); i++)
-                    out+=adj.getColumnLabel(i)+" ";
-                out+="\n";
-            }
-            if(Detail>=2){
-                //print matrix
-                out+= adj.toString()+"\n";
-            }
+            out+="Edges:\n";
+            out+=util.matrixToString(adj);
+//            if(Detail>=1){
+//                //print headers
+//                for(int i=0; i<adj.getColumnCount(); i++)
+//                    out+=adj.getColumnLabel(i)+" ";
+//                out+="\n";
+//            }
+//            if(Detail>=2){
+//                //print matrix
+//                out+= adj.toString()+"\n";
+//            }
         }else{
         	out+="There are no adjacency values loaded!\n";
         }
         //add attb attributes
         if(!attb.isEmpty()){
-            out+="Attributes: ["+attb.getRowCount()+","+attb.getColumnCount()+"] \n";
-            if(Detail>=1){
-                //print headers
-                for(int i=0; i<attb.getColumnCount(); i++)
-                    out+=attb.getColumnLabel(i)+" ";
-                out+="\n";
-            }
-            if(Detail>=2){
-                //print matrix
-                out+= attb.toString()+"\n";
-            }
+            out+="Attributes: \n";
+            out+=util.matrixToString(attb);
+//            if(Detail>=1){
+//                //print headers
+//                for(int i=0; i<attb.getColumnCount(); i++)
+//                    out+=attb.getColumnLabel(i)+" ";
+//                out+="\n";
+//            }
+//            if(Detail>=2){
+//                //print matrix
+//                out+= attb.toString()+"\n";
+//            }
         }else{
         	out+="There are no attribute values loaded!\n";
         }

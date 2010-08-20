@@ -383,20 +383,27 @@ public class DataLister extends JTree implements TreeSelectionListener, ActionLi
         csvr.setXCol(f.getXColumn());
         csvr.setYCol(f.getYColumn());
         csvr.setHasHeader(f.getHasHeader());
+        csvr.setHasLabels(f.getHasLabels());
         csvr.setSortByColumn(f.getSortByColumn());
         csvr.setSeperatorChar(f.getSeparatorAsString());
+        int addToIdx=f.getDataSetIndex();
         try {
             Vector<DataSet> vds = csvr.Read( f.getMatrixFormat(),f.getDataSetType(), f.getRowsAsInt(), f.getColumnsAsInt());
-            
+            System.out.println(vds.size()+" DataSets Read. Type:"+f.getDataSetType()+" Appended To: "+addToIdx);
             //TODO: add import and append to DataSet. gsn[] idx = f.getDataSetIndex()-1;
-            if(f.getDataSetIndex()>0){
-            	
-            }
+            if(addToIdx>-1){
+            	DataSet DSFrom=vds.get(0);
+            	DataSet DSTo=gsn.getData(addToIdx);
+            	if(f.getDataSetType() == DataSetMatrixType.ADJACENCY){
+            		gsn.getData(addToIdx).setAdj(DSFrom.getAdj());
+            	}
+            }else{
             
             	
-            for (int i = 0; i < vds.size(); i++) {
-                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
-                gsn.getDataSets().add(vds.elementAt(i));
+	            for (int i = 0; i < vds.size(); i++) {
+	                if (f.getIsPolar()) vds.elementAt(i).PolarToXY();
+	                gsn.getDataSets().add(vds.elementAt(i));
+	            }
             }
             //reloadData();
         } catch (Exception ex) {

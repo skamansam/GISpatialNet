@@ -403,9 +403,10 @@ public class CSVOptionsFrame extends JDialog implements ActionListener,
 			this.isPolar = coord.getSelectedIndex()==0?false:true;
 		else if(e.getSource().equals(columnList))
 			this.splitBy=columnList.getSelectedIndex()>0?columnList.getSelectedIndex()-1:-1;
-		else if(e.getSource().equals(this.addToDSList))
+		else if(e.getSource().equals(this.addToDSList)){
 				this.DSIndex=addToDSList.getSelectedIndex()>0?addToDSList.getSelectedIndex()-1:-1;
-		else if(e.getSource().equals(xcolList))
+				System.out.println("Add To DataSet: "+this.DSIndex);
+		}else if(e.getSource().equals(xcolList))
 			this.xcol=xcolList.getSelectedIndex()>0?xcolList.getSelectedIndex()-1:-1;
 		else if(e.getSource().equals(ycolList))
 			this.ycol=ycolList.getSelectedIndex()>0?ycolList.getSelectedIndex()-1:-1;

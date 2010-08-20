@@ -190,9 +190,11 @@ public class GSNPanel extends JPanel implements ActionListener{
 		
 		//ask for file to save
 		JFileChooser c = new JFileChooser(type+": Enter filename with no extension.");
+		c.setCurrentDirectory(new File(prefs.get("LAST_SAVE_DIR", ".")));
 		int d = c.showSaveDialog(this);
 		if (d!=JFileChooser.APPROVE_OPTION) return;
 		File f=c.getSelectedFile();
+		prefs.put("LAST_SAVE_DIR", f.getAbsolutePath());
 		
 		switch(t){
 			case CSV:
@@ -231,12 +233,12 @@ public class GSNPanel extends JPanel implements ActionListener{
 		                	String choices[]={"Create XY data", "Write only Edge file"};
 							noXYChoice = JOptionPane.showOptionDialog(this, "Node data not found. \nWhat do you want to do?", "Export", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 		                }
-		                String nodeFile = f.getAbsolutePath()+".shp";
-		                String edgeFile = f.getAbsolutePath()+".shp";
+		                String nodeFile = f.getAbsolutePath();
+		                String edgeFile = f.getAbsolutePath()+"_edges";
 		                
-		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(f,tmp);
+		                SimpleShapefileWriter ssw = new SimpleShapefileWriter(nodeFile,edgeFile,tmp);
 		                ssw.writeNodes();
-		                ssw.writeEdges();
+		                //ssw.writeEdges();
 
 					/*
 						int noXYChoice=-1;
@@ -309,8 +311,8 @@ public class GSNPanel extends JPanel implements ActionListener{
 		//SaveType s = new SaveType();
 		//s.setVisible(true);
 		//System.out.println("Saving as "+Enums.FileType.toString(s.getType()));
-
-		JOptionPane.showMessageDialog(this, "Save has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
+		this.handleSaveAs("shapefile");
+		//JOptionPane.showMessageDialog(this, "Save has not yet been implemented.", "Not Yet Implemented", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public void saveAllData(){

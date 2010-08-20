@@ -142,7 +142,7 @@ public class HighlightEdges {
         Matrix temp = Adj;
         //FIXME: something is wrong here - downgrade to ujmp 0.2.3 broke this
         temp=temp.sort(Calculation.Ret.NEW);
-        //temp = temp. sortrows(Calculation.Ret.NEW, 0, false);
+        //temp = temp.sortrows(Calculation.Ret.NEW, 0, false);
         int[] rc;
 
         //avg

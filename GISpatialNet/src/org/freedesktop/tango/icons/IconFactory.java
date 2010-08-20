@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.svg.GraphicsConfiguration;
-import org.jdesktop.jdic.filetypes.AssociationService;
-import org.jdesktop.jdic.filetypes.Association;
+/*import org.jdesktop.jdic.filetypes.AssociationService;
+import org.jdesktop.jdic.filetypes.Association;*/
 import javax.swing.filechooser.FileSystemView; 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -122,7 +122,7 @@ public class IconFactory {
 		}
 
 		for(int i=0;i<exts.length-1;i++){
-			System.out.print("MIME icon for "+exts[i]+"\n");
+			//System.out.print("MIME icon for "+exts[i]+"\n");
 			try{
 				File f = File.createTempFile("icon", "." + exts[i]);
 				ico = icon2ImageIcon(FileSystemView.getFileSystemView().getSystemIcon(f));
